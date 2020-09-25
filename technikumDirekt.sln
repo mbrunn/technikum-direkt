@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "technikumDirekt.Services.Models", "technikumDirekt.Services.Models\technikumDirekt.Services.Models.csproj", "{702CA8C5-32AB-4DF8-A61C-FD76587447F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.Services.Models", "TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj", "{702CA8C5-32AB-4DF8-A61C-FD76587447F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "technikumDirekt.Services.Interfaces", "technikumDirekt.Services.Interfaces\technikumDirekt.Services.Interfaces.csproj", "{99820DBC-153F-4AA5-83CB-F8DBFA5C09B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.Services.Interfaces", "TechnikumDirekt.Services.Interfaces\TechnikumDirekt.Services.Interfaces.csproj", "{99820DBC-153F-4AA5-83CB-F8DBFA5C09B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "technikumDirekt.Services", "technikumDirekt.Services\technikumDirekt.Services.csproj", "{0DDBC80F-FE9C-4B19-AD33-A9307BE8E7DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.Services", "TechnikumDirekt.Services\TechnikumDirekt.Services.csproj", "{0DDBC80F-FE9C-4B19-AD33-A9307BE8E7DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>technikumDirekt.Services</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -10,6 +11,10 @@
       <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.6.3" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj" />
     </ItemGroup>
 
 </Project>

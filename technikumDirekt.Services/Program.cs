@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using Microsoft.Extensions.Hosting;
 
-namespace technikumDirekt.Services
+namespace TechnikumDirekt.Services
 {
     public class Program
     {

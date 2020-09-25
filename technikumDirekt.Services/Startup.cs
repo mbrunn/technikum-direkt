@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using IO.Swagger.Filters;
+using technikumDirekt.Services.Filters;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,10 +13,10 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using technikumDirekt.Services.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using TechnikumDirekt.Services.Filters;
 
-namespace technikumDirekt.Services
+namespace TechnikumDirekt.Services
 {
     public class Startup
     {

@@ -7,9 +7,20 @@
     <e p="C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt" t="IncludeFlat">
       <e p="packages" t="ExcludeRecursive" />
       <e p="technikumDirekt.Services" t="IncludeRecursive">
-        <e p="appsettings.Development.json" t="Include" />
-        <e p="appsettings.json" t="Include" />
+        <e p=".gitignore" t="Include" />
+        <e p="appsettings_default.json" t="Include" />
+        <e p="Attributes" t="Include">
+          <e p="ValidateModelStateAttribute.cs" t="Include" />
+        </e>
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Controllers" t="Include">
+          <e p="LogisticsPartnerApi.cs" t="Include" />
+          <e p="ParcelWebhookApi.cs" t="Include" />
+          <e p="ReceipientApi.cs" t="Include" />
+          <e p="SenderApi.cs" t="Include" />
+          <e p="StaffApi.cs" t="Include" />
+          <e p="WarehouseManagementApi.cs" t="Include" />
+        </e>
         <e p="Filters" t="Include">
           <e p="BasePathFilter.cs" t="Include" />
           <e p="GeneratePathParamsValidationFilter.cs" t="Include" />
@@ -29,6 +40,7 @@
         <e p="technikumDirekt.Services.csproj" t="IncludeRecursive" />
       </e>
       <e p="technikumDirekt.Services.Interfaces" t="IncludeRecursive">
+        <e p=".gitignore" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -40,6 +52,7 @@
         <e p="technikumDirekt.Services.Interfaces.csproj" t="IncludeRecursive" />
       </e>
       <e p="technikumDirekt.Services.Models" t="IncludeRecursive">
+        <e p=".gitignore" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="Error.cs" t="Include" />
         <e p="GeoCoordinate.cs" t="Include" />
