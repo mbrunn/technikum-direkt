@@ -22,27 +22,16 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="92ad211c-3668-47a4-9417-9a73688a9a7f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.technikumDirekt/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.technikumDirekt/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.technikumDirekt/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.technikumDirekt/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/Error.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/Error.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/GeoCoordinate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/GeoCoordinate.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/Hop.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/Hop.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/HopArrival.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/HopArrival.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/NewParcelInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/NewParcelInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/Parcel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/Parcel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/Recipient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/Recipient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/TrackingInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/TrackingInformation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/Transferwarehouse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/Transferwarehouse.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/Truck.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/Truck.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/Warehouse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/Warehouse.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/WarehouseNextHops.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/WarehouseNextHops.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/WebhookMessage.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/WebhookMessage.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/WebhookResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/WebhookResponse.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services.Models/WebhookResponses.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services.Models/WebhookResponses.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services/Filters/GeneratePathParamsValidationFilter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services/Filters/GeneratePathParamsValidationFilter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/technikumDirekt.Services/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/technikumDirekt.Services/Startup.cs" afterDir="false" />
+    <list default="true" id="92ad211c-3668-47a4-9417-9a73688a9a7f" name="Default Changelist" comment="added gitignore, controller">
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Recipient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Recipient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/TrackingInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/TrackingInformation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Transferwarehouse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Transferwarehouse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Truck.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Truck.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Warehouse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Warehouse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WarehouseNextHops.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WarehouseNextHops.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookMessage.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookMessage.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookResponses.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookResponses.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +40,16 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services.Models/NewParcelInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services.Models/Hop.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/StaffApi.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/SenderApi.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/ReceipientApi.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/ParcelWebhookApi.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/LogisticsPartnerApi.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/WarehouseManagementApi.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -64,12 +63,27 @@
         <option value="$PROJECT_DIR$/technikumDirekt.Services/Program.cs" />
         <option value="$PROJECT_DIR$/technikumDirekt.Services/Startup.cs" />
         <option value="$PROJECT_DIR$/technikumDirekt.Services.Models/NewParcelInfo.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/LogisticsPartnerApi.cs" />
         <option value="$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/ParcelWebhookApi.cs" />
         <option value="$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/ReceipientApi.cs" />
         <option value="$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/SenderApi.cs" />
         <option value="$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/StaffApi.cs" />
         <option value="$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/WarehouseManagementApi.cs" />
-        <option value="$PROJECT_DIR$/TechnikumDirekt.Services/Controllers/LogisticsPartnerApi.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Error.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/GeoCoordinate.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Hop.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/HopArrival.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/NewParcelInfo.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Parcel.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Recipient.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/TrackingInformation.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Transferwarehouse.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Truck.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/Warehouse.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WarehouseNextHops.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookMessage.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookResponse.cs" />
+        <option value="$PROJECT_DIR$/TechnikumDirekt.Services.Models/WebhookResponses.cs" />
       </list>
     </option>
   </component>
@@ -126,7 +140,16 @@
       <updated>1601031616716</updated>
       <workItem from="1601031622219" duration="1980000" />
       <workItem from="1601041712434" duration="3360000" />
+      <workItem from="1601045700991" duration="403000" />
     </task>
+    <task id="LOCAL-00001" summary="added gitignore, controller">
+      <created>1601045916269</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1601045916269</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -144,9 +167,12 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="added gitignore, controller" />
+    <option name="LAST_COMMIT_MESSAGE" value="added gitignore, controller" />
   </component>
   <component name="WindowStateProjectService">
     <state x="590" y="358" key="ImportDialog.Title" timestamp="1601033524650">
