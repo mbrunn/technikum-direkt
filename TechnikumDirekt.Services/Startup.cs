@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using technikumDirekt.Services.Filters;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +10,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.Extensions.DependencyInjection;
 using TechnikumDirekt.Services.Filters;
 
 namespace TechnikumDirekt.Services
@@ -65,17 +61,16 @@ namespace TechnikumDirekt.Services
                     {
                         Version = "1",
                         Title = "Parcel Logistics Service",
-                        Description = "Parcel Logistics Service (ASP.NET Core 3.0)",
+                        Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
                         Contact = new OpenApiContact()
                         {
                            Name = "SKS",
                            Url = new Uri("http://www.technikum-wien.at/"),
                            Email = ""
-                        },
-                        TermsOfService = new Uri("")
+                        }
                     });
                     c.CustomSchemaIds(type => type.FullName);
-                    c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
+                    // c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
                     // Sets the basePath property in the Swagger document generated
                     c.DocumentFilter<BasePathFilter>("/TechnikumDirekt/TechnikumDirekt_API/1");
 

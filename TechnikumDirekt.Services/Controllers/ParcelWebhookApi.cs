@@ -118,6 +118,7 @@ namespace TechnikumDirekt.Services.Controllers
         [Route("/TechnikumDirekt/TechnikumDirekt_API/1/parcel/{trackingId}/reportHop/{code}")]
         [ValidateModelState]
         [SwaggerOperation("ApiParcelWebhooksByIdReport")]
+        [SwaggerResponse(statusCode: 200, description: "Successfully reported hop.")]
         [SwaggerResponse(statusCode: 500, type: typeof(Error), description: "An error occurred")]
         public virtual IActionResult ApiParcelWebhooksByIdReport([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromRoute][Required][RegularExpression("/^[A-Z]{4}\\d{1,4}$/")]string code)
         { 
