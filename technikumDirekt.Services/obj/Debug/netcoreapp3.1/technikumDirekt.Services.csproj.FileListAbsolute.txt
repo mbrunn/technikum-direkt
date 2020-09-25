@@ -1,6 +1,0 @@
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services\obj\Debug\netcoreapp3.1\technikumDirekt.Services.csprojAssemblyReference.cache
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services\obj\Debug\netcoreapp3.1\technikumDirekt.Services.AssemblyInfoInputs.cache
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services\obj\Debug\netcoreapp3.1\technikumDirekt.Services.AssemblyInfo.cs
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services\obj\Debug\netcoreapp3.1\technikumDirekt.Services.csproj.CoreCompileInputs.cache
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services\obj\Debug\netcoreapp3.1\technikumDirekt.Services.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services\obj\Debug\netcoreapp3.1\technikumDirekt.Services.MvcApplicationPartsAssemblyInfo.cache
