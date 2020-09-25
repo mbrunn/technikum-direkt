@@ -1,9 +1,0 @@
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\bin\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.deps.json
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\bin\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.dll
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\bin\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.pdb
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\obj\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.csprojAssemblyReference.cache
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\obj\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.AssemblyInfoInputs.cache
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\obj\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.AssemblyInfo.cs
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\obj\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.csproj.CoreCompileInputs.cache
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\obj\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.dll
-C:\Users\nixmi\OneDrive\FH\BIF5\SKS\prj\technikumDirekt\technikumDirekt.Services.Interfaces\obj\Debug\netcoreapp3.1\technikumDirekt.Services.Interfaces.pdb
