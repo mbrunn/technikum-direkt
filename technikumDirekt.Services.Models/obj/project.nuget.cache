@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "zltE6q8qLfeLZVGpFElMDoi4PaFjAABpeyLSZySDhOHvXOwJKQXWmAE9g5pp+fXUv6u/eAB2rLmx7kSxwh0jcQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\nixmi\\OneDrive\\FH\\BIF5\\SKS\\prj\\technikumDirekt\\technikumDirekt.Services.Models\\technikumDirekt.Services.Models.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\nixmi\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

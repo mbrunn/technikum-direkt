@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "o5rzN2ajEcB5Df+/NYa29kMzqthT0ORD8Y0emmyU7bW1IegMx8NS77XaNbXUw3902n8oThFdiIw1Yeg56iM+6w==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\nixmi\\OneDrive\\FH\\BIF5\\SKS\\prj\\technikumDirekt\\technikumDirekt.Services\\technikumDirekt.Services.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\nixmi\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "C:\\Users\\nixmi\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\nixmi\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
+    "C:\\Users\\nixmi\\.nuget\\packages\\swashbuckle.aspnetcore\\5.6.3\\swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
+    "C:\\Users\\nixmi\\.nuget\\packages\\swashbuckle.aspnetcore.annotations\\5.6.3\\swashbuckle.aspnetcore.annotations.5.6.3.nupkg.sha512",
+    "C:\\Users\\nixmi\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\5.6.3\\swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
+    "C:\\Users\\nixmi\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\5.6.3\\swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",
+    "C:\\Users\\nixmi\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\5.6.3\\swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512"
+  ],
+  "logs": []
+}
