@@ -42,18 +42,29 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult TransitionParcel([FromBody]Parcel body, [FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         { 
+            //Why no 404 ? What if trackingId doesnt exist ?
+            if (body == null || trackingId == null)
+            {
+                return BadRequest(StatusCode(400, default(Error)));
+            }
+            else
+            {
+                return Ok(StatusCode(200, default(NewParcelInfo)));
+            }
+            
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(NewParcelInfo));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400, default(Error));
-            string exampleJson = null;
-            exampleJson = "{\n  \"trackingId\" : \"PYJRB4HZ6\"\n}";
             
-            var example = exampleJson != null
-                ? JsonConvert.DeserializeObject<NewParcelInfo>(exampleJson)
-                : default(NewParcelInfo);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            // string exampleJson = null;
+            // exampleJson = "{\n  \"trackingId\" : \"PYJRB4HZ6\"\n}";
+            // 
+            // var example = exampleJson != null
+            //     ? JsonConvert.DeserializeObject<NewParcelInfo>(exampleJson)
+            //     : default(NewParcelInfo);            //TODO: Change the data returned
+            // return new ObjectResult(example);
         }
     }
 }

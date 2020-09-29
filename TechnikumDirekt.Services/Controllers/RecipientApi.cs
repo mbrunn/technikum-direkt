@@ -17,17 +17,12 @@ using System.ComponentModel.DataAnnotations;
 using technikumDirekt.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.FileProviders;
 using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Controllers
 { 
     /// <summary>
-    /// 
-    /// </summary>
-    [ApiController]
-    public class ReceipientApiController : ControllerBase
-    { 
-         /// <summary>
     /// 
     /// </summary>
     [ApiController]
@@ -47,7 +42,14 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
-        { 
+        {
+            return trackingId switch
+            {
+                null => BadRequest(StatusCode(400, default(Error))),
+                "NonExistingParcel" => NotFound(StatusCode(404)),
+                _ => Ok(StatusCode(200, default(TrackingInformation)))
+            };
+            
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(TrackingInformation));
 
@@ -56,14 +58,14 @@ namespace TechnikumDirekt.Services.Controllers
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
-            string exampleJson = null;
-            exampleJson = "{\n  \"visitedHops\" : [ {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  }, {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  } ],\n  \"futureHops\" : [ null, null ],\n  \"state\" : \"Pickup\"\n}";
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<TrackingInformation>(exampleJson)
-                        : default(TrackingInformation);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            // string exampleJson = null;
+            // exampleJson = "{\n  \"visitedHops\" : [ {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  }, {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  } ],\n  \"futureHops\" : [ null, null ],\n  \"state\" : \"Pickup\"\n}";
+            // 
+            //             var example = exampleJson != null
+            //             ? JsonConvert.DeserializeObject<TrackingInformation>(exampleJson)
+            //             : default(TrackingInformation);            //TODO: Change the data returned
+            // return new ObjectResult(example);
         }
-    }
     }
 }

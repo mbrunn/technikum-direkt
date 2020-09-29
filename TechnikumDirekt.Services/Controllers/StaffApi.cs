@@ -40,7 +40,14 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("ReportParcelDelivery")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
-        { 
+        {
+            return trackingId switch
+            {
+                null => BadRequest(StatusCode(400, default(Error))),
+                "NonExistingParcel" => NotFound(StatusCode(404)),
+                _ => Ok(StatusCode(200))
+            };
+            
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200);
 
@@ -67,7 +74,21 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("ReportParcelHop")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromRoute][Required][RegularExpression("/^[A-Z]{4}\\d{1,4}$/")]string code)
-        { 
+        {
+            if (trackingId == null || code == null)
+            {
+                return BadRequest(StatusCode(400, default(Error)));
+            }
+
+            if (trackingId == "NonExistingTrackingId" || code == "NonExistingHopCode")
+            {
+                return NotFound(StatusCode(404));
+            }
+            else
+            {
+                return Ok(StatusCode(200));
+            }
+            
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200);
 

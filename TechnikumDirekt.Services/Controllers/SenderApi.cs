@@ -40,19 +40,29 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(NewParcelInfo), description: "Successfully submitted the new parcel")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult SubmitParcel([FromBody]Parcel body)
-        { 
+        {
+            if (body == null)
+            {
+                return BadRequest(StatusCode(400, default(Error)));
+            }
+            else
+            {
+                return Ok(StatusCode(200, default(NewParcelInfo)));
+            }
+            
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(NewParcelInfo));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400, default(Error));
-            string exampleJson = null;
-            exampleJson = "{\n  \"trackingId\" : \"PYJRB4HZ6\"\n}";
             
-            var example = exampleJson != null
-                ? JsonConvert.DeserializeObject<NewParcelInfo>(exampleJson)
-                : default(NewParcelInfo);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            // string exampleJson = null;
+            // exampleJson = "{\n  \"trackingId\" : \"PYJRB4HZ6\"\n}";
+            // 
+            // var example = exampleJson != null
+            //     ? JsonConvert.DeserializeObject<NewParcelInfo>(exampleJson)
+            //     : default(NewParcelInfo);            //TODO: Change the data returned
+            // return new ObjectResult(example);
         }
     }
 }

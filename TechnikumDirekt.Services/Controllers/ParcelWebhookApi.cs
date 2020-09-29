@@ -17,6 +17,8 @@ using System.ComponentModel.DataAnnotations;
 using technikumDirekt.Services.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
+using Microsoft.Extensions.FileProviders;
 using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Controllers
@@ -40,18 +42,26 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponses), description: "List of webooks for the &#x60;trackingId&#x60;")]
         public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         { 
+            return trackingId switch
+            {
+                "NonExistingParcel" => NotFound(StatusCode(404)),
+                null => NotFound(StatusCode(404)),
+                _ => Ok(StatusCode(200, default(WebhookResponses)))
+            };
+            
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(WebhookResponses));
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
-            string exampleJson = null;
-            exampleJson = "[ {\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n}, {\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n} ]";
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<WebhookResponses>(exampleJson)
-                        : default(WebhookResponses);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            // string exampleJson = null;
+            // exampleJson = "[ {\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n}, {\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n} ]";
+            // 
+            //             var example = exampleJson != null
+            //             ? JsonConvert.DeserializeObject<WebhookResponses>(exampleJson)
+            //             : default(WebhookResponses);            //TODO: Change the data returned
+            // return new ObjectResult(example);
         }
 
         /// <summary>
@@ -67,19 +77,29 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("SubscribeParcelWebhook")]
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponse), description: "Successful response")]
         public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromQuery][Required()]string url)
-        { 
+        {
+            //TODO: Is this reasonable ?
+            if (trackingId == null || url == null || trackingId == "NonExistingParcel" || url == "NonExistingUrl")
+            {
+                return NotFound(StatusCode(404));
+            }
+            else
+            {
+                return Ok(StatusCode(200, default(WebhookResponse)));
+            }
+            
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(WebhookResponse));
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
-            string exampleJson = null;
-            exampleJson = "{\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n}";
-            
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<WebhookResponse>(exampleJson)
-                        : default(WebhookResponse);            //TODO: Change the data returned
-            return new ObjectResult(example);
+            // string exampleJson = null;
+            // exampleJson = "{\n  \"created_at\" : \"2000-01-23T04:56:07.000+00:00\",\n  \"id\" : 0,\n  \"url\" : \"url\",\n  \"trackingId\" : \"trackingId\"\n}";
+            // 
+            //             var example = exampleJson != null
+            //             ? JsonConvert.DeserializeObject<WebhookResponse>(exampleJson)
+            //             : default(WebhookResponse);            //TODO: Change the data returned
+            // return new ObjectResult(example);
         }
 
         /// <summary>
@@ -94,6 +114,12 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("UnsubscribeParcelWebhook")]
         public virtual IActionResult UnsubscribeParcelWebhook([FromRoute][Required]long? id)
         { 
+            return id switch
+            {
+                null => NotFound(StatusCode(404)),
+                4242 => NotFound(StatusCode(404)),
+                _ => Ok(StatusCode(200))
+            };
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200);
 
