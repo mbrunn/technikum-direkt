@@ -7,28 +7,23 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-latest'
-
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  vmImage: 'ubuntu-18.04'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
-    restoreSolution: '$(solution)'
+    command: build
+    projects: '**/*.csproj'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: publish
+    publishWebProjects: True
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
 
-- task: VSTest@2
+- task: PublishBuildArtifacts@1
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'TechnikumDirektApi'
