@@ -109,6 +109,10 @@ namespace TechnikumDirekt.Services.Controllers
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400, default(Error));
 
+            /*var hop = body.NextHops[0].Hop;
+            Console.WriteLine(hop is Warehouse);
+            Console.WriteLine(hop is Hop);*/
+
             throw new NotImplementedException();
         }
     }
