@@ -34,7 +34,7 @@ namespace TechnikumDirekt.Services.Controllers
         /// <response code="200">Successfully submitted the new parcel</response>
         /// <response code="400">The operation failed due to an error.</response>
         [HttpPost]
-        [Route("/TechnikumDirekt/TechnikumDirekt_API/1/parcel")]
+        [Route("/parcel")]
         [ValidateModelState]
         [SwaggerOperation("SubmitParcel")]
         [SwaggerResponse(statusCode: 200, type: typeof(NewParcelInfo), description: "Successfully submitted the new parcel")]
@@ -49,9 +49,9 @@ namespace TechnikumDirekt.Services.Controllers
             string exampleJson = null;
             exampleJson = "{\n  \"trackingId\" : \"PYJRB4HZ6\"\n}";
             
-                        var example = exampleJson != null
-                        ? JsonConvert.DeserializeObject<NewParcelInfo>(exampleJson)
-                        : default(NewParcelInfo);            //TODO: Change the data returned
+            var example = exampleJson != null
+                ? JsonConvert.DeserializeObject<NewParcelInfo>(exampleJson)
+                : default(NewParcelInfo);            //TODO: Change the data returned
             return new ObjectResult(example);
         }
     }

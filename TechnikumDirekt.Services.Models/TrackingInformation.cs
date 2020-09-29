@@ -28,20 +28,30 @@ namespace TechnikumDirekt.Services.Models
         public enum StateEnum
         {
             /// <summary>
-            ///     Enum InTransportEnum for InTransport
+            /// Enum PickupEnum for Pickup
             /// </summary>
-            [EnumMember(Value = "InTransport")] InTransportEnum = 0,
-
+            [EnumMember(Value = "Pickup")]
+            PickupEnum = 0,
             /// <summary>
-            ///     Enum InTruckDeliveryEnum for InTruckDelivery
+            /// Enum InTransportEnum for InTransport
+            /// </summary>
+            [EnumMember(Value = "InTransport")]
+            InTransportEnum = 1,
+            /// <summary>
+            /// Enum InTruckDeliveryEnum for InTruckDelivery
             /// </summary>
             [EnumMember(Value = "InTruckDelivery")]
-            InTruckDeliveryEnum = 1,
-
+            InTruckDeliveryEnum = 2,
             /// <summary>
-            ///     Enum DeliveredEnum for Delivered
+            /// Enum TransferredEnum for Transferred
             /// </summary>
-            [EnumMember(Value = "Delivered")] DeliveredEnum = 2
+            [EnumMember(Value = "Transferred")]
+            TransferredEnum = 3,
+            /// <summary>
+            /// Enum DeliveredEnum for Delivered
+            /// </summary>
+            [EnumMember(Value = "Delivered")]
+            DeliveredEnum = 4
         }
 
         /// <summary>

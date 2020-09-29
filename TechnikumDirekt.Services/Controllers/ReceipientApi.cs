@@ -27,6 +27,12 @@ namespace TechnikumDirekt.Services.Controllers
     [ApiController]
     public class ReceipientApiController : ControllerBase
     { 
+         /// <summary>
+    /// 
+    /// </summary>
+    [ApiController]
+    public class RecipientApiController : ControllerBase
+    { 
         /// <summary>
         /// Find the latest state of a parcel by its tracking ID. 
         /// </summary>
@@ -35,7 +41,7 @@ namespace TechnikumDirekt.Services.Controllers
         /// <response code="400">The operation failed due to an error.</response>
         /// <response code="404">Parcel does not exist with this tracking ID.</response>
         [HttpGet]
-        [Route("/TechnikumDirekt/TechnikumDirekt_API/1/parcel/{trackingId}")]
+        [Route("/parcel/{trackingId}")]
         [ValidateModelState]
         [SwaggerOperation("TrackParcel")]
         [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
@@ -51,12 +57,13 @@ namespace TechnikumDirekt.Services.Controllers
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
             string exampleJson = null;
-            exampleJson = "{\n  \"visitedHops\" : [ {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  }, {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  } ],\n  \"futureHops\" : [ null, null ],\n  \"state\" : \"InTransport\"\n}";
+            exampleJson = "{\n  \"visitedHops\" : [ {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  }, {\n    \"dateTime\" : \"2000-01-23T04:56:07.000+00:00\",\n    \"code\" : \"code\",\n    \"description\" : \"description\"\n  } ],\n  \"futureHops\" : [ null, null ],\n  \"state\" : \"Pickup\"\n}";
             
                         var example = exampleJson != null
                         ? JsonConvert.DeserializeObject<TrackingInformation>(exampleJson)
                         : default(TrackingInformation);            //TODO: Change the data returned
             return new ObjectResult(example);
         }
+    }
     }
 }

@@ -20,18 +20,18 @@ namespace TechnikumDirekt.Services.Models
     public class Warehouse : Hop
     {
         /// <summary>
-        ///     Gets or Sets GeoCoordinate
+        /// Gets or Sets Level
         /// </summary>
         [Required]
-        [DataMember(Name = "geoCoordinate")]
-        public GeoCoordinate GeoCoordinate { get; set; }
+        [DataMember(Name="level")]
+        public int? Level { get; set; }
 
         /// <summary>
-        ///     Next hops after this warehouse (warehouses or trucks).
+        /// Next hops after this warehouse (warehouses or trucks).
         /// </summary>
         /// <value>Next hops after this warehouse (warehouses or trucks).</value>
         [Required]
-        [DataMember(Name = "nextHops")]
+        [DataMember(Name="nextHops")]
         public List<WarehouseNextHops> NextHops { get; set; }
     }
 }

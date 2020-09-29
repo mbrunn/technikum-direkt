@@ -19,34 +19,49 @@ namespace TechnikumDirekt.Services.Models
     public class Hop
     {
         /// <summary>
-        ///     Gets or Sets HopType
+        /// Gets or Sets HopType
         /// </summary>
         [Required]
-        [DataMember(Name = "hopType")]
+        [DataMember(Name="hopType")]
         public string HopType { get; set; }
 
         /// <summary>
-        ///     Unique CODE of the hop.
+        /// Unique CODE of the hop.
         /// </summary>
         /// <value>Unique CODE of the hop.</value>
         [Required]
-        [DataMember(Name = "code")]
+        [DataMember(Name="code")]
         public string Code { get; set; }
 
         /// <summary>
-        ///     Description of the hop.
+        /// Description of the hop.
         /// </summary>
         /// <value>Description of the hop.</value>
         [Required]
-        [DataMember(Name = "description")]
+        [DataMember(Name="description")]
         public string Description { get; set; }
 
         /// <summary>
-        ///     Delay processing takes on the hop.
+        /// Delay processing takes on the hop.
         /// </summary>
         /// <value>Delay processing takes on the hop.</value>
         [Required]
-        [DataMember(Name = "processingDelayMins")]
+        [DataMember(Name="processingDelayMins")]
         public int? ProcessingDelayMins { get; set; }
+
+        /// <summary>
+        /// Name of the location (village, city, ..) of the hop.
+        /// </summary>
+        /// <value>Name of the location (village, city, ..) of the hop.</value>
+        [Required]
+        [DataMember(Name="locationName")]
+        public string LocationName { get; set; }
+
+        /// <summary>
+        /// Gets or Sets LocationCoordinates
+        /// </summary>
+        [Required]
+        [DataMember(Name="locationCoordinates")]
+        public GeoCoordinate LocationCoordinates { get; set; }
     }
 }

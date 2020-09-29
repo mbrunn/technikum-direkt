@@ -28,18 +28,17 @@ namespace TechnikumDirekt.Services.Controllers
     public class ParcelWebhookApiController : ControllerBase
     { 
         /// <summary>
-        /// 
+        /// Get all registered subscriptions for the parcel webhook.
         /// </summary>
-        /// <remarks>Gets all registered subscriptions for the parcel webhook.</remarks>
         /// <param name="trackingId"></param>
         /// <response code="200">List of webooks for the &#x60;trackingId&#x60;</response>
         /// <response code="404">No parcel found with that tracking ID.</response>
         [HttpGet]
-        [Route("/TechnikumDirekt/TechnikumDirekt_API/1/parcel/{trackingId}/webhooks")]
+        [Route("/parcel/{trackingId}/webhooks")]
         [ValidateModelState]
-        [SwaggerOperation("ApiParcelByTrackingIdWebhooksGet")]
+        [SwaggerOperation("ListParcelWebhooks")]
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponses), description: "List of webooks for the &#x60;trackingId&#x60;")]
-        public virtual IActionResult ApiParcelByTrackingIdWebhooksGet([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
+        public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(WebhookResponses));
@@ -56,19 +55,18 @@ namespace TechnikumDirekt.Services.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Subscribe to a webhook notification for the specific parcel.
         /// </summary>
-        /// <remarks>Subscribes to a webhook notification for the specific parcel.</remarks>
         /// <param name="trackingId"></param>
         /// <param name="url"></param>
         /// <response code="200">Successful response</response>
         /// <response code="404">No parcel found with that tracking ID.</response>
         [HttpPost]
-        [Route("/TechnikumDirekt/TechnikumDirekt_API/1/parcel/{trackingId}/webhooks")]
+        [Route("/parcel/{trackingId}/webhooks")]
         [ValidateModelState]
-        [SwaggerOperation("ApiParcelByTrackingIdWebhooksPost")]
+        [SwaggerOperation("SubscribeParcelWebhook")]
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponse), description: "Successful response")]
-        public virtual IActionResult ApiParcelByTrackingIdWebhooksPost([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromQuery][Required()]string url)
+        public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromQuery][Required()]string url)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(WebhookResponse));
@@ -85,48 +83,22 @@ namespace TechnikumDirekt.Services.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Remove an existing webhook subscription.
         /// </summary>
-        /// <remarks>Removes an existing webhook subscription.</remarks>
         /// <param name="id"></param>
         /// <response code="200">Success</response>
         /// <response code="404">Subscription does not exist.</response>
         [HttpDelete]
-        [Route("/TechnikumDirekt/TechnikumDirekt_API/1/parcel/webhooks/{id}")]
+        [Route("/parcel/webhooks/{id}")]
         [ValidateModelState]
-        [SwaggerOperation("ApiParcelWebhooksByIdDelete")]
-        public virtual IActionResult ApiParcelWebhooksByIdDelete([FromRoute][Required]long? id)
+        [SwaggerOperation("UnsubscribeParcelWebhook")]
+        public virtual IActionResult UnsubscribeParcelWebhook([FromRoute][Required]long? id)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200);
 
             //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(404);
-
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Report that a Parcel has arrived at a certain hop either Warehouse or Truck</remarks>
-        /// <param name="trackingId">The tracking ID of the parcel. E.g. PYJRB4HZ6 </param>
-        /// <param name="code">The Code of the hop (Warehouse or Truck).</param>
-        /// <response code="200">Successfully reported hop.</response>
-        /// <response code="500">An error occurred</response>
-        [HttpPost]
-        [Route("/TechnikumDirekt/TechnikumDirekt_API/1/parcel/{trackingId}/reportHop/{code}")]
-        [ValidateModelState]
-        [SwaggerOperation("ApiParcelWebhooksByIdReport")]
-        [SwaggerResponse(statusCode: 200, description: "Successfully reported hop.")]
-        [SwaggerResponse(statusCode: 500, type: typeof(Error), description: "An error occurred")]
-        public virtual IActionResult ApiParcelWebhooksByIdReport([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromRoute][Required][RegularExpression("/^[A-Z]{4}\\d{1,4}$/")]string code)
-        { 
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200);
-
-            //TODO: Uncomment the next line to return response 500 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(500, default(Error));
 
             throw new NotImplementedException();
         }
