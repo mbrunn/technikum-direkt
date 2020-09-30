@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using technikumDirekt.Services.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
