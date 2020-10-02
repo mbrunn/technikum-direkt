@@ -31,25 +31,7 @@ steps:
     command: 'test'
     projects: '**/*Test*.csproj'
     publishTestResults: true
-
-- task: PublishTestResults@2
-  displayName: Publish TestResults
-  inputs:
-    testResultsFormat: 'NUnit'
-    testResultsFiles: '**/TEST-*.xml'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Create code coverage report'
-  inputs:
-    command: custom
-    custom: tool
-    arguments: 'run reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines'
-
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
-
+    arguments: '--output $(Build.SourceDirectory)/Tests.XML'
 
 - task: PublishBuildArtifacts@1
   inputs:
