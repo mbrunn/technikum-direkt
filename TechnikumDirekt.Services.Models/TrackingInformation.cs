@@ -11,7 +11,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace TechnikumDirekt.Services.Models
 {
@@ -24,7 +24,7 @@ namespace TechnikumDirekt.Services.Models
         ///     State of the parcel.
         /// </summary>
         /// <value>State of the parcel.</value>
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public enum StateEnum
         {
             /// <summary>
