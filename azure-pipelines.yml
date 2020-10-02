@@ -31,7 +31,6 @@ steps:
     command: 'test'
     projects: '**/*Test*.csproj'
     publishTestResults: true
-    arguments: '--output $(Build.SourceDirectory)/Tests.XML'
 
 - task: PublishBuildArtifacts@1
   inputs:
