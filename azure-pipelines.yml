@@ -10,6 +10,7 @@ pool:
   vmImage: 'ubuntu-18.04'
 
 steps:
+
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
@@ -23,17 +24,12 @@ steps:
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*Test*.csproj'
+
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
     artifactName: 'TechnikumDirektApi'
-
-- task: VSTest@2
-  inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*test*.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
-    codeCoverageEnabled: true
