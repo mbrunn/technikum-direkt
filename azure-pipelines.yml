@@ -29,6 +29,7 @@ steps:
   displayName: Run Tests
   inputs:
     command: test
+    arguments: '--configuration Release --collect "Code coverage"'
     projects: '**/*Test*.csproj'
     publishTestResults: true
 
