@@ -16,7 +16,7 @@ namespace TechnikumDirekt.Tests
 
             Assert.IsInstanceOf<OkObjectResult>(response);
 
-            object body = ((OkObjectResult) response).Value;
+            var body = ((OkObjectResult) response).Value;
 
             int? statusCode = ((StatusCodeResult) body).StatusCode;
 
@@ -32,7 +32,7 @@ namespace TechnikumDirekt.Tests
 
             Assert.IsInstanceOf<NotFoundObjectResult>(response);
 
-            object body = ((NotFoundObjectResult) response).Value;
+            var body = ((NotFoundObjectResult) response).Value;
 
             int? statusCode = ((StatusCodeResult) body).StatusCode;
 
