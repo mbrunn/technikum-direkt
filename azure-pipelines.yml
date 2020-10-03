@@ -50,7 +50,7 @@ steps:
   displayName: 'Publish code coverage'
   inputs:
     codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(Build.SourcesDirectory)/**/*.cobertura.xml'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/*cobertura.xml'
     reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
 
 - task: PublishBuildArtifacts@1
