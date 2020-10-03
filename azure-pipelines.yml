@@ -40,19 +40,11 @@ steps:
     projects: '**/*Test*.csproj'
     publishTestResults: true
 
-- task: DotNetCoreCLI@2
-  displayName: Install ReportGenerator Global Tool
-  inputs:
-      command: custom
-      custom: tool
-      arguments: install dotnet-reportgenerator-globaltool -g
-
-- script: echo "##vso[task.prependpath]$HOME/.dotnet/tools"
-  displayName: 'Update PATH'
-
-- script: reportgenerator "-reports:$(Agent.TempDirectory)/**/*.cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" -reporttypes:Cobertura;htmlInline
-  displayName: Generate code coverage report
+- script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.6.1
+  displayName: 'Install ReportGenerator tool'
   continueOnError: true
+
+- script: ./tools/reportgenerator "-reports:$(Agent.TempDirectory)/**/*.cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
 
 
 - task: PublishBuildArtifacts@1
