@@ -44,7 +44,7 @@ steps:
   displayName: 'Install ReportGenerator tool'
   continueOnError: true
 
-- script: ./tools/reportgenerator "-reports:$(Agent.TempDirectory)/**/*cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
+- script: ./tools/reportgenerator "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage'
