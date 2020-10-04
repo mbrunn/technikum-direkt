@@ -136,7 +136,7 @@ namespace TechnikumDirekt.Tests
 
             object body = ((OkObjectResult) response).Value;
 
-            int? statusCode = ((ObjectResult) body).StatusCode;
+            int? statusCode = ((StatusCodeResult) body).StatusCode;
 
             Assert.IsTrue(statusCode == 200);
         }
