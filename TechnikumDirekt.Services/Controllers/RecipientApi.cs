@@ -37,13 +37,23 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
         {
-            return trackingId switch
+            switch (trackingId)
             {
-                null => BadRequest(StatusCode(400, new Error{ErrorMessage = "The operation failed due to an error."})),
-                "NonExistingParcel" => NotFound(StatusCode(404)),
-                _ => Ok(StatusCode(200, new TrackingInformation{State = TrackingInformation.StateEnum.InTransportEnum, FutureHops = null, VisitedHops = null}))
-            };
-            
+                case null:
+                    return BadRequest(StatusCode(400,
+                        new Error {ErrorMessage = "The operation failed due to an error."}));
+                case "NonExistingParcel":
+                    return NotFound(StatusCode(404));
+                default:
+                    return Ok(StatusCode(200,
+                        new TrackingInformation
+                        {
+                            State = TrackingInformation.StateEnum.InTransportEnum,
+                            FutureHops = null,
+                            VisitedHops = null
+                        }));
+            }
+
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(TrackingInformation));
 

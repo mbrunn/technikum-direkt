@@ -69,13 +69,17 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
         public virtual IActionResult GetWarehouse([FromRoute][Required]string code)
-        { 
-            return code switch
+        {
+            switch (code)
             {
-                null => BadRequest(StatusCode(400, new Error{ErrorMessage = "The operation failed due to an error."})),
-                "NonExistingHopCode" => NotFound(StatusCode(404)),
-                _ => Ok(StatusCode(200, new Warehouse()))
-            };
+                case null:
+                    return BadRequest(StatusCode(400,
+                        new Error {ErrorMessage = "The operation failed due to an error."}));
+                case "NonExistingHopCode":
+                    return NotFound(StatusCode(404));
+                default:
+                    return Ok(StatusCode(200, new Warehouse()));
+            }
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(Warehouse));
 
@@ -106,12 +110,16 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("ImportWarehouses")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ImportWarehouses([FromBody]Warehouse body)
-        { 
-            return body switch
+        {
+            switch (body)
             {
-                null => BadRequest(StatusCode(400, new Error{ErrorMessage = "The operation failed due to an error."})),
-                _ => Ok(StatusCode(200))
-            };
+                case null:
+                    return BadRequest(StatusCode(400,
+                        new Error {ErrorMessage = "The operation failed due to an error."}));
+                default:
+                    return Ok(StatusCode(200));
+            }
+
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200);
 

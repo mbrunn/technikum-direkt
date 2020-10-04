@@ -34,14 +34,17 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("ListParcelWebhooks")]
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponses), description: "List of webhooks for the &#x60;trackingId&#x60;")]
         public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
-        { 
-            return trackingId switch
+        {
+            switch (trackingId)
             {
-                "NonExistingParcel" => NotFound(StatusCode(404)),
-                null => NotFound(StatusCode(404)),
-                _ => Ok(StatusCode(200, new WebhookResponses{new WebhookResponse{TrackingId = "TestTrackingId"}}))
-            };
-            
+                case "NonExistingParcel":
+                case null:
+                    return NotFound(StatusCode(404));
+                default:
+                    return Ok(StatusCode(200,
+                        new WebhookResponses {new WebhookResponse {TrackingId = "TestTrackingId"}}));
+            }
+
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200, default(WebhookResponses));
 
@@ -106,13 +109,15 @@ namespace TechnikumDirekt.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("UnsubscribeParcelWebhook")]
         public virtual IActionResult UnsubscribeParcelWebhook([FromRoute][Required]long? id)
-        { 
-            return id switch
+        {
+            switch (id)
             {
-                null => NotFound(StatusCode(404)),
-                4242 => NotFound(StatusCode(404)),
-                _ => Ok(StatusCode(200))
-            };
+                case null:
+                case 4242:
+                    return NotFound(StatusCode(404));
+                default:
+                    return Ok(StatusCode(200));
+            }
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(200);
 
