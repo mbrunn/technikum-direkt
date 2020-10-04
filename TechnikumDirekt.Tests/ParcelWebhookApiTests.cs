@@ -130,7 +130,7 @@ namespace TechnikumDirekt.Tests
         {
             var controller = new ParcelWebhookApiController();
 
-            var response = controller.SubscribeParcelWebhook("12345", "https://12345.at");
+            var response = controller.UnsubscribeParcelWebhook(1234);
 
             Assert.IsInstanceOf<OkObjectResult>(response);
 
