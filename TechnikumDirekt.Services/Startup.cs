@@ -1,5 +1,4 @@
 using System;
-using technikumDirekt.Services.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using TechnikumDirekt.Services.Filters;
 
 namespace TechnikumDirekt.Services
 {
@@ -69,13 +67,6 @@ namespace TechnikumDirekt.Services
                         }
                     });
                     c.CustomSchemaIds(type => type.FullName);
-                    // c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
-                    // Sets the basePath property in the Swagger document generated
-                    c.DocumentFilter<BasePathFilter>("/TechnikumDirekt/TechnikumDirekt_API/1");
-
-                    // Include DataAnnotation attributes on Controller Action parameters as Swagger validation rules (e.g required, pattern, ..)
-                    // Use [ValidateModelState] on Actions to actually validate it in C# as well!
-                    c.OperationFilter<GeneratePathParamsValidationFilter>();
                 });
         }
 
