@@ -29,7 +29,7 @@ steps:
   displayName: Run Tests
   inputs:
     command: test
-    arguments: '--configuration $(BuildConfiguration) --collect "Code coverage" -- RunConfiguration.DisableAppDomain=true'
+    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
     projects: '**/*Test*.csproj'
     publishTestResults: true
 
