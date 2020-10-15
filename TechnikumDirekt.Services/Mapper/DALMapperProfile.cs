@@ -1,4 +1,4 @@
-﻿namespace TechnikumDirekt.Services.AutoMapper
+﻿namespace TechnikumDirekt.Services.Mapper
 {
     public class DalMapperProfile
     {

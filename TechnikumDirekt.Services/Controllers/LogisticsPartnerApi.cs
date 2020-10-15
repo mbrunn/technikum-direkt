@@ -35,7 +35,7 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("TransitionParcel")]
         [SwaggerResponse(statusCode: 200, type: typeof(NewParcelInfo), description: "Successfully transitioned the parcel")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public IActionResult TransitionParcel([FromBody]Parcel body, [FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
+        public IActionResult TransitionParcel([FromBody]Parcel body, [FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         { 
             //Why no 404 ? What if trackingId doesnt exist ?
             if (body == null || trackingId == null)

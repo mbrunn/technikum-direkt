@@ -1,6 +1,8 @@
 using System;
+using NetTopologySuite.Geometries;
 using Newtonsoft.Json.Linq;
 using TechnikumDirekt.Services.Models;
+using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 
 namespace TechnikumDirekt.BusinessLogic.Models
 {

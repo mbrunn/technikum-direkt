@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BusinessLogic\TechnikumDirekt.BusinessLogic.Models\TechnikumDirekt.BusinessLogic.Models.csproj" />
       <ProjectReference Include="..\TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj" />
     </ItemGroup>
 

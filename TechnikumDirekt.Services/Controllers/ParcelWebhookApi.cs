@@ -33,7 +33,7 @@ namespace TechnikumDirekt.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("ListParcelWebhooks")]
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponses), description: "List of webhooks for the &#x60;trackingId&#x60;")]
-        public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId)
+        public virtual IActionResult ListParcelWebhooks([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         {
             switch (trackingId)
             {
@@ -72,7 +72,7 @@ namespace TechnikumDirekt.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("SubscribeParcelWebhook")]
         [SwaggerResponse(statusCode: 200, type: typeof(WebhookResponse), description: "Successful response")]
-        public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("/^[A-Z0-9]{9}$/")]string trackingId, [FromQuery][Required()]string url)
+        public virtual IActionResult SubscribeParcelWebhook([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromQuery][Required()]string url)
         {
             //TODO: Is this reasonable ?
             if (trackingId == null || url == null || trackingId == "NonExistingParcel" || url == "NonExistingUrl")
