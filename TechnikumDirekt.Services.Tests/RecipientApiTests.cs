@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using TechnikumDirekt.Services.Controllers;
 
-namespace TechnikumDirekt.Tests
+namespace TechnikumDirekt.Services.Tests
 {
     [TestFixture]
     public class RecipientApiTests

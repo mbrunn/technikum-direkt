@@ -3,7 +3,7 @@ using NUnit.Framework;
 using TechnikumDirekt.Services.Controllers;
 using TechnikumDirekt.Services.Models;
 
-namespace TechnikumDirekt.Tests
+namespace TechnikumDirekt.Services.Tests
 {
     [TestFixture]
     public class SenderApiTests

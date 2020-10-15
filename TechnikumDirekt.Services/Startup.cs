@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using AutoMapper;
 
 namespace TechnikumDirekt.Services
 {
@@ -50,6 +51,7 @@ namespace TechnikumDirekt.Services
                 })
                 .AddXmlSerializerFormatters();
 
+            services.AddAutoMapper(typeof(Startup));
 
             services
                 .AddSwaggerGen(c =>

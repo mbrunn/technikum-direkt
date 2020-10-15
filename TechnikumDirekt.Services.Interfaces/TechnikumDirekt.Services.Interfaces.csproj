@@ -5,4 +5,9 @@
         <RootNamespace>TechnikumDirekt.Services.Interfaces</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="10.0.0" />
+      <PackageReference Include="FluentValidation" Version="9.3.0-preview2" />
+    </ItemGroup>
+
 </Project>
