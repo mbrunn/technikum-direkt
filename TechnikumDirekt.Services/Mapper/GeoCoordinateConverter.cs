@@ -1,15 +1,16 @@
-﻿using System.Data;
+﻿using System.ComponentModel;
+using System.Data;
 using AutoMapper;
 using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 using SvcModels = TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Mapper
 {
-    public class GeoCoordinateConverter : IValueConverter<Models.GeoCoordinate, GeoCoordinate>, IValueConverter<GeoCoordinate, Models.GeoCoordinate>
+    public class GeoCoordinateConverter : IValueConverter<SvcModels.GeoCoordinate, GeoCoordinate>, IValueConverter<GeoCoordinate, SvcModels.GeoCoordinate>
     {
         private ResolutionContext _context;
 
-        public GeoCoordinate Convert(Models.GeoCoordinate sourceMember, ResolutionContext context)
+        public GeoCoordinate Convert(SvcModels.GeoCoordinate sourceMember, ResolutionContext context)
         {
             _context = context;
             if (sourceMember.Lat == null || sourceMember.Lon == null)
@@ -19,11 +20,10 @@ namespace TechnikumDirekt.Services.Mapper
             return new GeoCoordinate((double) sourceMember.Lat, (double) sourceMember.Lon);
         }
 
-        public Models.GeoCoordinate Convert(GeoCoordinate sourceMember, ResolutionContext context)
+        public SvcModels.GeoCoordinate Convert(GeoCoordinate sourceMember, ResolutionContext context)
         {
             _context = context;
-            //return new SvcModels.GeoCoordinate(sourceMember.Latitude, sourceMember.Longitude);
-            return new SvcModels.GeoCoordinate();
+            return new SvcModels.GeoCoordinate(){Lat = sourceMember.Latitude, Lon = sourceMember.Longitude};
         }
     }
 }

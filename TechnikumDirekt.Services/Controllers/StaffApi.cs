@@ -11,7 +11,9 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using technikumDirekt.Services.Attributes;
+using TechnikumDirekt.BusinessLogic.Exceptions;
+using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Controllers
@@ -22,6 +24,12 @@ namespace TechnikumDirekt.Services.Controllers
     [ApiController]
     public class StaffApiController : ControllerBase
     { 
+        private ITrackingLogic _trackingLogic;
+        public StaffApiController(ITrackingLogic trackingLogic)
+        {
+            _trackingLogic = trackingLogic;
+        }
+        
         /// <summary>
         /// Report that a Parcel has been delivered at it&#x27;s final destination address. 
         /// </summary>
@@ -36,27 +44,30 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         {
-            switch (trackingId)
+            try
             {
-                case null:
-                    return BadRequest(StatusCode(400,
-                        new Error {ErrorMessage = "The operation failed due to an error."}));
-                case "NonExistingParcel":
-                    return NotFound(StatusCode(404));
-                default:
-                    return Ok(StatusCode(200));
+                if (trackingId != null)
+                {
+                    _trackingLogic.ReportParcelDelivery(trackingId);
+                    return Ok("Successfully reported hop.");
+                }
+
+                throw new ArgumentNullException();
             }
-
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200);
-
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
-
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-
-            throw new NotImplementedException();
+            catch (TrackingLogicException)
+            {
+                return NotFound(StatusCode(404, new Error
+                {
+                    ErrorMessage = "Parcel does not exist with this tracking ID."
+                }));
+            }
+            catch
+            {
+                return BadRequest(StatusCode(400, new Error
+                {
+                    ErrorMessage = "The operation failed due to an error."
+                }));  
+            }
         }
 
         /// <summary>
@@ -74,30 +85,30 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
         public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
         {
-            if (trackingId == null || code == null)
+            try
             {
-                return BadRequest(StatusCode(400, new Error{ErrorMessage = "The operation failed due to an error."}));
-            }
+                if (trackingId != null && code != null)
+                {
+                    _trackingLogic.ReportParcelHop(trackingId, code);
+                    return Ok("Successfully reported hop.");
+                }
 
-            if (trackingId == "NonExistingTrackingId" || code == "NonExistingHopCode")
+                throw new ArgumentNullException();
+            }
+            catch (TrackingLogicException)
             {
-                return NotFound(StatusCode(404));
+                return NotFound(StatusCode(404, new Error
+                {
+                    ErrorMessage = "Parcel does not exist with this tracking ID or hop with code not found."
+                }));
             }
-            else
+            catch
             {
-                return Ok(StatusCode(200));
+                return BadRequest(StatusCode(400, new Error
+                {
+                    ErrorMessage = "The operation failed due to an error."
+                }));  
             }
-            
-            //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200);
-
-            //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(400, default(Error));
-
-            //TODO: Uncomment the next line to return response 404 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(404);
-
-            throw new NotImplementedException();
         }
     }
 }

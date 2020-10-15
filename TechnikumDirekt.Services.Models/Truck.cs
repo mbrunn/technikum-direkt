@@ -27,9 +27,9 @@ namespace TechnikumDirekt.Services.Models
         public string RegionGeoJson { get; set; }
 
         /// <summary>
-        /// The truck&#x27;s number plate.
+        /// The truck's number plate.
         /// </summary>
-        /// <value>The truck&#x27;s number plate.</value>
+        /// <value>The truck's number plate.</value>
         [Required]
         [DataMember(Name="numberPlate")]
         public string NumberPlate { get; set; }

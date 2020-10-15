@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace technikumDirekt.Services.Attributes
+namespace TechnikumDirekt.Services.Attributes
 {
     /// <summary>
     /// Model state validation attribute

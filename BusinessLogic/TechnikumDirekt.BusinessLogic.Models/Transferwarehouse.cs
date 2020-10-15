@@ -1,6 +1,5 @@
 
-using TechnikumDirekt.Services.Models;
-using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
+using NetTopologySuite.Geometries;
 
 namespace TechnikumDirekt.BusinessLogic.Models
 {
@@ -12,7 +11,7 @@ namespace TechnikumDirekt.BusinessLogic.Models
         /// GeoJSON of the are covered by the logistics partner.
         /// </summary>
         /// <value>GeoJSON of the are covered by the logistics partner.</value>
-        public GeoCoordinate RegionGeometry { get; set; }
+        public Geometry RegionGeometry { get; set; }
 
         /// <summary>
         /// Name of the logistics partner.

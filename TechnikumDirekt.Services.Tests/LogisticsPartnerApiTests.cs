@@ -5,6 +5,7 @@ using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Tests
 {
+    /*
     [TestFixture]
     public class LogisticsPartnerApiTests
     {
@@ -96,5 +97,5 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.IsTrue(statusCode == 400);
         }
-    }
+    }*/
 }

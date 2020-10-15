@@ -88,7 +88,6 @@ namespace TechnikumDirekt.Services.Models
                     return new Warehouse();
                 }
             }
-
             return new Hop();
         }
     }

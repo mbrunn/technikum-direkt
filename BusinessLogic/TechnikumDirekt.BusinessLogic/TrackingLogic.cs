@@ -39,6 +39,7 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void SubmitParcel(Parcel parcel)
         {
+            //should we try/catch and throw a TrackingLogicException here too ?
             _parcels.Add(parcel);
         }
 

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
-using TechnikumDirekt.BusinessLogic.Models;
 using Warehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
 
 namespace TechnikumDirekt.BusinessLogic
@@ -11,12 +10,13 @@ namespace TechnikumDirekt.BusinessLogic
     {
         public static readonly List<Warehouse> Warehouses = new List<Warehouse>
         {
-            new Warehouse
+            /*new Warehouse
             {
                 Code = "WENA04",
                 HopType = HopType.Warehouse,
                 Description = "Warehouse Level 4 - Wien",
                 LocationName = "Wien",
+                Level = 4,
                 LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
                 ProcessingDelayMins = 160
             },
@@ -26,9 +26,10 @@ namespace TechnikumDirekt.BusinessLogic
                 HopType = HopType.Warehouse,
                 Description = "Warehouse Level 3 - Wien",
                 LocationName = "Wien",
+                Level = 3,
                 LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
                 ProcessingDelayMins = 299
-            }
+            }*/
         };
 
         private readonly IValidator<Warehouse> _validator;

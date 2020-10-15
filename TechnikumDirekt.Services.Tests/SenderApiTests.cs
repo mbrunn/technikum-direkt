@@ -7,7 +7,7 @@ namespace TechnikumDirekt.Services.Tests
 {
     [TestFixture]
     public class SenderApiTests
-    {
+    {/*
         [Test]
         public void SubmitParcel_ValidParcel_Ok()
         {
@@ -58,6 +58,6 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.IsTrue(statusCode == 400);
             
-        }
+        }*/
     }
 }

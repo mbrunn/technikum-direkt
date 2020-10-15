@@ -11,7 +11,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using technikumDirekt.Services.Attributes;
+using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Controllers

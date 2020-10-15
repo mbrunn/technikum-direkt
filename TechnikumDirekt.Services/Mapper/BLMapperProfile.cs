@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using AutoMapper;
+using NetTopologySuite.Geometries;
 using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 using SvcModels = TechnikumDirekt.Services.Models;
@@ -32,8 +33,8 @@ namespace TechnikumDirekt.Services.Mapper
                         destMemb.ConvertUsing<GeoJsonConverter, string>(p => p.RegionGeoJson));
             
             CreateMap<BlModels.Truck, SvcModels.Truck>()
-                .ForMember(destMemb => destMemb.RegionGeoJson, destMemb => destMemb.ConvertUsing<GeoJsonConverter, GeoCoordinate>(p => p.RegionGeometry))
-                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "Truck")); //TODO !!!!!!!!!!!
+                .ForMember(destMemb => destMemb.RegionGeoJson, destMemb => destMemb.ConvertUsing<GeoJsonConverter, Geometry>(p => p.RegionGeometry))
+                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "Truck"));
             
             CreateMap<SvcModels.Transferwarehouse, BlModels.Transferwarehouse>()
                 .ForMember(destMemb => destMemb.RegionGeometry,
@@ -41,12 +42,13 @@ namespace TechnikumDirekt.Services.Mapper
                         destMemb.ConvertUsing<GeoJsonConverter, string>(p => p.RegionGeoJson));
             
             CreateMap<BlModels.Transferwarehouse, SvcModels.Transferwarehouse>()
-                .ForMember(destMemb => destMemb.RegionGeoJson, destMemb => destMemb.ConvertUsing<GeoJsonConverter, GeoCoordinate>(p => p.RegionGeometry))
-                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "Transferwarehouse")); //TODO !!!!!!!!!!!
+                .ForMember(destMemb => destMemb.RegionGeoJson, destMemb => destMemb.ConvertUsing<GeoJsonConverter, Geometry>(p => p.RegionGeometry))
+                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "TransferWarehouse"));
 
             CreateMap<BlModels.Warehouse, SvcModels.Warehouse>()
-                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "Warehouse")); //TODO !!!!!!!!!!!
-            
+                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "Warehouse"))
+                .ForMember(destMemb => destMemb.Level, memb => memb.MapFrom(src => src.Level));
+
             CreateMap<SvcModels.Warehouse,BlModels.Warehouse>().ReverseMap();
             
             CreateMap<SvcModels.WarehouseNextHops,BlModels.WarehouseNextHops>().ReverseMap();

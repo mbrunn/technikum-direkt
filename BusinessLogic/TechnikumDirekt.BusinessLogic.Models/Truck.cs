@@ -1,4 +1,4 @@
-using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
+using NetTopologySuite.Geometries;
 
 namespace TechnikumDirekt.BusinessLogic.Models
 {
@@ -6,7 +6,16 @@ namespace TechnikumDirekt.BusinessLogic.Models
     /// </summary>
     public class Truck : Hop
     {
+        /// <summary>
+        /// GeoJSON of the are covered by the truck.
+        /// </summary>
+        /// <value>GeoJSON of the are covered by the truck.</value>
+        public Geometry RegionGeometry { get; set; }
+        
+        /// <summary>
+        /// The truck's number plate.
+        /// </summary>
+        /// <value>The truck's number plate.</value>
         public string NumberPlate { get; set; }
-        public GeoCoordinate RegionGeometry { get; set; }
     }
 }

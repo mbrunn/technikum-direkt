@@ -1,26 +1,35 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
 using AutoMapper;
-using Newtonsoft.Json;
-using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Utilities;
+using NetTopologySuite.IO;
 using SvcModels = TechnikumDirekt.Services.Models;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 
 namespace TechnikumDirekt.Services.Mapper
 {
-    public class GeoJsonConverter : IValueConverter<string, GeoCoordinate>, IValueConverter<GeoCoordinate, string>
+    public class GeoJsonConverter : IValueConverter<string, Geometry>, IValueConverter<Geometry, string>
     {
         private ResolutionContext _context;
-
-        public GeoCoordinate Convert(string sourceMember, ResolutionContext context)
+        public Geometry Convert(string sourceMember, ResolutionContext context)
         {
             _context = context;
+            
+            var reader = new GeoJsonReader();
+            var featureCollection = reader.Read<Feature>(sourceMember);
 
-            return null;
+            return featureCollection.Geometry;
         }
 
-        public string Convert(GeoCoordinate sourceMember, ResolutionContext context)
+        public string Convert(Geometry sourceMember, ResolutionContext context)
         {
-            return null;
+            _context = context;
+            
+            var writer = new GeoJsonWriter();
+            var featureCollection = writer.Write(sourceMember);
+
+            return featureCollection;
         }
     }
 }

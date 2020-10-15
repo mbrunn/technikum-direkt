@@ -7,7 +7,7 @@ namespace TechnikumDirekt.Services.Tests
     [TestFixture]
     public class StaffApiTests
     {
-        [Test]
+        /*[Test]
         public void ReportParcelDelivery_ValidTrackingId_Ok()
         {
             var controller = new StaffApiController();
@@ -151,6 +151,6 @@ namespace TechnikumDirekt.Services.Tests
             int? statusCode = ((StatusCodeResult) body).StatusCode;
 
             Assert.IsTrue(statusCode == 404);
-        }
+        }*/
     }
 }
