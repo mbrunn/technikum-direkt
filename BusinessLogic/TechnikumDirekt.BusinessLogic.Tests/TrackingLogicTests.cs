@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 namespace TechnikumDirekt.BusinessLogic.Tests
 {
-    public class Tests
+    public class TrackingLogicTests
     {
         [SetUp]
         public void Setup()

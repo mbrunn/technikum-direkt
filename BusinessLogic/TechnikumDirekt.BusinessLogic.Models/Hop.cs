@@ -1,6 +1,4 @@
-using System;
-using Newtonsoft.Json.Linq;
-using TechnikumDirekt.Services.Models;
+using GeoCoordinatePortable;
 
 namespace TechnikumDirekt.BusinessLogic.Models
 {
@@ -12,7 +10,7 @@ namespace TechnikumDirekt.BusinessLogic.Models
         /// <summary>
         /// Gets or Sets HopType
         /// </summary>
-        public string HopType { get; set; }
+        public HopType HopType { get; set; }
 
         /// <summary>
         /// Unique CODE of the hop.
@@ -44,28 +42,10 @@ namespace TechnikumDirekt.BusinessLogic.Models
         public GeoCoordinate LocationCoordinates { get; set; }
     }
 
-    public class HopJsonConverter : JsonCreationConverter<Hop>
+    public enum HopType
     {
-        protected override Hop Create(Type objectType, JObject jObject)
-        {
-            if (jObject == null) throw new ArgumentNullException("jObject");
-
-            if (jObject["hopType"] != null && (string) jObject["hopType"] is var hopTypeString && hopTypeString != "")
-            {
-                if (hopTypeString == "Truck")
-                {
-                    return new Truck();
-                }
-                else if (hopTypeString == "Transferwarehouse")
-                {
-                    return new Transferwarehouse();
-                } else
-                {
-                    return new Warehouse();
-                }
-            }
-
-            return new Hop();
-        }
+        Warehouse,
+        Truck,
+        TransferWarehouse
     }
 }
