@@ -9,6 +9,11 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
+using FluentValidation;
+using TechnikumDirekt.BusinessLogic;
+using TechnikumDirekt.BusinessLogic.FluentValidation;
+using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.BusinessLogic.Models;
 
 namespace TechnikumDirekt.Services
 {
@@ -70,6 +75,10 @@ namespace TechnikumDirekt.Services
                     });
                     c.CustomSchemaIds(type => type.FullName);
                 });
+
+            services.AddScoped<IWarehouseLogic, WarehouseLogic>();
+            services.AddScoped<ITrackingLogic, TrackingLogic>();
+            services.AddScoped<IValidator<Warehouse>, WarehouseValidator>();
         }
 
         /// <summary>
