@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework;
-using TechnikumDirekt.Services.Controllers;
-
-namespace TechnikumDirekt.Services.Tests
+﻿namespace TechnikumDirekt.Services.Tests
 {
     /*
     [TestFixture]

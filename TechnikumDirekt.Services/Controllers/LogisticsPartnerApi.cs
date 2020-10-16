@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -40,13 +39,9 @@ namespace TechnikumDirekt.Services.Controllers
         { 
             try
             {
-                if (body != null)
-                {
-                    var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
-                    _trackingLogic.TransitionParcelFromPartner(blParcel, trackingId);
-                    return Ok("Successfully transitioned the parcel");
-                }
-                throw new ArgumentNullException();
+                var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
+                _trackingLogic.TransitionParcelFromPartner(blParcel, trackingId);
+                return Ok("Successfully transitioned the parcel");
             }
             
             catch

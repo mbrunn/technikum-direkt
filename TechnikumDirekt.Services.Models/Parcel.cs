@@ -26,10 +26,10 @@ namespace TechnikumDirekt.Services.Models
         public float? Weight { get; set; }
 
         /// <summary>
-        ///     Gets or Sets Receipient
+        ///     Gets or Sets Recipient
         /// </summary>
         [Required]
-        [DataMember(Name = "receipient")]
+        [DataMember(Name = "recipient")]
         public Recipient Recipient { get; set; }
 
         /// <summary>

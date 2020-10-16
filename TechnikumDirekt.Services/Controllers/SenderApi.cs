@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -38,13 +37,9 @@ namespace TechnikumDirekt.Services.Controllers
         {
             try
             {
-                if (body != null)
-                {
-                    var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
-                    _trackingLogic.SubmitParcel(blParcel);
-                    return Ok("Successfully submitted the new parcel");
-                }
-                throw new ArgumentNullException();
+                var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
+                _trackingLogic.SubmitParcel(blParcel);
+                return Ok("Successfully submitted the new parcel");
             }
             catch
             {

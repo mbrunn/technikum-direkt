@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using AutoMapper;
+﻿using AutoMapper;
 using NetTopologySuite.Geometries;
 using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
@@ -7,6 +6,9 @@ using SvcModels = TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Mapper
 {
+    /// <summary>
+    /// Configures Mapperprofile between BL-Layer and SVC-Layer
+    /// </summary>
     public class BlMapperProfile : Profile
     {
         public BlMapperProfile()
@@ -46,9 +48,8 @@ namespace TechnikumDirekt.Services.Mapper
                 .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "TransferWarehouse"));
 
             CreateMap<BlModels.Warehouse, SvcModels.Warehouse>()
-                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "Warehouse"))
-                .ForMember(destMemb => destMemb.Level, memb => memb.MapFrom(src => src.Level));
-
+                .ForMember(destMemb => destMemb.HopType, destMemb => destMemb.MapFrom(src => "Warehouse"));
+            
             CreateMap<SvcModels.Warehouse,BlModels.Warehouse>().ReverseMap();
             
             CreateMap<SvcModels.WarehouseNextHops,BlModels.WarehouseNextHops>().ReverseMap();

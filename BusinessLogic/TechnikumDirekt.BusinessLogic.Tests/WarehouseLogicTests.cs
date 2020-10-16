@@ -1,4 +1,3 @@
-using System;
 using FluentValidation;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
@@ -25,7 +24,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
                 ProcessingDelayMins = 160
             };
-            var warehouseLogic = new WarehouseLogic(new WarehouseValidator()); // TODO: mock warehouse validator? - prop fine like this though
+            var warehouseLogic = new WarehouseLogic(new WarehouseValidator(), new HopValidator()); // TODO: mock warehouse validator? - prop fine like this though
 
             Assert.Throws<ValidationException>(() => warehouseLogic.ImportWarehouses(warehouse));
         }
@@ -42,7 +41,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
                 ProcessingDelayMins = 160
             };
-            var warehouseLogic = new WarehouseLogic(new WarehouseValidator()); // TODO: mock warehouse validator? - prop fine like this though
+            var warehouseLogic = new WarehouseLogic(new WarehouseValidator(), new HopValidator()); // TODO: mock warehouse validator? - prop fine like this though
 
             Assert.DoesNotThrow(() => warehouseLogic.ImportWarehouses(warehouse));
         }

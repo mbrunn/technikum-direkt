@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework;
-using TechnikumDirekt.Services.Controllers;
-using TechnikumDirekt.Services.Models;
+﻿using NUnit.Framework;
 
 namespace TechnikumDirekt.Tests
 {

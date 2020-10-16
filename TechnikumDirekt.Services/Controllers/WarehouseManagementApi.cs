@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using AutoMapper;
 using TechnikumDirekt.BusinessLogic.Interfaces;
@@ -87,7 +88,7 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "Warehouse id not found")]
-        public virtual IActionResult GetWarehouse([FromRoute][Required]string code)
+        public virtual IActionResult GetWarehouse([FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
         {
             try
             {
@@ -109,14 +110,13 @@ namespace TechnikumDirekt.Services.Controllers
                         ErrorMessage = "Warehouse id not found!"
                     }));
                 }
+                throw new NoNullAllowedException();
             }
             
             catch
             {
                 return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
             }
-            
-            return Ok();
         }
         
         /// <summary>
@@ -135,15 +135,10 @@ namespace TechnikumDirekt.Services.Controllers
         {
             try
             {
-                if (body != null)
-                {
-                    var blWh = _mapper.Map<BusinessLogic.Models.Warehouse>(body);
-                    _blWarehouseLogic.ImportWarehouses(blWh);
-                    return Ok(body);
-                }
-                throw new ArgumentNullException();
+                var blWh = _mapper.Map<BusinessLogic.Models.Warehouse>(body);
+                _blWarehouseLogic.ImportWarehouses(blWh);
+                return Ok(body);
             }
-            
             catch
             {
                 return BadRequest(StatusCode(400, new Error

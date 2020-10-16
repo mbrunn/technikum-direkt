@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Data;
+﻿using System.Data;
 using AutoMapper;
 using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 using SvcModels = TechnikumDirekt.Services.Models;
@@ -10,6 +9,13 @@ namespace TechnikumDirekt.Services.Mapper
     {
         private ResolutionContext _context;
 
+        /// <summary>
+        /// Defines Converters for converting SvcModels.GeoCoordinate 
+        /// </summary>
+        /// <param name="sourceMember"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <exception cref="NoNullAllowedException"></exception>
         public GeoCoordinate Convert(SvcModels.GeoCoordinate sourceMember, ResolutionContext context)
         {
             _context = context;

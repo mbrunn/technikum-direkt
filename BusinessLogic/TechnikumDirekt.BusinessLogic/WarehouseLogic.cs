@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.BusinessLogic.Models;
 using Warehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
 
 namespace TechnikumDirekt.BusinessLogic
@@ -32,11 +33,13 @@ namespace TechnikumDirekt.BusinessLogic
             }*/
         };
 
-        private readonly IValidator<Warehouse> _validator;
+        private readonly IValidator<Warehouse> _warehouseValidator;
+        private readonly IValidator<Hop> _hopValidator;
         
-        public WarehouseLogic(IValidator<Warehouse> validator)
+        public WarehouseLogic(IValidator<Warehouse> warehouseValidator, IValidator<Hop> hopValidator)
         {
-            _validator = validator;
+            _warehouseValidator = warehouseValidator;
+            _hopValidator = hopValidator;
         }
         
         public IEnumerable<Warehouse> ExportWarehouses()
@@ -51,8 +54,15 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void ImportWarehouses(Warehouse warehouse)
         {
-            _validator.ValidateAndThrow(warehouse);
+            _warehouseValidator.ValidateAndThrow(warehouse);
             
+            foreach (var nextHop in warehouse.NextHops)
+            {
+                _hopValidator.ValidateAndThrow(nextHop.Hop);
+                //TODO iterate over all hops in next hop
+                var iter = nextHop.Hop;
+            }
+
             Warehouses.Add(warehouse);
         }
     }

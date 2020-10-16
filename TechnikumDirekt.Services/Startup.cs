@@ -9,12 +9,10 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
-using FluentValidation;
+using FluentValidation.AspNetCore;
 using TechnikumDirekt.BusinessLogic;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
-using TechnikumDirekt.BusinessLogic.Models;
-using TechnikumDirekt.Services.Mapper;
 
 namespace TechnikumDirekt.Services
 {
@@ -77,9 +75,11 @@ namespace TechnikumDirekt.Services
                     c.CustomSchemaIds(type => type.FullName);
                 });
 
-            services.AddScoped<IWarehouseLogic, WarehouseLogic>();
-            services.AddScoped<ITrackingLogic, TrackingLogic>();
-            services.AddScoped<IValidator<Warehouse>, WarehouseValidator>();
+            services.AddSingleton<IWarehouseLogic, WarehouseLogic>();
+            services.AddSingleton<ITrackingLogic, TrackingLogic>();
+            
+            //other validators are also added with this command.
+            services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
         }
 
         /// <summary>
