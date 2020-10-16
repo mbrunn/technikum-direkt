@@ -92,25 +92,21 @@ namespace TechnikumDirekt.Services.Controllers
         {
             try
             {
-                if (code != null)
+                var blWh = _blWarehouseLogic.GetWarehouse(code);
+                    
+                if (blWh != null)
                 {
-                    var blWh = _blWarehouseLogic.GetWarehouse(code);
-                    
-                    if (blWh != null)
+                    var svcWarehouse = _mapper.Map<Warehouse>(blWh);
+                    if (svcWarehouse != null)
                     {
-                        var svcWarehouse = _mapper.Map<Warehouse>(blWh);
-                        if (svcWarehouse != null)
-                        {
-                            return Ok(svcWarehouse);
-                        }
+                        return Ok(svcWarehouse);
                     }
-                    
-                    return NotFound(StatusCode(404, new Error
-                    {
-                        ErrorMessage = "Warehouse id not found!"
-                    }));
                 }
-                throw new NoNullAllowedException();
+                
+                return NotFound(StatusCode(404, new Error
+                {
+                    ErrorMessage = "Warehouse id not found!"
+                }));
             }
             
             catch

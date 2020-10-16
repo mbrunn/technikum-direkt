@@ -5,18 +5,20 @@ using System.Text;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
-
 using HopArrival = TechnikumDirekt.BusinessLogic.Models.HopArrival;
 using Parcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
+using Recipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
 
 namespace TechnikumDirekt.BusinessLogic
 {
     public class TrackingLogic: ITrackingLogic
     {
         private readonly IValidator<Parcel> _parcelValidator;
-        public TrackingLogic(IValidator<Parcel> parcelValidator)
+        private readonly IValidator<Recipient> _recipientValidator;
+        public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator)
         {
             _parcelValidator = parcelValidator;
+            _recipientValidator = recipientValidator;
         }
         
         private const int IdLength = 9;
@@ -59,6 +61,13 @@ namespace TechnikumDirekt.BusinessLogic
             } while (_parcels.Find(x => x.TrackingId == parcel.TrackingId) != null);
 
             _parcelValidator.ValidateAndThrow(parcel);
+            _recipientValidator.ValidateAndThrow(parcel.Recipient);
+            _recipientValidator.ValidateAndThrow(parcel.Sender);
+
+            foreach (var futureHop in parcel.FutureHops)
+            {
+                
+            }
             
             _parcels.Add(parcel);
         }

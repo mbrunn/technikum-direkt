@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace TechnikumDirekt.Tests
+namespace TechnikumDirekt.Services.Tests
 {
     [TestFixture]
     public class WarehouseManagementApiTests

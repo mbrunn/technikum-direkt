@@ -20,9 +20,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BusinessLogic\TechnikumDirekt.BusinessLogic.Interfaces\TechnikumDirekt.BusinessLogic.Interfaces.csproj" />
-      <ProjectReference Include="..\BusinessLogic\TechnikumDirekt.BusinessLogic\TechnikumDirekt.BusinessLogic.csproj" />
+      <ProjectReference Include="..\..\BusinessLogic\TechnikumDirekt.BusinessLogic.Interfaces\TechnikumDirekt.BusinessLogic.Interfaces.csproj" />
+      <ProjectReference Include="..\..\BusinessLogic\TechnikumDirekt.BusinessLogic\TechnikumDirekt.BusinessLogic.csproj" />
       <ProjectReference Include="..\TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj" />
     </ItemGroup>
-
 </Project>
