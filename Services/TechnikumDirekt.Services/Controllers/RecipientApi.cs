@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
@@ -44,24 +45,23 @@ namespace TechnikumDirekt.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("TrackParcel")]
         [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
+        
         public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
         {
             try
             {
                 var tlParcel = _trackingLogic.TrackParcel(trackingId);
-
-                if (tlParcel == null)
-                {
-                    return NotFound(StatusCode(404, new Error
-                    {
-                        ErrorMessage = "No hierarchy loaded yet."
-                    }));
-                }
-
-                var svcTrackingInformation = _mapper.Map<TrackingInformation>(tlParcel);
                 
+                var svcTrackingInformation = _mapper.Map<TrackingInformation>(tlParcel);
+
                 return Ok(svcTrackingInformation); //TODO add Msg to response
+            }
+            catch (TrackingLogicException)
+            {
+                return NotFound(StatusCode(404, new Error
+                {
+                    ErrorMessage = "No hierarchy loaded yet."
+                }));
             }
             catch
             {

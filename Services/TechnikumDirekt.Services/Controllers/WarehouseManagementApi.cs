@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using AutoMapper;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
@@ -65,9 +66,9 @@ namespace TechnikumDirekt.Services.Controllers
                        whResponseList.Add(svcWarehouses);
                    }
                }
+
                return Ok(whResponseList);
            }
-           
            catch (Exception)
            {
                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));

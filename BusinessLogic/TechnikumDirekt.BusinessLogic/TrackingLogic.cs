@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
+using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.BusinessLogic.Models;
 using HopArrival = TechnikumDirekt.BusinessLogic.Models.HopArrival;
 using Parcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
 using Recipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
@@ -15,10 +17,14 @@ namespace TechnikumDirekt.BusinessLogic
     {
         private readonly IValidator<Parcel> _parcelValidator;
         private readonly IValidator<Recipient> _recipientValidator;
-        public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator)
+        private readonly IValidator<HopArrival> _hopArrivalValidator;
+        private readonly IValidator<Hop> _hopCodeValidator;
+        public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator, IValidator<HopArrival> hopArrivalValidator, IValidator <Hop> hopCodeValidator)
         {
             _parcelValidator = parcelValidator;
             _recipientValidator = recipientValidator;
+            _hopArrivalValidator = hopArrivalValidator;
+            _hopCodeValidator = hopCodeValidator;
         }
         
         private const int IdLength = 9;
@@ -30,6 +36,7 @@ namespace TechnikumDirekt.BusinessLogic
         
         public void ReportParcelDelivery(string trackingId)
         {
+            //TODO: validate trackingID
             var parcel = _parcels.Find(p => p.TrackingId == trackingId);
             
             if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
@@ -39,6 +46,23 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void ReportParcelHop(string trackingId, string code)
         {
+            trackingId = "moin!";
+            code = "!";
+            
+            _hopCodeValidator.Validate(new Hop {Code = code}, 
+                options =>
+                {
+                    options.IncludeRuleSets("code");
+                    options.ThrowOnFailures();
+                });
+            
+            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                options =>
+                {
+                    options.IncludeRuleSets("trackingId");
+                    options.ThrowOnFailures();
+                });
+        
             var parcel = _parcels.Find(p => p.TrackingId == trackingId);
             var warehouse = WarehouseLogic.Warehouses.Find(w => w.Code == code);
             
@@ -54,20 +78,11 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void SubmitParcel(Parcel parcel)
         {
-            //should we try/catch and throw a TrackingLogicException here too ?
+            ValidateParcel(parcel);
             do
             {
                 parcel.TrackingId = GenerateUniqueId(IdLength);
             } while (_parcels.Find(x => x.TrackingId == parcel.TrackingId) != null);
-
-            _parcelValidator.ValidateAndThrow(parcel);
-            _recipientValidator.ValidateAndThrow(parcel.Recipient);
-            _recipientValidator.ValidateAndThrow(parcel.Sender);
-
-            foreach (var futureHop in parcel.FutureHops)
-            {
-                
-            }
             
             _parcels.Add(parcel);
         }
@@ -111,6 +126,28 @@ namespace TechnikumDirekt.BusinessLogic
                 .ToList().ForEach(e => builder.Append(e));
 
             return builder.ToString();
+        }
+
+        private void ValidateParcel(Parcel parcel)
+        {
+            _parcelValidator.ValidateAndThrow(parcel);
+            _recipientValidator.ValidateAndThrow(parcel.Recipient);
+            _recipientValidator.ValidateAndThrow(parcel.Sender);
+
+            foreach (var futureHop in parcel.FutureHops)
+            {
+                _hopArrivalValidator.ValidateAndThrow(futureHop);
+            }
+            
+            foreach (var futureHop in parcel.FutureHops)
+            {
+                _hopArrivalValidator.ValidateAndThrow(futureHop);
+            }
+            
+            foreach (var visitedHop in parcel.VisitedHops)
+            {
+                _hopArrivalValidator.ValidateAndThrow(visitedHop);
+            }
         }
     }
 }

@@ -51,6 +51,7 @@ namespace TechnikumDirekt.BusinessLogic
 
         public Warehouse GetWarehouse(string code)
         {
+            //TODO: validate code
             return Warehouses.FirstOrDefault(w => w.Code == code);
         }
 
