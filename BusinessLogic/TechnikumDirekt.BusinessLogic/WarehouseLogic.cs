@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Validators;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using Warehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
@@ -11,29 +12,7 @@ namespace TechnikumDirekt.BusinessLogic
 {
     public class WarehouseLogic : IWarehouseLogic
     {
-        public static readonly List<Warehouse> Warehouses = new List<Warehouse>
-        {
-            /*new Warehouse
-            {
-                Code = "WENA04",
-                HopType = HopType.Warehouse,
-                Description = "Warehouse Level 4 - Wien",
-                LocationName = "Wien",
-                Level = 4,
-                LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
-                ProcessingDelayMins = 160
-            },
-            new Warehouse
-            {
-                Code = "WENA03",
-                HopType = HopType.Warehouse,
-                Description = "Warehouse Level 3 - Wien",
-                LocationName = "Wien",
-                Level = 3,
-                LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
-                ProcessingDelayMins = 299
-            }*/
-        };
+        public static readonly List<Warehouse> Warehouses = new List<Warehouse>();
 
         private readonly IValidator<Warehouse> _warehouseValidator;
         private readonly IValidator<Hop> _hopValidator;
@@ -46,12 +25,19 @@ namespace TechnikumDirekt.BusinessLogic
 
         public IEnumerable<Warehouse> ExportWarehouses()
         {
+            if (Warehouses.Count == 0) throw new TrackingLogicException(); // TODO - use notfound exception
+            
             return Warehouses;
         }
 
         public Warehouse GetWarehouse(string code)
         {
-            //TODO: validate code
+            _hopValidator.Validate(new Hop {Code = code}, 
+                options =>
+                {
+                    options.IncludeRuleSets("code");
+                    options.ThrowOnFailures();
+                });
             return Warehouses.FirstOrDefault(w => w.Code == code);
         }
 
