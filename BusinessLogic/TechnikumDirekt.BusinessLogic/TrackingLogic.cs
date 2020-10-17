@@ -46,9 +46,6 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void ReportParcelHop(string trackingId, string code)
         {
-            trackingId = "moin!";
-            code = "!";
-            
             _hopCodeValidator.Validate(new Hop {Code = code}, 
                 options =>
                 {

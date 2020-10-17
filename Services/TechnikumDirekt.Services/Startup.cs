@@ -65,7 +65,7 @@ namespace TechnikumDirekt.Services
                         Version = "1",
                         Title = "Parcel Logistics Service",
                         Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
-                        Contact = new OpenApiContact()
+                        Contact = new OpenApiContact
                         {
                            Name = "SKS",
                            Url = new Uri("http://www.technikum-wien.at/"),
@@ -75,8 +75,8 @@ namespace TechnikumDirekt.Services
                     c.CustomSchemaIds(type => type.FullName);
                 });
 
-            services.AddSingleton<IWarehouseLogic, WarehouseLogic>();
-            services.AddSingleton<ITrackingLogic, TrackingLogic>();
+            services.AddTransient<IWarehouseLogic, WarehouseLogic>();
+            services.AddTransient<ITrackingLogic, TrackingLogic>();
             
             //other validators are also added with this command.
             services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
