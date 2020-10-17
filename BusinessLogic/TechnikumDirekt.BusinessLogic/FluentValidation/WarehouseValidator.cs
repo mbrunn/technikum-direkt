@@ -9,7 +9,6 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
         {
             //TODO: should we include ÖÄÜ ?
             RuleFor(w => w.Description).Matches(@"^[\wÖÄÜöäü\d -]*$");
-
             RuleForEach(w => w.NextHops).SetValidator(new WarehouseNextHopsValidator());
         }
     }
