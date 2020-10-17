@@ -43,7 +43,7 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void ImportWarehouses(Warehouse warehouse)
         {
-            _warehouseValidator.ValidateAndThrow(warehouse);
+            //_warehouseValidator.ValidateAndThrow(warehouse);
             ValidateWarehouseTree(warehouse);
 
             Warehouses.Add(warehouse);
@@ -72,6 +72,7 @@ namespace TechnikumDirekt.BusinessLogic
             catch (ValidationException)
             {
                 Console.WriteLine($"Invalid object: {node.Description}");
+                throw new TrackingLogicException($"Invalid object: {node.Description}");
             }
         }
     }

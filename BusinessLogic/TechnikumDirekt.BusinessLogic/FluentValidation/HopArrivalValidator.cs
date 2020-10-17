@@ -8,6 +8,10 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
         public HopArrivalValidator()
         {
             RuleFor(ha => ha.Code).Matches(@"^[A-Z]{4}\d{1,4}$");
+            /*
+            RuleFor(ha => ha.Description).NotNull();
+            RuleFor(ha => ha.DateTime).NotNull();
+            */
         }
     }
 }

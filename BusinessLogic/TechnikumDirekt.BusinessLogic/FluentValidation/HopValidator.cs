@@ -7,12 +7,15 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
     {
         public HopValidator()
         {
-            RuleSet("code", () =>
+            /*RuleSet("code", () =>
             {
                 RuleFor(h => h.Code).Matches(@"^[A-Z]{4}\\d{1,4}$");
             });
-            RuleFor(h => h.Code).Matches(@"^[A-Z]{4}\\d{1,4}$");
+            RuleFor(h => h.Code).Matches(@"^[A-Z]{4}\\d{1,4}$");*/
             RuleFor(h => h).NotNull();
+            /*
+            RuleFor(h => h.LocationCoordinates).NotNull();
+            */
         }    
     }
 }

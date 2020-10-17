@@ -7,10 +7,11 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
     {
         public RecipientValidator()
         {
+            //TODO: should we include ÖÄÜ ??
             RuleFor(r => r.PostalCode).Matches(@"^[A][-][\d]{4}$").When(r=>r.Country == "Austria" || r.Country == "Österreich");
-            RuleFor(r => r.Street).Matches(@"^[A-Z][A-Za-z]*[ ]([\d]+[\w\/]*)*").When(r=>r.Country == "Austria" || r.Country == "Österreich");
-            RuleFor(r => r.City).Matches(@"^[A-Z][A-Za-z- ]*$");
-            RuleFor(r => r.Name).Matches(@"^[A-Z][A-Za-z- ]*$");
+            RuleFor(r => r.Street).Matches(@"^[A-ZÖÄÜ][A-ZÖÄÜöäüa-z]*[ ]([\d]+[\w\/]*)*").When(r=>r.Country == "Austria" || r.Country == "Österreich");
+            RuleFor(r => r.City).Matches(@"^[A-ZÖÄÜ][A-ZÖÄÜöäüa-z- ]*$");
+            RuleFor(r => r.Name).Matches(@"^[A-ZÖÄÜ][A-ZÖÄÜöäüa-z- ]*$");
         }
     }
 }

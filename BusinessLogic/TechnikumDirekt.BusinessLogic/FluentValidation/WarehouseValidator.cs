@@ -7,11 +7,10 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
     {
         public WarehouseValidator()
         {
-            RuleFor(w => w.Description).Matches(@"^[\w\d -]*$");
-            RuleForEach(w => w.NextHops).ChildRules(x =>
-            {
-                x.RuleFor(a => a.Hop).SetValidator(new HopValidator());
-            });
+            //TODO: should we include ÖÄÜ ?
+            RuleFor(w => w.Description).Matches(@"^[\wÖÄÜöäü\d -]*$");
+
+            RuleForEach(w => w.NextHops).SetValidator(new WarehouseNextHopsValidator());
         }
     }
 }
