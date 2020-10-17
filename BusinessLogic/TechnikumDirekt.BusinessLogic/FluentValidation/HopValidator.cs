@@ -11,6 +11,7 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
             {
                 RuleFor(h => h.Code).Matches(@"^[A-Z]{4}\\d{1,4}$");
             });
+            RuleFor(h => h.Code).Matches(@"^[A-Z]{4}\\d{1,4}$");
             RuleFor(h => h).NotNull();
         }    
     }

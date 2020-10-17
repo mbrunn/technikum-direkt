@@ -10,7 +10,6 @@ using TechnikumDirekt.Services.Mapper;
 using TechnikumDirekt.Services.Models;
 using BlParcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
 using BlRecipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
-using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Tests
 {

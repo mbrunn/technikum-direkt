@@ -7,8 +7,11 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
     {
         public WarehouseValidator()
         {
-            // TODO - validate hop code??
             RuleFor(w => w.Description).Matches(@"^[\w\d -]*$");
+            RuleForEach(w => w.NextHops).ChildRules(x =>
+            {
+                x.RuleFor(a => a.Hop).SetValidator(new HopValidator());
+            });
         }
     }
 }
