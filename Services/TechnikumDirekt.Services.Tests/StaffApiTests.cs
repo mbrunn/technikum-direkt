@@ -1,154 +1,189 @@
-﻿using NUnit.Framework;
+﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using NUnit.Framework;
+using TechnikumDirekt.BusinessLogic.Exceptions;
+using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.Services.Controllers;
+using TechnikumDirekt.Services.Mapper;
+using BlParcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
+using BlRecipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
+using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Tests
 {
     [TestFixture]
     public class StaffApiTests
     {
-        /*[Test]
+        private ITrackingLogic _trackingLogic;
+
+        private const string ValidTrackingNumber = "A123BCD23";
+        private const string InvalidTrackingNumber = "A123BaD23";
+        private const string NotfoundTrackingNumber = "000000000";
+        private const string ValidHopCode = "ABCD1234";
+        private const string InvalidHopCode = "AbdA2a";
+        private const string NotfoundHopCode = "ABCD0000";
+        
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            var mockTrackingLogic = new Mock<ITrackingLogic>();
+            // Setup - ReportParcelDelivery
+            mockTrackingLogic.Setup(m => m.ReportParcelDelivery(ValidTrackingNumber));
+            mockTrackingLogic.Setup(m => m.ReportParcelDelivery(InvalidTrackingNumber)).Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.ReportParcelDelivery(NotfoundTrackingNumber)).Throws<TrackingLogicException>();
+            // Setup - ReportParcelHop
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(ValidTrackingNumber, ValidHopCode));
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(InvalidTrackingNumber, It.IsAny<string>())).Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), InvalidHopCode)).Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(NotfoundTrackingNumber, It.IsAny<string>())).Throws<TrackingLogicException>();
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), NotfoundHopCode)).Throws<TrackingLogicException>();
+
+            _trackingLogic = mockTrackingLogic.Object;
+        }
+
+        #region ReportParcelDelivery Tests
+
+        [Test]
         public void ReportParcelDelivery_ValidTrackingId_Ok()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
             
-            var response = controller.ReportParcelDelivery("123");
+            var response = controller.ReportParcelDelivery(ValidTrackingNumber);
 
             Assert.IsInstanceOf<OkObjectResult>(response);
 
-            var body = ((OkObjectResult) response).Value;
+            var typedResponse = (OkObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((StatusCodeResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 200);
+            Assert.AreEqual(200, statusCode);
         }
         
         [Test]
-        public void ReportParcelDelivery_InValidTrackingId_NotFound()
+        public void ReportParcelDelivery_NonexistentTrackingId_NotFound()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
 
-            var response = controller.ReportParcelDelivery("NonExistingParcel");
+            var response = controller.ReportParcelDelivery(NotfoundTrackingNumber);
 
             Assert.IsInstanceOf<NotFoundObjectResult>(response);
 
-            var body = ((NotFoundObjectResult) response).Value;
+            var typedResponse = (NotFoundObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((StatusCodeResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 404);
+            Assert.AreEqual(404, statusCode);
         }
         
         [Test]
-        public void ReportParcelDelivery_NullTrackingId_BadRequest()
+        public void ReportParcelDelivery_InvalidTrackingId_BadRequest()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
 
-            var response = controller.ReportParcelDelivery(null);
+            var response = controller.ReportParcelDelivery(InvalidTrackingNumber);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
 
-            object body = ((BadRequestObjectResult) response).Value;
+            var typedResponse = (BadRequestObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((ObjectResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 400);
+            Assert.AreEqual(400, statusCode);
         }
-        
-        //--------------------------------------------------------------------------------------------------------------
+
+        #endregion
+
+        #region ReportParcelHop Tests
         
         [Test]
         public void ReportParcelHop_ValidTrackingID_OkRequest()
         {
-            var controller = new StaffApiController();
-           
-            var response = controller.ReportParcelHop("12345", "HopCode123");
+            var controller = new StaffApiController(_trackingLogic);
+            
+            var response = controller.ReportParcelHop(ValidTrackingNumber, ValidHopCode);
 
             Assert.IsInstanceOf<OkObjectResult>(response);
 
-            object body = ((OkObjectResult) response).Value;
+            var typedResponse = (OkObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((StatusCodeResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 200);
+            Assert.AreEqual(200, statusCode);
         }
 
         [Test]
-        public void ReportParcelHop_nullHopCode_BadRequest()
+        public void ReportParcelHop_InvalidHopCode_BadRequest()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
             
-            var response = controller.ReportParcelHop("trackingID", null);
+            var response = controller.ReportParcelHop(ValidTrackingNumber, InvalidHopCode);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
 
-            object body = ((BadRequestObjectResult) response).Value;
+            var typedResponse = (BadRequestObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((ObjectResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 400);
+            Assert.AreEqual(400, statusCode);
         }
 
         [Test]
-        public void ReportParcelHop_nullTrackingID_BadRequest()
+        public void ReportParcelHop_InvalidTrackingID_BadRequest()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
             
-            var response = controller.ReportParcelHop(null, "HopCode");
+            var response = controller.ReportParcelHop(InvalidTrackingNumber, ValidHopCode);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
 
-            object body = ((BadRequestObjectResult) response).Value;
+            var typedResponse = (BadRequestObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((ObjectResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 400);
+            Assert.AreEqual(400, statusCode);
         }
         
         [Test]
-        public void ReportParcelHop_nullTrackingIDandHopCode_BadRequest()
+        public void ReportParcelHop_InvalidTrackingIDandHopCode_BadRequest()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
             
-            var response = controller.ReportParcelHop(null, null);
+            var response = controller.ReportParcelHop(InvalidTrackingNumber, InvalidHopCode);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
 
-            object body = ((BadRequestObjectResult) response).Value;
+            var typedResponse = (BadRequestObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((ObjectResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 400);
+            Assert.AreEqual(400, statusCode);
         }
         
         [Test]
         public void ReportParcelHop_NonExistingTrackingId_NotFound()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
             
-            var response = controller.ReportParcelHop("NonExistingTrackingId", "HopCode");
+            var response = controller.ReportParcelHop(NotfoundTrackingNumber, ValidHopCode);
 
             Assert.IsInstanceOf<NotFoundObjectResult>(response);
 
-            object body = ((NotFoundObjectResult) response).Value;
+            var typedResponse = (NotFoundObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((StatusCodeResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 404);
+            Assert.AreEqual(404, statusCode);
         }
         
         [Test]
         public void ReportParcelHop_NonExistingHopCode_NotFound()
         {
-            var controller = new StaffApiController();
+            var controller = new StaffApiController(_trackingLogic);
             
-            var response = controller.ReportParcelHop("12345", "NonExistingHopCode");
+            var response = controller.ReportParcelHop(ValidTrackingNumber, NotfoundHopCode);
 
             Assert.IsInstanceOf<NotFoundObjectResult>(response);
 
-            object body = ((NotFoundObjectResult) response).Value;
+            var typedResponse = (NotFoundObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
 
-            int? statusCode = ((StatusCodeResult) body).StatusCode;
-
-            Assert.IsTrue(statusCode == 404);
-        }*/
+            Assert.AreEqual(404, statusCode);
+        }
+        
+        #endregion
     }
 }

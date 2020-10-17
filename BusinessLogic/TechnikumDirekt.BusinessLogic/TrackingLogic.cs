@@ -36,19 +36,22 @@ namespace TechnikumDirekt.BusinessLogic
         
         public void ReportParcelDelivery(string trackingId)
         {
-            //TODO: validate trackingID
+            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                options =>
+                {
+                    options.IncludeRuleSets("trackingId");
+                    options.ThrowOnFailures();
+                });
+            
             var parcel = _parcels.Find(p => p.TrackingId == trackingId);
             
-            if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
+            if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found"); // TODO - use notfound exception
 
             parcel.State = Parcel.StateEnum.DeliveredEnum;
         }
 
         public void ReportParcelHop(string trackingId, string code)
         {
-            trackingId = "moin!";
-            code = "!";
-            
             _hopCodeValidator.Validate(new Hop {Code = code}, 
                 options =>
                 {
@@ -89,6 +92,13 @@ namespace TechnikumDirekt.BusinessLogic
 
         public Parcel TrackParcel(string trackingId)
         {
+            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                options =>
+                {
+                    options.IncludeRuleSets("trackingId");
+                    options.ThrowOnFailures();
+                });
+            
             var parcel = _parcels.Find(p => p.TrackingId == trackingId);
             
             if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
@@ -98,7 +108,15 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void TransitionParcelFromPartner(Parcel parcel, string trackingId)
         {
+            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                options =>
+                {
+                    options.IncludeRuleSets("trackingId");
+                    options.ThrowOnFailures();
+                });
+            
             //shouldn't we generate a unique ID if the ID already is present in our system ?
+            // denke eine exception wär schon ok, da vlt die idee is dass man die tracking id vom partner übernimmt (warum würd man sonst extra als param die trackingId übergeben?)
             do
             {
                 parcel.TrackingId = GenerateUniqueId(IdLength);

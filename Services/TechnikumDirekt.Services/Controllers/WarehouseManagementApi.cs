@@ -69,6 +69,13 @@ namespace TechnikumDirekt.Services.Controllers
 
                return Ok(whResponseList);
            }
+           catch (TrackingLogicException)
+           {
+               return NotFound(StatusCode(404, new Error
+               {
+                   ErrorMessage = "No hierarchy loaded yet."
+               }));
+           }
            catch (Exception)
            {
                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
@@ -94,22 +101,16 @@ namespace TechnikumDirekt.Services.Controllers
             try
             {
                 var blWh = _blWarehouseLogic.GetWarehouse(code);
-                    
-                if (blWh != null)
-                {
-                    var svcWarehouse = _mapper.Map<Warehouse>(blWh);
-                    if (svcWarehouse != null)
-                    {
-                        return Ok(svcWarehouse);
-                    }
-                }
-                
+                var svcWarehouse = _mapper.Map<Warehouse>(blWh);
+                return Ok(svcWarehouse);
+            }
+            catch (TrackingLogicException)
+            {
                 return NotFound(StatusCode(404, new Error
                 {
-                    ErrorMessage = "Warehouse id not found!"
+                    ErrorMessage = "Warehouse id not found"
                 }));
             }
-            
             catch
             {
                 return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
