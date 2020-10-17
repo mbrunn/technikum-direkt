@@ -30,15 +30,16 @@ steps:
   inputs:
     command: test
     arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
-    projects: '**/*Test*.csproj'
+    projects: '**/*/*Test*.csproj'
     publishTestResults: true
 
 - script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.6.7
   displayName: 'Install ReportGenerator tool'
   continueOnError: true
 
-- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.Services.Controllers.*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
-
+- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
+  displayName: 'Run ReportGenerator tool'
+  
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage'
   inputs:
