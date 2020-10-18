@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
-using FluentValidation.Validators;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
@@ -43,12 +41,10 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void ImportWarehouses(Warehouse warehouse)
         {
-            //_warehouseValidator.ValidateAndThrow(warehouse);
             ValidateWarehouseTree(warehouse);
-
             Warehouses.Add(warehouse);
         }
-
+        
         private void ValidateWarehouseTree(Hop node)
         {
             switch (node.HopType)

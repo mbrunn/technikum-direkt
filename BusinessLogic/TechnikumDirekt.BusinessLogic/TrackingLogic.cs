@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
-using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using HopArrival = TechnikumDirekt.BusinessLogic.Models.HopArrival;
@@ -79,15 +78,22 @@ namespace TechnikumDirekt.BusinessLogic
             });
         }
 
-        public void SubmitParcel(Parcel parcel)
+        //TODO: return Parcel to extract Tracking Info ?
+        public Parcel SubmitParcel(Parcel parcel)
         {
-            ValidateParcel(parcel);
+            _parcelValidator.Validate(parcel, 
+                options =>
+                {
+                    options.IncludeRuleSets("newParcel");
+                    options.ThrowOnFailures();
+                });
             do
             {
                 parcel.TrackingId = GenerateUniqueId(IdLength);
             } while (_parcels.Find(x => x.TrackingId == parcel.TrackingId) != null);
             
             _parcels.Add(parcel);
+            return parcel;
         }
 
         public Parcel TrackParcel(string trackingId)
@@ -116,13 +122,6 @@ namespace TechnikumDirekt.BusinessLogic
                 });
             _parcelValidator.ValidateAndThrow(parcel);
             
-            //shouldn't we generate a unique ID if the ID already is present in our system ?
-            // denke eine exception wär schon ok, da vlt die idee is dass man die tracking id vom partner übernimmt (warum würd man sonst extra als param die trackingId übergeben?)
-            /*do
-            {
-                parcel.TrackingId = GenerateUniqueId(IdLength);
-            } while (_parcels.Find(x => x.TrackingId == parcel.TrackingId) != null);*/
-
             if (_parcels.Find(p => p.TrackingId == trackingId) != null) throw new TrackingLogicException($"A parcel with tracking id {trackingId} has already been registered");
             
             parcel.TrackingId = trackingId;
