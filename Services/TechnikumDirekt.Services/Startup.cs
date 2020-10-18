@@ -79,7 +79,7 @@ namespace TechnikumDirekt.Services
             services.AddTransient<ITrackingLogic, TrackingLogic>();
             
             //other validators are also added with this command.
-            services.AddControllers().AddFluentValidation();
+            services.AddControllers().AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
         }
 
         /// <summary>
