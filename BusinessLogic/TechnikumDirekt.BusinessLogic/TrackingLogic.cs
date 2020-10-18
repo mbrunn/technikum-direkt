@@ -81,12 +81,7 @@ namespace TechnikumDirekt.BusinessLogic
         //TODO: return Parcel to extract Tracking Info ?
         public Parcel SubmitParcel(Parcel parcel)
         {
-            _parcelValidator.Validate(parcel, 
-                options =>
-                {
-                    options.IncludeRuleSets("newParcel");
-                    options.ThrowOnFailures();
-                });
+            ValidateParcel(parcel);
             do
             {
                 parcel.TrackingId = GenerateUniqueId(IdLength);
@@ -150,11 +145,6 @@ namespace TechnikumDirekt.BusinessLogic
             _recipientValidator.ValidateAndThrow(parcel.Recipient);
             _recipientValidator.ValidateAndThrow(parcel.Sender);
 
-            foreach (var futureHop in parcel.FutureHops)
-            {
-                _hopArrivalValidator.ValidateAndThrow(futureHop);
-            }
-            
             foreach (var futureHop in parcel.FutureHops)
             {
                 _hopArrivalValidator.ValidateAndThrow(futureHop);

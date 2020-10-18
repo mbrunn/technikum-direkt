@@ -15,7 +15,7 @@ namespace TechnikumDirekt.BusinessLogic.Interfaces
 
         /// <summary> Submits a new parcel to the system. </summary>
         /// <param name="parcel">Parcel to submit</param>
-        public void SubmitParcel(Parcel parcel);
+        public Parcel SubmitParcel(Parcel parcel);
 
         /// <summary> Returns tracking information of the specified parcel. </summary>
         /// <param name="trackingId">Tracking id of the parcel</param>

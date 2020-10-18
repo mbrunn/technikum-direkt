@@ -35,7 +35,7 @@ namespace TechnikumDirekt.Services.Tests
             City = "Banana City",
             Country = "AT"
         };
-
+        
         private const string ValidTrackingNumber = "A123BCD23";
         private const string InvalidTrackingNumber = "A123BaD23";
         private const string NotfoundTrackingNumber = "000000000";
@@ -57,7 +57,7 @@ namespace TechnikumDirekt.Services.Tests
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(validParcel, ValidTrackingNumber));
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(It.IsAny<BlParcel>(), InvalidTrackingNumber)).Throws(new ValidationException(""));
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(null, It.IsAny<string>())).Throws(new ValidationException(""));
-
+            
             _trackingLogic = mockTrackingLogic.Object;
         }
         

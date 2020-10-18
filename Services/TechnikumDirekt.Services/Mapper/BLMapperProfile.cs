@@ -56,9 +56,9 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<SvcModels.WarehouseNextHops,BlModels.WarehouseNextHops>().ReverseMap();
             
             CreateMap<SvcModels.HopArrival, BlModels.HopArrival>().ReverseMap();
-
+            
             CreateMap<BlModels.Parcel, SvcModels.TrackingInformation>();
-
+            
             CreateMap<BlModels.Parcel, SvcModels.NewParcelInfo>();
 
             CreateMap<SvcModels.Parcel, BlModels.Parcel>()

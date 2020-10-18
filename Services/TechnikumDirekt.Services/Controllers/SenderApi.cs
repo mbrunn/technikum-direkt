@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TechnikumDirekt.BusinessLogic.Interfaces;
@@ -25,7 +26,7 @@ namespace TechnikumDirekt.Services.Controllers
         /// Submit a new parcel to the logistics service. 
         /// </summary>
         /// <param name="body"></param>
-        /// <response code="200">Successfully submitted the new parcel</response>
+        /// <response code="200">Successfully submitted the new parcel,</response>
         /// <response code="400">The operation failed due to an error.</response>
         [HttpPost]
         [Route("/parcel")]
@@ -38,8 +39,15 @@ namespace TechnikumDirekt.Services.Controllers
             try
             {
                 var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
-                _trackingLogic.SubmitParcel(blParcel);
-                return Ok("Successfully submitted the new parcel");
+                var newParcelInfo = _mapper.Map<NewParcelInfo>(_trackingLogic.SubmitParcel(blParcel));
+                return Ok(newParcelInfo);
+            }
+            catch (ValidationException)
+            {
+                return BadRequest(StatusCode(400, new Error
+                {
+                    ErrorMessage = "The parcel has invalid data."
+                }));  
             }
             catch
             {
