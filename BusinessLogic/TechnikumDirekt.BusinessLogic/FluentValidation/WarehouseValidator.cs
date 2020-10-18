@@ -7,7 +7,7 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
     {
         public WarehouseValidator()
         {
-            //TODO: should we include ÖÄÜ ?
+            // TODO: should we include ÖÄÜ ? - good question :) sind die bei \w nicht dabei? :thinking:
             RuleFor(w => w.Description).Matches(@"^[\wÖÄÜöäü\d -]*$");
             RuleForEach(w => w.NextHops).SetValidator(new WarehouseNextHopsValidator());
         }
