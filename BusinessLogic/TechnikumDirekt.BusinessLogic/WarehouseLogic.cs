@@ -12,7 +12,7 @@ namespace TechnikumDirekt.BusinessLogic
 {
     public class WarehouseLogic : IWarehouseLogic
     {
-        public static readonly List<Warehouse> Warehouses = new List<Warehouse>();
+        public static List<Warehouse> Warehouses = new List<Warehouse>();
 
         private readonly IValidator<Warehouse> _warehouseValidator;
         private readonly IValidator<Hop> _hopValidator;
@@ -58,6 +58,7 @@ namespace TechnikumDirekt.BusinessLogic
                     case HopType.Warehouse:
                         _warehouseValidator.ValidateAndThrow((Warehouse) node);
                         var whHelper = (Warehouse) node;
+                        if (whHelper.NextHops == null) break;
                         foreach (var child in whHelper.NextHops)
                         {
                             ValidateWarehouseTree(child.Hop);
@@ -71,8 +72,10 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException)
             {
-                Console.WriteLine($"Invalid object: {node.Description}");
-                throw new TrackingLogicException($"Invalid object: {node.Description}");
+                // TODO: Why? Wir müssen ja wissen dass es eine ValidationException war oder?
+                // Console.WriteLine($"Invalid object: {node.Description}");
+                // throw new TrackingLogicException($"Invalid object: {node.Description}");
+                throw;
             }
         }
     }
