@@ -51,31 +51,21 @@ namespace TechnikumDirekt.BusinessLogic
 
         private void ValidateWarehouseTree(Hop node)
         {
-            try
+            switch (node.HopType)
             {
-                switch (node.HopType)
-                {
-                    case HopType.Warehouse:
-                        _warehouseValidator.ValidateAndThrow((Warehouse) node);
-                        var whHelper = (Warehouse) node;
-                        if (whHelper.NextHops == null) break;
-                        foreach (var child in whHelper.NextHops)
-                        {
-                            ValidateWarehouseTree(child.Hop);
-                        }
-                        break;
-                    case HopType.Truck:
-                    case HopType.TransferWarehouse:
-                        _hopValidator.ValidateAndThrow(node);
-                        break;
-                }
-            }
-            catch (ValidationException)
-            {
-                // TODO: Why? Wir müssen ja wissen dass es eine ValidationException war oder?
-                // Console.WriteLine($"Invalid object: {node.Description}");
-                // throw new TrackingLogicException($"Invalid object: {node.Description}");
-                throw;
+                case HopType.Warehouse:
+                    _warehouseValidator.ValidateAndThrow((Warehouse) node);
+                    var whHelper = (Warehouse) node;
+                    if (whHelper.NextHops == null) break;
+                    foreach (var child in whHelper.NextHops)
+                    {
+                        ValidateWarehouseTree(child.Hop);
+                    }
+                    break;
+                case HopType.Truck:
+                case HopType.TransferWarehouse:
+                    _hopValidator.ValidateAndThrow(node);
+                    break;
             }
         }
     }
