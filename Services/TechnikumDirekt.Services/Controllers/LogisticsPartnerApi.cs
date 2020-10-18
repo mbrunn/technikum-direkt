@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace TechnikumDirekt.Services.Controllers
 { 
@@ -43,7 +45,13 @@ namespace TechnikumDirekt.Services.Controllers
                 _trackingLogic.TransitionParcelFromPartner(blParcel, trackingId);
                 return Ok("Successfully transitioned the parcel");
             }
-            
+            catch (ValidationException )
+            {
+                return BadRequest(StatusCode(400, new Error
+                {
+                    ErrorMessage = "The Parcel or the trackingId is not valid."
+                }));  
+            }
             catch
             {
                 return BadRequest(StatusCode(400, new Error

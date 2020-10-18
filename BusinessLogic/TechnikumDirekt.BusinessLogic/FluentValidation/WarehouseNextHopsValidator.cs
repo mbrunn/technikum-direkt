@@ -1,5 +1,4 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Models;
 
 namespace TechnikumDirekt.BusinessLogic.FluentValidation

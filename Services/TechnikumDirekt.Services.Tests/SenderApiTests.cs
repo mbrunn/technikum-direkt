@@ -51,7 +51,7 @@ namespace TechnikumDirekt.Services.Tests
             
             var mockTrackingLogic = new Mock<ITrackingLogic>();
             // Setup - SubmitParcel
-            mockTrackingLogic.Setup(m => m.SubmitParcel(validParcel));
+            mockTrackingLogic.Setup(m => m.SubmitParcel(validParcel)).Returns(validParcel);
             mockTrackingLogic.Setup(m => m.SubmitParcel(null)).Throws(new ValidationException(""));
 
             _trackingLogic = mockTrackingLogic.Object;

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using NetTopologySuite.Geometries;
 using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
@@ -55,12 +56,17 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<SvcModels.WarehouseNextHops,BlModels.WarehouseNextHops>().ReverseMap();
             
             CreateMap<SvcModels.HopArrival, BlModels.HopArrival>().ReverseMap();
-
-            CreateMap<BlModels.Parcel, SvcModels.TrackingInformation>();
-
-            CreateMap<BlModels.Parcel, SvcModels.NewParcelInfo>();
             
-            CreateMap<SvcModels.Parcel, BlModels.Parcel>();
+            CreateMap<BlModels.Parcel, SvcModels.TrackingInformation>();
+            
+            CreateMap<BlModels.Parcel, SvcModels.NewParcelInfo>();
+
+            CreateMap<SvcModels.Parcel, BlModels.Parcel>()
+                .AfterMap((_, parcel) =>
+                {
+                    parcel.VisitedHops ??= new List<BlModels.HopArrival>();
+                    parcel.FutureHops ??= new List<BlModels.HopArrival>();
+                });
 
             CreateMap<SvcModels.Recipient, BlModels.Recipient>().ReverseMap();
         }
