@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using FluentValidation;
-using GeoCoordinatePortable;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;

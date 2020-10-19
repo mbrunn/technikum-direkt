@@ -10,6 +10,6 @@
         /// <summary>
         ///     Gets or Sets Hop
         /// </summary>
-        public Hop Hop { get; set; }
+        public Hop Hop { get; set; } //TODO not compatible with database
     }
 }

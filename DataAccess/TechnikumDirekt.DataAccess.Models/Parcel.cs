@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TechnikumDirekt.DataAccess.Models
 {
+    [Table("Parcels", Schema = "Application")]
     public class Parcel
     {
         public enum StateEnum
@@ -42,24 +44,24 @@ namespace TechnikumDirekt.DataAccess.Models
         /// <summary>
         ///     Gets or Sets Recipient
         /// </summary>
-        public Recipient Recipient { get; set; }
+        public Recipient Recipient { get; set; } //TODO not compatible with database
         
         /// <summary>
         ///     Gets or Sets Sender
         /// </summary>
-        public Recipient Sender { get; set; }
+        public Recipient Sender { get; set; } //TODO not compatible with database
         
         /// <summary>
         ///     Hops visited in the past.
         /// </summary>
         /// <value>Hops visited in the past.</value>
-        public List<HopArrival> VisitedHops { get; set; }
+        public List<HopArrival> VisitedHops { get; set; } //TODO not compatible with database
         
         /// <summary>
         ///     Hops coming up in the future - their times are estimations.
         /// </summary>
         /// <value>Hops coming up in the future - their times are estimations.</value>
-        public List<HopArrival> FutureHops { get; set; }
+        public List<HopArrival> FutureHops { get; set; } //TODO not compatible with database
         
         public string TrackingId { get; set; }
     }

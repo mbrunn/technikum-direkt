@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
 using NetTopologySuite.Geometries;
-using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 using SvcModels = TechnikumDirekt.Services.Models;
 
