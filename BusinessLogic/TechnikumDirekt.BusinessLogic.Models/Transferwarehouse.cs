@@ -8,9 +8,9 @@ namespace TechnikumDirekt.BusinessLogic.Models
     public class Transferwarehouse : Hop
     {
         /// <summary>
-        /// GeoJSON of the are covered by the logistics partner.
+        /// GeoJSON of the area covered by the logistics partner.
         /// </summary>
-        /// <value>GeoJSON of the are covered by the logistics partner.</value>
+        /// <value>GeoJSON of the area covered by the logistics partner.</value>
         public Geometry RegionGeometry { get; set; }
 
         /// <summary>

@@ -3,6 +3,7 @@ using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using NetTopologySuite.Geometries;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
@@ -30,7 +31,7 @@ namespace TechnikumDirekt.Services.Tests
             Description = "Warehouse Level 4 - Wien",
             LocationName = "Wien",
             Level = 4,
-            LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
+            LocationCoordinates = new Point(16.3725042, 48.2083537),
             ProcessingDelayMins = 160
         };
         

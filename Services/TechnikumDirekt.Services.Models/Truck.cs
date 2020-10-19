@@ -19,9 +19,9 @@ namespace TechnikumDirekt.Services.Models
     public class Truck : Hop
     {
         /// <summary>
-        /// GeoJSON of the are covered by the truck.
+        /// GeoJSON of the area covered by the truck.
         /// </summary>
-        /// <value>GeoJSON of the are covered by the truck.</value>
+        /// <value>GeoJSON of the area covered by the truck.</value>
         [Required]
         [DataMember(Name="regionGeoJson")]
         public string RegionGeoJson { get; set; }

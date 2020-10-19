@@ -10,7 +10,7 @@
 
 using System;
 
-namespace TechnikumDirekt.BusinessLogic.Models
+namespace TechnikumDirekt.DataAccess.Models
 {
     /// <summary>
     /// This is used to track where a parcel has been or is heading.

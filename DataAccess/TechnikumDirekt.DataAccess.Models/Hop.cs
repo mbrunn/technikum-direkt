@@ -1,7 +1,6 @@
-using GeoCoordinatePortable;
 using NetTopologySuite.Geometries;
 
-namespace TechnikumDirekt.BusinessLogic.Models
+namespace TechnikumDirekt.DataAccess.Models
 {
     /// <summary>
     /// </summary>

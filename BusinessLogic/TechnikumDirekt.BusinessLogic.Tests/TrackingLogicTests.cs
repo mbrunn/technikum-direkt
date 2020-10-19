@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FluentValidation;
 using GeoCoordinatePortable;
+using NetTopologySuite.Geometries;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
@@ -47,7 +48,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                     Description = "Descriptive description",
                     ProcessingDelayMins = 100,
                     LocationName = "Benjis Hut",
-                    LocationCoordinates = new GeoCoordinate(43.645074, -115.993081),
+                    LocationCoordinates = new Point(43.645074, -115.993081),
                     Level = 5,
                     NextHops = new List<WarehouseNextHops>()
                 }

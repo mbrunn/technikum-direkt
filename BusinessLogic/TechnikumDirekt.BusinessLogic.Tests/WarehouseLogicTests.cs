@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
+using NetTopologySuite.Geometries;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
@@ -17,7 +18,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             Description = "Warehouse Level 4 - Wien",
             LocationName = "Wien",
             Level = 4,
-            LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
+            LocationCoordinates = new Point(16.3725042, 48.2083537),
             ProcessingDelayMins = 160
         };
         
@@ -28,7 +29,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             Description = "Warehouse Level* 4 - Wien",
             LocationName = "Wien",
             Level = 4,
-            LocationCoordinates = new GeoCoordinatePortable.GeoCoordinate(16.3725042, 48.2083537),
+            LocationCoordinates = new Point(16.3725042, 48.2083537),
             ProcessingDelayMins = 160
         };
         
