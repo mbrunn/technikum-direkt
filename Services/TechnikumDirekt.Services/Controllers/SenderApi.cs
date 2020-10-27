@@ -39,7 +39,8 @@ namespace TechnikumDirekt.Services.Controllers
             try
             {
                 var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
-                var newParcelInfo = _mapper.Map<NewParcelInfo>(_trackingLogic.SubmitParcel(blParcel));
+                var trackingId = _trackingLogic.SubmitParcel(blParcel);
+                var newParcelInfo = new NewParcelInfo() {TrackingId = trackingId};
                 return Ok(newParcelInfo);
             }
             catch (ValidationException)

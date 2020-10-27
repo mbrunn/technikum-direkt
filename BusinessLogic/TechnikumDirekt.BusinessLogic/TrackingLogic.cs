@@ -79,7 +79,7 @@ namespace TechnikumDirekt.BusinessLogic
         }
 
         //TODO: return Parcel to extract Tracking Info ?
-        public Parcel SubmitParcel(Parcel parcel)
+        public string SubmitParcel(Parcel parcel)
         {
             ValidateParcel(parcel);
             do
@@ -88,7 +88,7 @@ namespace TechnikumDirekt.BusinessLogic
             } while (_parcels.Find(x => x.TrackingId == parcel.TrackingId) != null);
             
             _parcels.Add(parcel);
-            return parcel;
+            return parcel.TrackingId;
         }
 
         public Parcel TrackParcel(string trackingId)

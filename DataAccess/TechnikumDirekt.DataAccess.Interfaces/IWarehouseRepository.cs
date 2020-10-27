@@ -4,9 +4,11 @@ using TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.DataAccess.Interfaces
 {
-    public interface IWarehouseRepository : ISearchableRepository<Warehouse>
+    public interface IWarehouseRepository
     {
-        Warehouse GetWarehouseWithCode(string code);
+        IEnumerable<Warehouse> GetAll();
+        Warehouse GetWarehouseByCode(string code);
+        void ImportWarehouses(Warehouse warehouse);
         IEnumerable<Warehouse> GetWarehousesOnLevel(int level);
     }
 }

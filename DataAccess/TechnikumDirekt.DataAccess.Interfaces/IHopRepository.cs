@@ -2,8 +2,8 @@
 
 namespace TechnikumDirekt.DataAccess.Interfaces
 {
-    public interface ITruckRepository : ISearchableRepository<Truck>
+    public interface IHopRepository
     {
-        
+        Hop GetHopByCode(string hopCode);
     }
 }

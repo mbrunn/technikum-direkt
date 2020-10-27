@@ -9,6 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TechnikumDirekt.DataAccess.Interfaces\TechnikumDirekt.DataAccess.Interfaces.csproj" />
       <ProjectReference Include="..\TechnikumDirekt.DataAccess.Models\TechnikumDirekt.DataAccess.Models.csproj" />
     </ItemGroup>
 
