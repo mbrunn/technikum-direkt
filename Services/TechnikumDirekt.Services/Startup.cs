@@ -58,7 +58,7 @@ namespace TechnikumDirekt.Services
                 .AddXmlSerializerFormatters();
 
             services.AddAutoMapper(typeof(Startup));
-
+            
             services
                 .AddSwaggerGen(c =>
                 {
