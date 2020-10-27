@@ -10,7 +10,6 @@
 
 using System.Collections.Generic;
 
-
 namespace TechnikumDirekt.BusinessLogic.Models
 {
     /// <summary>

@@ -37,6 +37,6 @@ namespace TechnikumDirekt.BusinessLogic.Models
         /// </summary>
         /// <value>The date/time the parcel arrived at the hop.</value>
 
-        public DateTime? DateTime { get; set; }
+        public DateTime? HopArrivalTime { get; set; }
     }
 }

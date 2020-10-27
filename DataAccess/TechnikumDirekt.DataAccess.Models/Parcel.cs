@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TechnikumDirekt.DataAccess.Models
@@ -31,6 +32,12 @@ namespace TechnikumDirekt.DataAccess.Models
         }
         
         /// <summary>
+        /// TrackingId of the parcel
+        /// </summary>
+        [Key]
+        public string TrackingId { get; set; }
+        
+        /// <summary>
         ///     State of the parcel.
         /// </summary>
         /// <value>State of the parcel.</value>
@@ -44,12 +51,12 @@ namespace TechnikumDirekt.DataAccess.Models
         /// <summary>
         ///     Gets or Sets Recipient
         /// </summary>
-        public Recipient Recipient { get; set; } //TODO not compatible with database
+        public string RecipientId { get; set; } //TODO createId for Recipient
         
         /// <summary>
         ///     Gets or Sets Sender
         /// </summary>
-        public Recipient Sender { get; set; } //TODO not compatible with database
+        public string SenderId { get; set; } //TODO createId for Recipient
         
         /// <summary>
         ///     Hops visited in the past.
@@ -62,7 +69,5 @@ namespace TechnikumDirekt.DataAccess.Models
         /// </summary>
         /// <value>Hops coming up in the future - their times are estimations.</value>
         public List<HopArrival> FutureHops { get; set; } //TODO not compatible with database
-        
-        public string TrackingId { get; set; }
     }
 }

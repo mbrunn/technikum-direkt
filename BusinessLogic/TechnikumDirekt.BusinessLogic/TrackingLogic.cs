@@ -74,7 +74,7 @@ namespace TechnikumDirekt.BusinessLogic
             parcel.VisitedHops.Add(new HopArrival
             {
                 Code = code,
-                DateTime = DateTime.Now
+                HopArrivalTime = DateTime.Now
             });
         }
 
