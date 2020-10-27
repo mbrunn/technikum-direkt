@@ -9,28 +9,21 @@
  */
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace TechnikumDirekt.DataAccess.Models
 {
     /// <summary>
-    /// This is used to track where a parcel has been or is heading.
+    /// n:m intermediate table for Parcel <-> Hop
     /// </summary>
 
     public class HopArrival
     {
-        /// <summary>
-        ///     Unique CODE of the hop.
-        /// </summary>
-        /// <value>Unique CODE of the hop.</value>
+        public string ParcelTrackingId { get; set; }
+        public Parcel Parcel { get; set; }
 
-        public string Code { get; set; }
-
-        /// <summary>
-        ///     Description of the hop.
-        /// </summary>
-        /// <value>Description of the hop.</value>
-
-        public string Description { get; set; }
+        public string HopCode { get; set; }
+        public Hop Hop { get; set; }
 
         /// <summary>
         ///     The date/time the parcel arrived at the hop.

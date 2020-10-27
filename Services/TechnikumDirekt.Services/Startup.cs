@@ -10,9 +10,11 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using TechnikumDirekt.BusinessLogic;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.DataAccess.Sql;
 
 namespace TechnikumDirekt.Services
 {
@@ -77,6 +79,10 @@ namespace TechnikumDirekt.Services
 
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();
+
+            services.AddDbContext<TechnikumDirektContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
+                    x => x.UseNetTopologySuite()));
             
             //other validators are also added with this command.
             services.AddControllers().AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());

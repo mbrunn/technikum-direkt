@@ -6,6 +6,11 @@ namespace TechnikumDirekt.DataAccess.Models
     public class Recipient
     {
         /// <summary>
+        /// PK
+        /// </summary>
+        public int Id { get; set; }
+        
+        /// <summary>
         ///     Name of person or company.
         /// </summary>
         /// <value>Name of person or company.</value>

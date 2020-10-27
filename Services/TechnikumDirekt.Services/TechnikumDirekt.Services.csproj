@@ -11,6 +11,8 @@
       <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0-preview2" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0-preview2" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="3.1.9" />
       <PackageReference Include="NetTopologySuite" Version="2.1.0" />
       <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="2.0.4" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
@@ -23,6 +25,15 @@
       <ProjectReference Include="..\..\BusinessLogic\TechnikumDirekt.BusinessLogic.Interfaces\TechnikumDirekt.BusinessLogic.Interfaces.csproj" />
       <ProjectReference Include="..\..\BusinessLogic\TechnikumDirekt.BusinessLogic\TechnikumDirekt.BusinessLogic.csproj" />
       <ProjectReference Include="..\..\DataAccess\TechnikumDirekt.DataAccess.Models\TechnikumDirekt.DataAccess.Models.csproj" />
+      <ProjectReference Include="..\..\DataAccess\TechnikumDirekt.DataAccess.Sql\TechnikumDirekt.DataAccess.Sql.csproj" />
       <ProjectReference Include="..\TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="appsettings.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 </Project>

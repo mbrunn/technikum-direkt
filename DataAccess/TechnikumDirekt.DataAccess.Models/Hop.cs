@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using NetTopologySuite.Geometries;
 
 namespace TechnikumDirekt.DataAccess.Models
@@ -16,6 +18,7 @@ namespace TechnikumDirekt.DataAccess.Models
         /// Unique CODE of the hop.
         /// </summary>
         /// <value>Unique CODE of the hop.</value>
+        [Key]
         public string Code { get; set; }
 
         /// <summary>
@@ -40,6 +43,22 @@ namespace TechnikumDirekt.DataAccess.Models
         /// Gets or Sets LocationCoordinates
         /// </summary>
         public Point LocationCoordinates { get; set; }
+        
+        /// <summary>
+        /// Represents HopArrivals for n:m to parcel.
+        /// </summary>
+        public List<HopArrival> HopArrivals { get; set; }
+
+        /// <summary>
+        /// Code of the parent hop.
+        /// </summary>
+        public string ParentCode { get; set; }
+        public Warehouse ParentWarehouse { get; set; }
+        
+        /// <summary>
+        /// Travel time from parent hop to this hop.
+        /// </summary>
+        public int? ParentTraveltimeMins { get; set; }
     }
 
     public enum HopType

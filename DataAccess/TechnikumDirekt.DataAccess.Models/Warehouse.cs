@@ -25,6 +25,6 @@ namespace TechnikumDirekt.DataAccess.Models
         /// Next hops after this warehouse (warehouses or trucks).
         /// </summary>
         /// <value>Next hops after this warehouse (warehouses or trucks).</value>
-        public List<WarehouseNextHops> NextHops { get; set; } //TODO not compatible with database
+        public List<Hop> NextHops { get; set; }
     }
 }
