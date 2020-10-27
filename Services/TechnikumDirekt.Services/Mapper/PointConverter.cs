@@ -16,25 +16,6 @@ namespace TechnikumDirekt.Services.Mapper
         /// <param name="context"></param>
         /// <returns></returns>
         /// <exception cref="NoNullAllowedException"></exception>
-        /*
-         
-         IValueConverter<SvcModels.GeoCoordinate, GeoCoordinate>, IValueConverter<GeoCoordinate, SvcModels.GeoCoordinate>, 
-         
-         public GeoCoordinate Convert(SvcModels.GeoCoordinate sourceMember, ResolutionContext context)
-        {
-            _context = context;
-            if (sourceMember.Lat == null || sourceMember.Lon == null)
-            {
-                throw new NoNullAllowedException();
-            }
-            return new GeoCoordinate((double) sourceMember.Lat, (double) sourceMember.Lon);
-        }
-
-        public SvcModels.GeoCoordinate Convert(GeoCoordinate sourceMember, ResolutionContext context)
-        {
-            _context = context;
-            return new SvcModels.GeoCoordinate(){Lat = sourceMember.Latitude, Lon = sourceMember.Longitude};
-        }*/
 
         Point IValueConverter<SvcModels.GeoCoordinate, Point>.Convert(SvcModels.GeoCoordinate sourceMember, ResolutionContext context)
         {
@@ -44,7 +25,7 @@ namespace TechnikumDirekt.Services.Mapper
                 throw new NoNullAllowedException();
             }
 
-            return new Point((double) sourceMember.Lon, (double) sourceMember.Lat);
+            return new Point((double) sourceMember.Lon, (double) sourceMember.Lat) { SRID = 4326 };
         }
 
         public SvcModels.GeoCoordinate Convert(Point sourceMember, ResolutionContext context)

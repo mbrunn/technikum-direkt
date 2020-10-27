@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
@@ -30,9 +32,12 @@ namespace TechnikumDirekt.BusinessLogic
 
         public IEnumerable<Warehouse> ExportWarehouses()
         {
-            if (Warehouses.Count == 0) throw new TrackingLogicException(); // TODO - use notfound exception
+            var dalWarehouses = _warehouseRepository.GetAll();
+
+            dalWarehouses = dalWarehouses.Where(x => x.Level == 0);
             
-            return Warehouses;
+            var blWarehouse = _mapper.Map<IEnumerable<Warehouse>>(dalWarehouses);
+            return blWarehouse;
         }
 
         public Warehouse GetWarehouse(string code)
@@ -43,14 +48,23 @@ namespace TechnikumDirekt.BusinessLogic
                     options.IncludeRuleSets("code");
                     options.ThrowOnFailures();
                 });
-            return Warehouses.FirstOrDefault(w => w.Code == code);
+
+            var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
+            if (dalWarehouse == null)
+            {
+                throw new TrackingLogicException("Hüfe, i hob kan Code gfunden!"); //TODO: DO NOT CHANGE
+            }
+            
+            var blWarehouse = _mapper.Map<BusinessLogic.Models.Warehouse>(dalWarehouse);
+            return blWarehouse;
         }
 
         public void ImportWarehouses(Warehouse warehouse)
         {
             ValidateWarehouseTree(warehouse);
             _warehouseRepository.ClearWarehouses();
-            _warehouseRepository.ImportWarehouses(_mapper.Map<DataAccess.Models.Warehouse>(warehouse));
+            var dalWh = _mapper.Map<DataAccess.Models.Warehouse>(warehouse);
+            _warehouseRepository.ImportWarehouses(dalWh);
         }
         
         private void ValidateWarehouseTree(Hop node)

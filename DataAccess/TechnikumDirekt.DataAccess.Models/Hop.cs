@@ -52,7 +52,7 @@ namespace TechnikumDirekt.DataAccess.Models
         /// <summary>
         /// Code of the parent hop.
         /// </summary>
-        public string ParentCode { get; set; }
+        public string ParentWarehouseCode { get; set; }
         public Warehouse ParentWarehouse { get; set; }
         
         /// <summary>

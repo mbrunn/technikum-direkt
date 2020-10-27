@@ -41,9 +41,6 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                     b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ParentCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("ParentTraveltimeMins")
                         .HasColumnType("int");
 
