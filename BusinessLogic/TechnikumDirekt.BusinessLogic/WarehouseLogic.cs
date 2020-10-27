@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
+using TechnikumDirekt.DataAccess.Interfaces;
 using Warehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
 
 namespace TechnikumDirekt.BusinessLogic
@@ -14,11 +16,16 @@ namespace TechnikumDirekt.BusinessLogic
 
         private readonly IValidator<Warehouse> _warehouseValidator;
         private readonly IValidator<Hop> _hopValidator;
+        private readonly IWarehouseRepository _warehouseRepository;
+        private readonly IMapper _mapper;
 
-        public WarehouseLogic(IValidator<Warehouse> warehouseValidator, IValidator<Hop> hopValidator)
+        public WarehouseLogic(IValidator<Warehouse> warehouseValidator, IValidator<Hop> hopValidator, IWarehouseRepository warehouseRepository, 
+            IMapper mapper)
         {
             _warehouseValidator = warehouseValidator;
             _hopValidator = hopValidator;
+            _warehouseRepository = warehouseRepository;
+            _mapper = mapper;
         }
 
         public IEnumerable<Warehouse> ExportWarehouses()
@@ -42,7 +49,8 @@ namespace TechnikumDirekt.BusinessLogic
         public void ImportWarehouses(Warehouse warehouse)
         {
             ValidateWarehouseTree(warehouse);
-            Warehouses.Add(warehouse);
+            _warehouseRepository.ClearWarehouses();
+            _warehouseRepository.ImportWarehouses(_mapper.Map<DataAccess.Models.Warehouse>(warehouse));
         }
         
         private void ValidateWarehouseTree(Hop node)

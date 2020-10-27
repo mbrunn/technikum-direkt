@@ -6,6 +6,7 @@ using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
+using TechnikumDirekt.DataAccess.Interfaces;
 using HopArrival = TechnikumDirekt.BusinessLogic.Models.HopArrival;
 using Parcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
 using Recipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
@@ -18,12 +19,16 @@ namespace TechnikumDirekt.BusinessLogic
         private readonly IValidator<Recipient> _recipientValidator;
         private readonly IValidator<HopArrival> _hopArrivalValidator;
         private readonly IValidator<Hop> _hopCodeValidator;
-        public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator, IValidator<HopArrival> hopArrivalValidator, IValidator <Hop> hopCodeValidator)
+
+        private readonly IHopRepository _hopRepository;
+        public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator, IValidator<HopArrival> hopArrivalValidator, 
+            IValidator <Hop> hopCodeValidator, IHopRepository hopRepository)
         {
             _parcelValidator = parcelValidator;
             _recipientValidator = recipientValidator;
             _hopArrivalValidator = hopArrivalValidator;
             _hopCodeValidator = hopCodeValidator;
+            _hopRepository = hopRepository;
         }
         
         private const int IdLength = 9;
@@ -66,10 +71,10 @@ namespace TechnikumDirekt.BusinessLogic
                 });
         
             var parcel = _parcels.Find(p => p.TrackingId == trackingId);
-            var warehouse = WarehouseLogic.Warehouses.Find(w => w.Code == code);
+            var hop = _hopRepository.GetHopByCode(code);
             
             if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
-            if (warehouse == null) throw new TrackingLogicException($"Warehouse for code {code} not found");
+            if (hop == null) throw new TrackingLogicException($"Warehouse for code {code} not found");
             
             parcel.VisitedHops.Add(new HopArrival
             {

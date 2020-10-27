@@ -36,7 +36,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
 
-        #region ExportWarehouses Tests
+        /*#region ExportWarehouses Tests
 
         [Test]
         public void ExportWarehouses_Throws_WithEmptyWarehouseList()
@@ -101,6 +101,6 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             Assert.Throws<ValidationException>(() => wl.GetWarehouse(InvalidHopCode));
         }
 
-        #endregion
+        #endregion*/
     }
 }

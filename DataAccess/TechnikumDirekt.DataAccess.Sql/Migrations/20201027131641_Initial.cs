@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 
-namespace technikumDirekt.Services.Migrations
+namespace TechnikumDirekt.DataAccess.Sql.Migrations
 {
     public partial class Initial : Migration
     {
@@ -90,7 +90,7 @@ namespace technikumDirekt.Services.Migrations
                 {
                     ParcelTrackingId = table.Column<string>(nullable: false),
                     HopCode = table.Column<string>(nullable: false),
-                    DateTime = table.Column<DateTime>(nullable: true)
+                    HopArrivalTime = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {

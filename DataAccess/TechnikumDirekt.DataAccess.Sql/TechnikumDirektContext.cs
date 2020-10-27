@@ -30,6 +30,12 @@ namespace TechnikumDirekt.DataAccess.Sql
                 .HasOne(ha => ha.Hop)
                 .WithMany(h => h.HopArrivals)
                 .HasForeignKey(ha => ha.HopCode);
+
+            /*modelBuilder.Entity<Hop>()
+                .HasOne(h => h.ParentWarehouse)
+                .WithMany(pw => pw.NextHops)
+                .HasForeignKey(h => h.ParentCode)
+                .OnDelete(DeleteBehavior.Cascade);*/
         }
     }
 }

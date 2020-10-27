@@ -3,16 +3,18 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using TechnikumDirekt.DataAccess.Sql;
 
-namespace technikumDirekt.Services.Migrations
+namespace TechnikumDirekt.DataAccess.Sql.Migrations
 {
     [DbContext(typeof(TechnikumDirektContext))]
-    partial class TechnikumDirektContextModelSnapshot : ModelSnapshot
+    [Migration("20201027131641_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,7 +72,7 @@ namespace technikumDirekt.Services.Migrations
                     b.Property<string>("HopCode")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("DateTime")
+                    b.Property<DateTime?>("HopArrivalTime")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ParcelTrackingId", "HopCode");

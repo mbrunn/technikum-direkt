@@ -54,7 +54,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             };
         }
         
-        #region ReportParcelDelivery Tests
+        /*#region ReportParcelDelivery Tests
 
         [Test]
         public void ReportParcelDelivery_DoesNotThrow_WithValidTrackingId()
@@ -304,6 +304,6 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             Assert.Throws<ValidationException>(() => tl.TransitionParcelFromPartner(parcel, ValidTrackingNumber));
         }
 
-        #endregion
+        #endregion*/
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using TechnikumDirekt.BusinessLogic;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql;
 
 namespace TechnikumDirekt.Services
@@ -77,12 +78,19 @@ namespace TechnikumDirekt.Services
                     c.CustomSchemaIds(type => type.FullName);
                 });
 
+            services.AddTransient<IHopRepository, HopRepository>();
+            services.AddTransient<IWarehouseRepository, WarehouseRepository>();
+
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();
 
             services.AddDbContext<TechnikumDirektContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
-                    x => x.UseNetTopologySuite()));
+                    x =>
+                    {
+                        x.UseNetTopologySuite();
+                        x.MigrationsAssembly("TechnikumDirekt.DataAccess.Sql");
+                    }));
             
             //other validators are also added with this command.
             services.AddControllers().AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
