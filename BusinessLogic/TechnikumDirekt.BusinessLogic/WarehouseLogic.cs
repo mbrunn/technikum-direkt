@@ -9,6 +9,7 @@ using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
 using Warehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
+using DalModels = TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.BusinessLogic
 {
@@ -30,13 +31,17 @@ namespace TechnikumDirekt.BusinessLogic
             _mapper = mapper;
         }
 
-        public IEnumerable<Warehouse> ExportWarehouses()
+        public Warehouse ExportWarehouses()
         {
-            var dalWarehouses = _warehouseRepository.GetAll();
+            var dalHops = _warehouseRepository.GetAll();
+            DalModels.Warehouse rootWarehouse = null;
 
-            dalWarehouses = dalWarehouses.Where(x => x.Level == 0);
-            
-            var blWarehouse = _mapper.Map<IEnumerable<Warehouse>>(dalWarehouses);
+            foreach (var wh in dalHops)
+            {
+                if (wh is DataAccess.Models.Warehouse warehouse && warehouse.Level == 0) rootWarehouse = warehouse;
+            }
+
+            var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
             return blWarehouse;
         }
 

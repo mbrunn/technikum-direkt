@@ -11,6 +11,7 @@ using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TechnikumDirekt.BusinessLogic;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
@@ -55,6 +56,7 @@ namespace TechnikumDirekt.Services
                 {
                     opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     opts.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+                    opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 })
                 .AddXmlSerializerFormatters();
 

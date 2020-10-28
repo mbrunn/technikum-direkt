@@ -45,9 +45,9 @@ namespace TechnikumDirekt.Services.Controllers
             //Exceptionhandling for statusCode 400.
             try
             {
-                var exportWarehouses = _blWarehouseLogic.ExportWarehouses().ToList();
+                var exportWarehouse = _blWarehouseLogic.ExportWarehouses();
 
-                if (!exportWarehouses.Any())
+                if (exportWarehouse == null)
                 {
                     return NotFound(StatusCode(404, new Error
                     {
@@ -55,19 +55,7 @@ namespace TechnikumDirekt.Services.Controllers
                     }));
                 }
 
-                var whResponseList = new List<Warehouse>();
-                Warehouse svcWarehouses;
-
-                foreach (var wh in exportWarehouses)
-                {
-                    svcWarehouses = _mapper.Map<Warehouse>(wh);
-                    if (svcWarehouses != null)
-                    {
-                        whResponseList.Add(svcWarehouses);
-                    }
-                }
-
-                return Ok(whResponseList);
+                return Ok(_mapper.Map<Warehouse>(exportWarehouse));
             }
             catch (TrackingLogicException)
             {

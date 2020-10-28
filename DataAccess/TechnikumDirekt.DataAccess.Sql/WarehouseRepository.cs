@@ -15,9 +15,9 @@ namespace TechnikumDirekt.DataAccess.Sql
             _dbContext = dbContext;
         }
         
-        public IEnumerable<Warehouse> GetAll()
+        public IEnumerable<Hop> GetAll()
         {
-            var wh = _dbContext.Warehouses.ToList();
+            var wh = _dbContext.Hops.ToList();
             return wh;
         }
 

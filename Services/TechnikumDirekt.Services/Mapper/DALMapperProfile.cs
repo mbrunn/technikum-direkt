@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using AutoMapper;
 using Microsoft.AspNetCore.Routing.Constraints;
+using TechnikumDirekt.Services.Models;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -30,22 +32,42 @@ namespace TechnikumDirekt.Services.Mapper
                     {
                         dest.NextHops[i].ParentTraveltimeMins = src.NextHops[i].TraveltimeMins;
                     }
-                }).ReverseMap();
+                });
 
             CreateMap<DalModels.Warehouse, BlModels.Warehouse>()
-                .ForMember(dest => dest.NextHops,
-                    dest =>
-                        dest.MapFrom(src => src.NextHops));
-
-            CreateMap<DalModels.Warehouse, BlModels.WarehouseNextHops>()
                 .AfterMap((src, dest, context) =>
                 {
-                    dest = new BlModels.WarehouseNextHops()
+                    for (int i = 0; i < src.NextHops.Count; i++)
                     {
-                        //TraveltimeMins = src.NextHops.Find(x => x.Code == dest.Hop.Code).ParentTraveltimeMins
-                        //WTF dude
-                    };
+                        dest.NextHops[i].TraveltimeMins = src.NextHops[i].ParentTraveltimeMins;
+                    }
                 });
+
+            CreateMap<DalModels.Hop, BlModels.WarehouseNextHops>()
+                .ForMember(dest => dest.Hop,
+                    opt => opt.MapFrom(src => src))
+                .Include<DalModels.Warehouse, BlModels.WarehouseNextHops>()
+                .Include<DalModels.Truck, BlModels.WarehouseNextHops>()
+                .Include<DalModels.Transferwarehouse, BlModels.WarehouseNextHops>();
+
+            CreateMap<DalModels.Warehouse, BlModels.WarehouseNextHops>()
+                .ForMember(dest => dest.Hop,
+                    opt => opt.MapFrom(src => src));
+            CreateMap<DalModels.Truck, BlModels.WarehouseNextHops>()
+                .ForMember(dest => dest.Hop,
+                    opt => opt.MapFrom(src => src));
+            CreateMap<DalModels.Transferwarehouse, BlModels.WarehouseNextHops>()
+                .ForMember(dest => dest.Hop,
+                    opt => opt.MapFrom(src => src));
+
+            CreateMap<DalModels.Warehouse, BlModels.Hop>()
+                .As<BlModels.Warehouse>();
+            
+            CreateMap<DalModels.Truck, BlModels.Hop>()
+                .As<BlModels.Truck>();
+            
+            CreateMap<DalModels.Transferwarehouse, BlModels.Hop>()
+                .As<BlModels.Transferwarehouse>();
 
             CreateMap<BlModels.Truck, DalModels.Truck>().ReverseMap();
             CreateMap<BlModels.Transferwarehouse, DalModels.Transferwarehouse>().ReverseMap();

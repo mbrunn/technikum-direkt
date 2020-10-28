@@ -50,7 +50,7 @@ namespace TechnikumDirekt.Services.Tests
             _warehouses.Add(_validWarehouse);
             var mockWarehouseLogic = new Mock<IWarehouseLogic>();
             // Setup - ExportWarehouses
-            mockWarehouseLogic.Setup(m => m.ExportWarehouses()).Returns(_warehouses);
+            mockWarehouseLogic.Setup(m => m.ExportWarehouses()).Returns(_validWarehouse);
             mockWarehouseLogic.Setup(m => m.GetWarehouse(ValidHopCode)).Returns(_validWarehouse);
             mockWarehouseLogic.Setup(m => m.GetWarehouse(InvalidHopCode)).Throws(new ValidationException(""));
             mockWarehouseLogic.Setup(m => m.GetWarehouse(NotfoundHopCode)).Throws<TrackingLogicException>();
