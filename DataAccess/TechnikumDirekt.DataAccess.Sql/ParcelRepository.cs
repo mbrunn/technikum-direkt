@@ -5,29 +5,46 @@ namespace TechnikumDirekt.DataAccess.Sql
 {
     public class ParcelRepository : IParcelRepository
     {
+        private readonly TechnikumDirektContext _dbContext;
+
+        public ParcelRepository(TechnikumDirektContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        
         public Parcel GetByTrackingId(string trackingId)
         {
-            throw new System.NotImplementedException();
+            return _dbContext.Parcels.Find(trackingId);
         }
 
         public void Update(Parcel parcel)
         {
-            throw new System.NotImplementedException();
+            _dbContext.Parcels.Update(parcel);
+            _dbContext.SaveChanges();
         }
 
         public string Add(Parcel parcel)
         {
-            throw new System.NotImplementedException();
+            _dbContext.Parcels.Add(parcel);
+
+            _dbContext.HopArrivals.AddRange(parcel.HopArrivals);
+            
+            _dbContext.SaveChanges();
+            
+            return parcel.TrackingId;
         }
 
         public void Delete(Parcel parcel)
         {
-            throw new System.NotImplementedException();
+            _dbContext.Parcels.Remove(parcel);
+            _dbContext.SaveChanges();
         }
 
         public void Delete(string trackingId)
         {
-            throw new System.NotImplementedException();
+            var parcel = GetByTrackingId(trackingId);
+            _dbContext.Remove(parcel);
+            _dbContext.SaveChanges();
         }
     }
 }

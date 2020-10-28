@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
@@ -34,6 +31,7 @@ namespace TechnikumDirekt.BusinessLogic
         public Warehouse ExportWarehouses()
         {
             var dalHops = _warehouseRepository.GetAll();
+            
             DalModels.Warehouse rootWarehouse = null;
 
             foreach (var wh in dalHops)
@@ -60,7 +58,7 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new TrackingLogicException("Hüfe, i hob kan Code gfunden!"); //TODO: DO NOT CHANGE
             }
             
-            var blWarehouse = _mapper.Map<BusinessLogic.Models.Warehouse>(dalWarehouse);
+            var blWarehouse = _mapper.Map<Warehouse>(dalWarehouse);
             return blWarehouse;
         }
 

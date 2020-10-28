@@ -82,6 +82,7 @@ namespace TechnikumDirekt.Services
 
             services.AddTransient<IHopRepository, HopRepository>();
             services.AddTransient<IWarehouseRepository, WarehouseRepository>();
+            services.AddTransient<IParcelRepository, ParcelRepository>();
 
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();

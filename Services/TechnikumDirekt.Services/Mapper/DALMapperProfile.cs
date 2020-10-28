@@ -72,7 +72,16 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<BlModels.Truck, DalModels.Truck>().ReverseMap();
             CreateMap<BlModels.Transferwarehouse, DalModels.Transferwarehouse>().ReverseMap();
             CreateMap<BlModels.HopArrival, DalModels.HopArrival>().ReverseMap();
+            
             CreateMap<BlModels.Parcel, DalModels.Parcel>().ReverseMap();
+
+            CreateMap<BlModels.Parcel, DalModels.Parcel>()
+                .AfterMap((src, dest, context) =>
+                    {
+                        
+                    }
+                );
+            
             CreateMap<BlModels.Recipient, DalModels.Recipient>().ReverseMap();
         }
     }
