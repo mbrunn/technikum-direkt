@@ -12,8 +12,6 @@ namespace TechnikumDirekt.BusinessLogic
 {
     public class WarehouseLogic : IWarehouseLogic
     {
-        public static List<Warehouse> Warehouses = new List<Warehouse>();
-
         private readonly IValidator<Warehouse> _warehouseValidator;
         private readonly IValidator<Hop> _hopValidator;
         private readonly IWarehouseRepository _warehouseRepository;
@@ -38,6 +36,8 @@ namespace TechnikumDirekt.BusinessLogic
             {
                 if (wh is DataAccess.Models.Warehouse warehouse && warehouse.Level == 0) rootWarehouse = warehouse;
             }
+            
+            if (rootWarehouse == null) throw new TrackingLogicException("No warehouses imported.");
 
             var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
             return blWarehouse;

@@ -87,11 +87,13 @@ namespace TechnikumDirekt.BusinessLogic
             if (hop == null) throw new TrackingLogicException($"Warehouse for code {code} not found");
 
             var hopToEdit = parcel.HopArrivals.Find(x => x.HopCode == code);
+            if (hopToEdit == null) throw new TrackingLogicException($"Hop with code {code} is not part of this parcel's route.");
             parcel.HopArrivals.Remove(hopToEdit);
             
             hopToEdit.HopArrivalTime = DateTime.Now;
             
             parcel.HopArrivals.Add(hopToEdit);
+            _parcelRepository.Update(parcel);
         }
         
         public string SubmitParcel(Parcel parcel)
@@ -135,10 +137,6 @@ namespace TechnikumDirekt.BusinessLogic
                 catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
                 {
                     //this exception is thrown if trackingId already exists.
-                }
-                catch (Exception e)
-                {
-                    
                 }
             }
         }

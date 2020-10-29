@@ -1,4 +1,6 @@
-﻿using TechnikumDirekt.DataAccess.Interfaces;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.DataAccess.Sql
@@ -14,7 +16,9 @@ namespace TechnikumDirekt.DataAccess.Sql
         
         public Parcel GetByTrackingId(string trackingId)
         {
-            return _dbContext.Parcels.Find(trackingId);
+            return _dbContext.Parcels
+                .Include(p => p.HopArrivals)
+                .First(p => p.TrackingId == trackingId);
         }
 
         public void Update(Parcel parcel)

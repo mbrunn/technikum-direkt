@@ -28,6 +28,8 @@ namespace TechnikumDirekt.Services.Mapper
                         dest.MapFrom(wh => wh.Level))
                 .AfterMap((src, dest, context) =>
                 {
+                    if (src?.NextHops == null) return;
+                    
                     for (int i = 0; i < src.NextHops.Count; i++)
                     {
                         dest.NextHops[i].ParentTraveltimeMins = src.NextHops[i].TraveltimeMins;
@@ -37,6 +39,8 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<DalModels.Warehouse, BlModels.Warehouse>()
                 .AfterMap((src, dest, context) =>
                 {
+                    if (src.NextHops == null) return;
+                    
                     for (int i = 0; i < src.NextHops.Count; i++)
                     {
                         dest.NextHops[i].TraveltimeMins = src.NextHops[i].ParentTraveltimeMins;
@@ -71,16 +75,20 @@ namespace TechnikumDirekt.Services.Mapper
 
             CreateMap<BlModels.Truck, DalModels.Truck>().ReverseMap();
             CreateMap<BlModels.Transferwarehouse, DalModels.Transferwarehouse>().ReverseMap();
-            CreateMap<BlModels.HopArrival, DalModels.HopArrival>().ReverseMap();
+            CreateMap<BlModels.HopArrival, DalModels.HopArrival>()
+                .ForMember(dest => dest.HopCode,
+                    opt => opt.MapFrom(src => src.Code))
+                .ReverseMap();
             
             CreateMap<BlModels.Parcel, DalModels.Parcel>().ReverseMap();
 
             CreateMap<BlModels.Parcel, DalModels.Parcel>()
-                .AfterMap((src, dest, context) =>
-                    {
-                        
-                    }
-                );
+                .BeforeMap((src, dest) =>
+                {
+                    src.VisitedHops.AddRange(src.FutureHops);
+                })
+                .ForMember(dest => dest.HopArrivals,
+                    opt => opt.MapFrom(src => src.VisitedHops));
             
             CreateMap<BlModels.Recipient, DalModels.Recipient>().ReverseMap();
         }
