@@ -34,7 +34,7 @@ namespace TechnikumDirekt.BusinessLogic
 
             foreach (var wh in dalHops)
             {
-                if (wh is DataAccess.Models.Warehouse warehouse && warehouse.Level == 0) rootWarehouse = warehouse;
+                if (wh is DalModels.Warehouse warehouse && warehouse.Level == 0) rootWarehouse = warehouse;
             }
             
             if (rootWarehouse == null) throw new TrackingLogicException("No warehouses imported.");
@@ -66,7 +66,7 @@ namespace TechnikumDirekt.BusinessLogic
         {
             ValidateWarehouseTree(warehouse);
             _warehouseRepository.ClearWarehouses();
-            var dalWh = _mapper.Map<DataAccess.Models.Warehouse>(warehouse);
+            var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
             _warehouseRepository.ImportWarehouses(dalWh);
         }
         

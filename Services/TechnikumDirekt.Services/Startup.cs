@@ -87,7 +87,7 @@ namespace TechnikumDirekt.Services
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();
 
-            services.AddDbContext<TechnikumDirektContext>(options => 
+            services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
                     x =>
                     {

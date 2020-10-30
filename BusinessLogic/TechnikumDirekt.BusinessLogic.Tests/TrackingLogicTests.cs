@@ -39,7 +39,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
         private const string NotfoundHopCode = "ABCD0000";
-
+        
         private ITrackingLogic _trackingLogic;
 
         [OneTimeSetUp]

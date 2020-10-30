@@ -7,9 +7,9 @@ namespace TechnikumDirekt.DataAccess.Sql
 {
     public class ParcelRepository : IParcelRepository
     {
-        private readonly TechnikumDirektContext _dbContext;
+        private readonly ITechnikumDirektContext _dbContext;
 
-        public ParcelRepository(TechnikumDirektContext dbContext)
+        public ParcelRepository(ITechnikumDirektContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -18,7 +18,7 @@ namespace TechnikumDirekt.DataAccess.Sql
         {
             return _dbContext.Parcels
                 .Include(p => p.HopArrivals)
-                .First(p => p.TrackingId == trackingId);
+                .FirstOrDefault(p => p.TrackingId == trackingId);
         }
 
         public void Update(Parcel parcel)
@@ -26,7 +26,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             _dbContext.Parcels.Update(parcel);
             _dbContext.SaveChanges();
         }
-
+        
         public string Add(Parcel parcel)
         {
             _dbContext.Parcels.Add(parcel);

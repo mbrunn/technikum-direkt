@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.DataAccess.Sql
 {
-    public class TechnikumDirektContext: DbContext
+    public class TechnikumDirektContext: DbContext, ITechnikumDirektContext
     {
         public TechnikumDirektContext(DbContextOptions<TechnikumDirektContext> options): base(options) {} 
         
@@ -14,6 +17,8 @@ namespace TechnikumDirekt.DataAccess.Sql
         public DbSet<Transferwarehouse> Transferwarehouses { get; set; } 
         public DbSet<Truck> Trucks { get; set; } 
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DatabaseFacade Database { get; set; }
+        public IModel Model { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -114,7 +114,7 @@ namespace TechnikumDirekt.BusinessLogic
             {
                 new HopArrival()
                 {
-                    HopArrivalTime = null,
+                    HopArrivalTime = null,    
                     Code = "WENB01",
                     Description = "Warehouse Level 1 - Wien"
                 },

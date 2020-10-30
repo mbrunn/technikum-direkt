@@ -8,9 +8,9 @@ namespace TechnikumDirekt.DataAccess.Sql
 {
     public class WarehouseRepository : IWarehouseRepository
     {
-        private readonly TechnikumDirektContext _dbContext;
+        private readonly ITechnikumDirektContext _dbContext;
         
-        public WarehouseRepository(TechnikumDirektContext dbContext)
+        public WarehouseRepository(ITechnikumDirektContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -41,11 +41,6 @@ namespace TechnikumDirekt.DataAccess.Sql
         public IEnumerable<Warehouse> GetWarehousesOnLevel(int level)
         {
             throw new System.NotImplementedException();
-        }
-
-        private void AddParentWarehouseCode(Hop hop)
-        {
-           
         }
     }
 }

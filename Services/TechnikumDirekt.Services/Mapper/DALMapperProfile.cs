@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
+﻿using System.Linq;
 using AutoMapper;
-using Microsoft.AspNetCore.Routing.Constraints;
-using TechnikumDirekt.Services.Models;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -49,20 +44,24 @@ namespace TechnikumDirekt.Services.Mapper
 
             CreateMap<DalModels.Hop, BlModels.WarehouseNextHops>()
                 .ForMember(dest => dest.Hop,
-                    opt => opt.MapFrom(src => src))
+                    opt => 
+                        opt.MapFrom(src => src))
                 .Include<DalModels.Warehouse, BlModels.WarehouseNextHops>()
                 .Include<DalModels.Truck, BlModels.WarehouseNextHops>()
                 .Include<DalModels.Transferwarehouse, BlModels.WarehouseNextHops>();
 
             CreateMap<DalModels.Warehouse, BlModels.WarehouseNextHops>()
                 .ForMember(dest => dest.Hop,
-                    opt => opt.MapFrom(src => src));
+                    opt => 
+                        opt.MapFrom(src => src));
             CreateMap<DalModels.Truck, BlModels.WarehouseNextHops>()
                 .ForMember(dest => dest.Hop,
-                    opt => opt.MapFrom(src => src));
+                    opt => 
+                        opt.MapFrom(src => src));
             CreateMap<DalModels.Transferwarehouse, BlModels.WarehouseNextHops>()
                 .ForMember(dest => dest.Hop,
-                    opt => opt.MapFrom(src => src));
+                    opt => 
+                        opt.MapFrom(src => src));
 
             CreateMap<DalModels.Warehouse, BlModels.Hop>()
                 .As<BlModels.Warehouse>();
