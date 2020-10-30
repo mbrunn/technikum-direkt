@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="1.3.0" />
+        <PackageReference Include="FluentValidation" Version="9.2.2" />
+        <PackageReference Include="Moq" Version="4.14.7" />
+        <PackageReference Include="NetTopologySuite" Version="2.1.0" />
+        <PackageReference Include="nunit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Services\TechnikumDirekt.Services\TechnikumDirekt.Services.csproj" />
+      <ProjectReference Include="..\TechnikumDirekt.BusinessLogic.Models\TechnikumDirekt.BusinessLogic.Models.csproj" />
+      <ProjectReference Include="..\TechnikumDirekt.BusinessLogic\TechnikumDirekt.BusinessLogic.csproj" />
+    </ItemGroup>
+
+</Project>

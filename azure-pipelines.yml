@@ -38,7 +38,8 @@ steps:
   continueOnError: true
 
 - script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
-
+  displayName: 'Run ReportGenerator tool'
+  
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage'
   inputs:
