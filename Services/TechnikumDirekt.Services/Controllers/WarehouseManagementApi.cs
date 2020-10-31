@@ -64,9 +64,12 @@ namespace TechnikumDirekt.Services.Controllers
                     ErrorMessage = "No hierarchy loaded yet."
                 }));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
+                return BadRequest(StatusCode(400, new List<Error> {
+                    new Error{ ErrorMessage = "An error occured loading."},
+                    new Error{ErrorMessage = e.Message}
+                }));
             }
         }
 
@@ -125,12 +128,13 @@ namespace TechnikumDirekt.Services.Controllers
                 _blWarehouseLogic.ImportWarehouses(blWh);
                 return Ok(body);
             }
-            catch 
+            catch (Exception e)
             {
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(StatusCode(400, new List<Error>
                 {
-                    ErrorMessage = "The operation failed due to an error."
-                }));  
+                   new Error{ErrorMessage = "The operation failed due to an error."},
+                   new Error{ErrorMessage = e.Message}
+                }));
             }
         }
     }
