@@ -17,6 +17,8 @@ steps:
     command: build
     projects: '**/*.csproj'
 
+- script: dotnet ef migrations script --output $(Build.ArtifactStagingDirectory)\SQL\migrationScript --context TechnikumDirektContext  --idempotent
+
 - task: DotNetCoreCLI@2
   displayName: Publish (create)
   inputs:
