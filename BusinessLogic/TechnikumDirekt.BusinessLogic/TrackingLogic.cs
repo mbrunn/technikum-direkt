@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AutoMapper;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
+using TechnikumDirekt.DataAccess.Interfaces;
 using HopArrival = TechnikumDirekt.BusinessLogic.Models.HopArrival;
 using Parcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
 using Recipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
+using DalModels = TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.BusinessLogic
 {
@@ -18,20 +21,30 @@ namespace TechnikumDirekt.BusinessLogic
         private readonly IValidator<Recipient> _recipientValidator;
         private readonly IValidator<HopArrival> _hopArrivalValidator;
         private readonly IValidator<Hop> _hopCodeValidator;
-        public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator, IValidator<HopArrival> hopArrivalValidator, IValidator <Hop> hopCodeValidator)
+        
+        private readonly IMapper _mapper;
+
+        private readonly IHopRepository _hopRepository;
+        private readonly IParcelRepository _parcelRepository;
+        
+        public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator, IValidator<HopArrival> hopArrivalValidator, 
+            IValidator <Hop> hopCodeValidator, IHopRepository hopRepository, IParcelRepository parcelRepository, IMapper mapper)
         {
             _parcelValidator = parcelValidator;
             _recipientValidator = recipientValidator;
             _hopArrivalValidator = hopArrivalValidator;
             _hopCodeValidator = hopCodeValidator;
+            _hopRepository = hopRepository;
+            _parcelRepository = parcelRepository;
+            _mapper = mapper;
         }
         
         private const int IdLength = 9;
         
-        private readonly List<Parcel> _parcels = new List<Parcel>
+        /*private readonly List<Parcel> _parcels = new List<Parcel>
         {
             new Parcel { TrackingId = "ABCD12345", State = Parcel.StateEnum.InTruckDeliveryEnum}
-        };
+        };*/
         
         public void ReportParcelDelivery(string trackingId)
         {
@@ -41,12 +54,14 @@ namespace TechnikumDirekt.BusinessLogic
                     options.IncludeRuleSets("trackingId");
                     options.ThrowOnFailures();
                 });
-            
-            var parcel = _parcels.Find(p => p.TrackingId == trackingId);
-            
-            if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found"); // TODO - use notfound exception
 
-            parcel.State = Parcel.StateEnum.DeliveredEnum;
+            var parcel = _parcelRepository.GetByTrackingId(trackingId);
+
+            if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
+            
+            //TODO - Check if Parcel is already delivered ?
+            parcel.State = DalModels.Parcel.StateEnum.DeliveredEnum;
+            _parcelRepository.Update(parcel);
         }
 
         public void ReportParcelHop(string trackingId, string code)
@@ -64,31 +79,68 @@ namespace TechnikumDirekt.BusinessLogic
                     options.IncludeRuleSets("trackingId");
                     options.ThrowOnFailures();
                 });
-        
-            var parcel = _parcels.Find(p => p.TrackingId == trackingId);
-            var warehouse = WarehouseLogic.Warehouses.Find(w => w.Code == code);
+
+            var parcel = _parcelRepository.GetByTrackingId(trackingId);
+            var hop = _hopRepository.GetHopByCode(code);
             
             if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
-            if (warehouse == null) throw new TrackingLogicException($"Warehouse for code {code} not found");
-            
-            parcel.VisitedHops.Add(new HopArrival
-            {
-                Code = code,
-                DateTime = DateTime.Now
-            });
-        }
+            if (hop == null) throw new TrackingLogicException($"Warehouse for code {code} not found");
 
-        //TODO: return Parcel to extract Tracking Info ?
-        public Parcel SubmitParcel(Parcel parcel)
+            var hopToEdit = parcel.HopArrivals.Find(x => x.HopCode == code);
+            if (hopToEdit == null) throw new TrackingLogicException($"Hop with code {code} is not part of this parcel's route.");
+            
+            parcel.HopArrivals.Remove(hopToEdit);
+            
+            hopToEdit.HopArrivalTime = DateTime.Now;
+
+            parcel.HopArrivals.Add(hopToEdit);
+            
+            _parcelRepository.Update(parcel);
+        }
+        
+        public string SubmitParcel(Parcel parcel)
         {
             ValidateParcel(parcel);
-            do
-            {
-                parcel.TrackingId = GenerateUniqueId(IdLength);
-            } while (_parcels.Find(x => x.TrackingId == parcel.TrackingId) != null);
             
-            _parcels.Add(parcel);
-            return parcel;
+            parcel.VisitedHops = new List<HopArrival>()
+            {
+                new HopArrival()
+                {
+                    HopArrivalTime = DateTime.Now,
+                    Code = "WSTB02",
+                    Description = "Warehouse Level 2 - Wien Stadt"
+                }
+            };
+            
+            parcel.FutureHops = new List<HopArrival>()
+            {
+                new HopArrival()
+                {
+                    HopArrivalTime = null,    
+                    Code = "WENB01",
+                    Description = "Warehouse Level 1 - Wien"
+                },
+                new HopArrival()
+                {
+                    HopArrivalTime = null,
+                    Code = "WTTA087",
+                    Description = "Truck in Süssenbrunn"
+                }
+            };
+            
+            while(true)
+            {
+                try
+                {
+                    parcel.TrackingId = GenerateUniqueId(IdLength);
+                    _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
+                    return parcel.TrackingId;
+                }
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+                {
+                    //this exception is thrown if trackingId already exists.
+                }
+            }
         }
 
         public Parcel TrackParcel(string trackingId)
@@ -99,8 +151,8 @@ namespace TechnikumDirekt.BusinessLogic
                     options.IncludeRuleSets("trackingId");
                     options.ThrowOnFailures();
                 });
-            
-            var parcel = _parcels.Find(p => p.TrackingId == trackingId);
+
+            var parcel = _mapper.Map<Parcel>(_parcelRepository.GetByTrackingId(trackingId));
             
             if (parcel == null) throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
 
@@ -117,11 +169,12 @@ namespace TechnikumDirekt.BusinessLogic
                 });
             _parcelValidator.ValidateAndThrow(parcel);
             
-            if (_parcels.Find(p => p.TrackingId == trackingId) != null) throw new TrackingLogicException($"A parcel with tracking id {trackingId} has already been registered");
+            
+            
+            if (_parcelRepository.GetByTrackingId(trackingId) != null) throw new TrackingLogicException($"A parcel with tracking id {trackingId} has already been registered");
             
             parcel.TrackingId = trackingId;
-
-            _parcels.Add(parcel);
+            _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
         }
         
         //Generator to generate Base 32 based ID with built in GUID as random generator

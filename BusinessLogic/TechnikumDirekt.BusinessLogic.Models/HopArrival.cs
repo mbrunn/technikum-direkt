@@ -13,6 +13,7 @@ using System;
 namespace TechnikumDirekt.BusinessLogic.Models
 {
     /// <summary>
+    /// This is used to track where a parcel has been or is heading.
     /// </summary>
 
     public class HopArrival
@@ -36,6 +37,6 @@ namespace TechnikumDirekt.BusinessLogic.Models
         /// </summary>
         /// <value>The date/time the parcel arrived at the hop.</value>
 
-        public DateTime? DateTime { get; set; }
+        public DateTime? HopArrivalTime { get; set; }
     }
 }

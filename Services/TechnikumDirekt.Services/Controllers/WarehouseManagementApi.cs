@@ -41,46 +41,34 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "No hierarchy loaded yet.")]
         public virtual IActionResult ExportWarehouses()
-       {
-           //Exceptionhandling for statusCode 400.
-           try
-           {
-               var exportWarehouses = _blWarehouseLogic.ExportWarehouses().ToList();
+        {
+            //Exceptionhandling for statusCode 400.
+            try
+            {
+                var exportWarehouse = _blWarehouseLogic.ExportWarehouses();
 
-               if (!exportWarehouses.Any())
-               {
-                   return NotFound(StatusCode(404, new Error
-                   {
-                       ErrorMessage = "No hierarchy loaded yet."
-                   }));
-               }
+                if (exportWarehouse == null)
+                {
+                    return NotFound(StatusCode(404, new Error
+                    {
+                        ErrorMessage = "No hierarchy loaded yet."
+                    }));
+                }
 
-               var whResponseList = new List<Warehouse>();
-               Warehouse svcWarehouses;
-
-               foreach (var wh in exportWarehouses)
-               {
-                   svcWarehouses = _mapper.Map<Warehouse>(wh);
-                   if (svcWarehouses != null)
-                   {
-                       whResponseList.Add(svcWarehouses);
-                   }
-               }
-
-               return Ok(whResponseList);
-           }
-           catch (TrackingLogicException)
-           {
-               return NotFound(StatusCode(404, new Error
-               {
-                   ErrorMessage = "No hierarchy loaded yet."
-               }));
-           }
-           catch (Exception)
-           {
-               return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
-           }
-       }
+                return Ok(_mapper.Map<Warehouse>(exportWarehouse));
+            }
+            catch (TrackingLogicException)
+            {
+                return NotFound(StatusCode(404, new Error
+                {
+                    ErrorMessage = "No hierarchy loaded yet."
+                }));
+            }
+            catch (Exception)
+            {
+                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
+            }
+        }
 
         /// <summary>
         /// Get a certain warehouse or truck by code

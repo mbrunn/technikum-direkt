@@ -1,31 +1,46 @@
 using System.Collections.Generic;
-using System.Linq;
+using AutoMapper;
 using FluentValidation;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
+using TechnikumDirekt.DataAccess.Interfaces;
 using Warehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
+using DalModels = TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.BusinessLogic
 {
     public class WarehouseLogic : IWarehouseLogic
     {
-        public static List<Warehouse> Warehouses = new List<Warehouse>();
-
         private readonly IValidator<Warehouse> _warehouseValidator;
         private readonly IValidator<Hop> _hopValidator;
+        private readonly IWarehouseRepository _warehouseRepository;
+        private readonly IMapper _mapper;
 
-        public WarehouseLogic(IValidator<Warehouse> warehouseValidator, IValidator<Hop> hopValidator)
+        public WarehouseLogic(IValidator<Warehouse> warehouseValidator, IValidator<Hop> hopValidator, IWarehouseRepository warehouseRepository, 
+            IMapper mapper)
         {
             _warehouseValidator = warehouseValidator;
             _hopValidator = hopValidator;
+            _warehouseRepository = warehouseRepository;
+            _mapper = mapper;
         }
 
-        public IEnumerable<Warehouse> ExportWarehouses()
+        public Warehouse ExportWarehouses()
         {
-            if (Warehouses.Count == 0) throw new TrackingLogicException(); // TODO - use notfound exception
+            var dalHops = _warehouseRepository.GetAll();
             
-            return Warehouses;
+            DalModels.Warehouse rootWarehouse = null;
+
+            foreach (var wh in dalHops)
+            {
+                if (wh is DalModels.Warehouse warehouse && warehouse.Level == 0) rootWarehouse = warehouse;
+            }
+            
+            if (rootWarehouse == null) throw new TrackingLogicException("No warehouses imported.");
+
+            var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
+            return blWarehouse;
         }
 
         public Warehouse GetWarehouse(string code)
@@ -36,13 +51,23 @@ namespace TechnikumDirekt.BusinessLogic
                     options.IncludeRuleSets("code");
                     options.ThrowOnFailures();
                 });
-            return Warehouses.FirstOrDefault(w => w.Code == code);
+
+            var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
+            if (dalWarehouse == null)
+            {
+                throw new TrackingLogicException("Hüfe, i hob kan Code gfunden!"); //TODO: DO NOT CHANGE
+            }
+            
+            var blWarehouse = _mapper.Map<Warehouse>(dalWarehouse);
+            return blWarehouse;
         }
 
         public void ImportWarehouses(Warehouse warehouse)
         {
             ValidateWarehouseTree(warehouse);
-            Warehouses.Add(warehouse);
+            _warehouseRepository.ClearWarehouses();
+            var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
+            _warehouseRepository.ImportWarehouses(dalWh);
         }
         
         private void ValidateWarehouseTree(Hop node)

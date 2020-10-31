@@ -10,7 +10,7 @@
 
 using System.Collections.Generic;
 
-namespace TechnikumDirekt.BusinessLogic.Models
+namespace TechnikumDirekt.DataAccess.Models
 {
     /// <summary>
     /// </summary>
@@ -25,6 +25,6 @@ namespace TechnikumDirekt.BusinessLogic.Models
         /// Next hops after this warehouse (warehouses or trucks).
         /// </summary>
         /// <value>Next hops after this warehouse (warehouses or trucks).</value>
-        public List<WarehouseNextHops> NextHops { get; set; }
+        public List<Hop> NextHops { get; set; }
     }
 }

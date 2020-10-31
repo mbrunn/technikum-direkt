@@ -15,7 +15,9 @@ using System.Runtime.Serialization;
 namespace TechnikumDirekt.Services.Models
 {
     /// <summary>
+    /// This is used to track where a parcel has been or is heading.
     /// </summary>
+    /// 
     [DataContract]
     public class HopArrival
     {

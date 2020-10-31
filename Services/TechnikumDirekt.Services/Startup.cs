@@ -10,9 +10,13 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TechnikumDirekt.BusinessLogic;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.DataAccess.Interfaces;
+using TechnikumDirekt.DataAccess.Sql;
 
 namespace TechnikumDirekt.Services
 {
@@ -52,11 +56,12 @@ namespace TechnikumDirekt.Services
                 {
                     opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     opts.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+                    opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 })
                 .AddXmlSerializerFormatters();
 
             services.AddAutoMapper(typeof(Startup));
-
+            
             services
                 .AddSwaggerGen(c =>
                 {
@@ -75,8 +80,20 @@ namespace TechnikumDirekt.Services
                     c.CustomSchemaIds(type => type.FullName);
                 });
 
+            services.AddTransient<IHopRepository, HopRepository>();
+            services.AddTransient<IWarehouseRepository, WarehouseRepository>();
+            services.AddTransient<IParcelRepository, ParcelRepository>();
+
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();
+
+            services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
+                    x =>
+                    {
+                        x.UseNetTopologySuite();
+                        x.MigrationsAssembly("TechnikumDirekt.DataAccess.Sql");
+                    }));
             
             //other validators are also added with this command.
             services.AddControllers().AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());

@@ -5,6 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
       <PackageReference Include="NetTopologySuite" Version="2.1.0" />
     </ItemGroup>
+
 </Project>

@@ -20,6 +20,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.BusinessLog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.BusinessLogic.Tests", "BusinessLogic\TechnikumDirekt.BusinessLogic.Tests\TechnikumDirekt.BusinessLogic.Tests.csproj", "{BF2415DA-EC6D-4B6B-AD5D-4292F7B8D767}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", "{773A4B86-2EDD-4B20-A70D-ECE16500BDCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.DataAccess.Sql", "DataAccess\TechnikumDirekt.DataAccess.Sql\TechnikumDirekt.DataAccess.Sql.csproj", "{DACB2FDD-76C2-4C4B-9A2D-EFACBFC07271}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.DataAccess.Interfaces", "DataAccess\TechnikumDirekt.DataAccess.Interfaces\TechnikumDirekt.DataAccess.Interfaces.csproj", "{D3DF4483-FC72-46B4-90F4-7397359CC73C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.DataAccess.Models", "DataAccess\TechnikumDirekt.DataAccess.Models\TechnikumDirekt.DataAccess.Models.csproj", "{A054C34D-9A2A-4BCF-B4D7-DC905CE08F31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.DataAccess.Tests", "DataAccess\TechnikumDirekt.DataAccess.Tests\TechnikumDirekt.DataAccess.Tests.csproj", "{4B7DA7B3-8790-4DDF-B630-14E7942EB3B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +68,22 @@ Global
 		{BF2415DA-EC6D-4B6B-AD5D-4292F7B8D767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF2415DA-EC6D-4B6B-AD5D-4292F7B8D767}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF2415DA-EC6D-4B6B-AD5D-4292F7B8D767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DACB2FDD-76C2-4C4B-9A2D-EFACBFC07271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACB2FDD-76C2-4C4B-9A2D-EFACBFC07271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DACB2FDD-76C2-4C4B-9A2D-EFACBFC07271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DACB2FDD-76C2-4C4B-9A2D-EFACBFC07271}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3DF4483-FC72-46B4-90F4-7397359CC73C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3DF4483-FC72-46B4-90F4-7397359CC73C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3DF4483-FC72-46B4-90F4-7397359CC73C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3DF4483-FC72-46B4-90F4-7397359CC73C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A054C34D-9A2A-4BCF-B4D7-DC905CE08F31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A054C34D-9A2A-4BCF-B4D7-DC905CE08F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A054C34D-9A2A-4BCF-B4D7-DC905CE08F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A054C34D-9A2A-4BCF-B4D7-DC905CE08F31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B7DA7B3-8790-4DDF-B630-14E7942EB3B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B7DA7B3-8790-4DDF-B630-14E7942EB3B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B7DA7B3-8790-4DDF-B630-14E7942EB3B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B7DA7B3-8790-4DDF-B630-14E7942EB3B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0DDBC80F-FE9C-4B19-AD33-A9307BE8E7DE} = {D4D483FF-AC5D-4416-B2AE-62BE36611CD7}
@@ -68,5 +94,9 @@ Global
 		{E033C0AD-CD60-4E07-AAC8-E12450EDFAC4} = {78B9EACD-76FA-4869-BF27-A68830F462C8}
 		{423E6972-78BF-427A-A642-8E2B6178997D} = {D4D483FF-AC5D-4416-B2AE-62BE36611CD7}
 		{BF2415DA-EC6D-4B6B-AD5D-4292F7B8D767} = {78B9EACD-76FA-4869-BF27-A68830F462C8}
+		{DACB2FDD-76C2-4C4B-9A2D-EFACBFC07271} = {773A4B86-2EDD-4B20-A70D-ECE16500BDCB}
+		{D3DF4483-FC72-46B4-90F4-7397359CC73C} = {773A4B86-2EDD-4B20-A70D-ECE16500BDCB}
+		{A054C34D-9A2A-4BCF-B4D7-DC905CE08F31} = {773A4B86-2EDD-4B20-A70D-ECE16500BDCB}
+		{4B7DA7B3-8790-4DDF-B630-14E7942EB3B7} = {773A4B86-2EDD-4B20-A70D-ECE16500BDCB}
 	EndGlobalSection
 EndGlobal

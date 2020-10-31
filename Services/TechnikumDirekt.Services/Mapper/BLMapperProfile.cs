@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
 using NetTopologySuite.Geometries;
-using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 using SvcModels = TechnikumDirekt.Services.Models;
 
@@ -17,7 +16,7 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<SvcModels.Hop, BlModels.Hop>()
                 .ForMember(destMemb => destMemb.LocationCoordinates,
                     destMemb =>
-                        destMemb.ConvertUsing<GeoCoordinateConverter, SvcModels.GeoCoordinate>(p => p.LocationCoordinates))
+                        destMemb.ConvertUsing<PointConverter, SvcModels.GeoCoordinate>(p => p.LocationCoordinates))
                 .Include<SvcModels.Warehouse, BlModels.Warehouse>()
                 .Include<SvcModels.Truck, BlModels.Truck>()
                 .Include<SvcModels.Transferwarehouse, BlModels.Transferwarehouse>();
@@ -25,7 +24,7 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<BlModels.Hop, SvcModels.Hop>()
                 .ForMember(destMemb => destMemb.LocationCoordinates,
                     destMemb =>
-                        destMemb.ConvertUsing<GeoCoordinateConverter, GeoCoordinate>(p => p.LocationCoordinates))
+                        destMemb.ConvertUsing<PointConverter, Point>(p => p.LocationCoordinates))
                 .Include<BlModels.Warehouse, SvcModels.Warehouse>()
                 .Include<BlModels.Truck, SvcModels.Truck>()
                 .Include<BlModels.Transferwarehouse, SvcModels.Transferwarehouse>();

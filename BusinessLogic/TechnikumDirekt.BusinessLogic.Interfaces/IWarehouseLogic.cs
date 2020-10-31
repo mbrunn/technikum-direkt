@@ -6,7 +6,7 @@ namespace TechnikumDirekt.BusinessLogic.Interfaces
     public interface IWarehouseLogic
     {
         /// <summary> Returns the list of registered warehouses. </summary>
-        public IEnumerable<Warehouse> ExportWarehouses();
+        public Warehouse ExportWarehouses();
         /// <summary> Returns a single warehouse. </summary>
         /// <param name="code">Code of the warehouse to return</param>
         public Warehouse GetWarehouse(string code);

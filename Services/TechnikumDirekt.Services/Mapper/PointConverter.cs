@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using AutoMapper;
-using GeoCoordinate = GeoCoordinatePortable.GeoCoordinate;
+using NetTopologySuite.Geometries;
 using SvcModels = TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Mapper
 {
-    public class GeoCoordinateConverter : IValueConverter<SvcModels.GeoCoordinate, GeoCoordinate>, IValueConverter<GeoCoordinate, SvcModels.GeoCoordinate>
+    public class PointConverter : IValueConverter<SvcModels.GeoCoordinate, Point>, IValueConverter<Point, SvcModels.GeoCoordinate>
     {
         private ResolutionContext _context;
 
@@ -16,20 +16,22 @@ namespace TechnikumDirekt.Services.Mapper
         /// <param name="context"></param>
         /// <returns></returns>
         /// <exception cref="NoNullAllowedException"></exception>
-        public GeoCoordinate Convert(SvcModels.GeoCoordinate sourceMember, ResolutionContext context)
+
+        Point IValueConverter<SvcModels.GeoCoordinate, Point>.Convert(SvcModels.GeoCoordinate sourceMember, ResolutionContext context)
         {
             _context = context;
             if (sourceMember.Lat == null || sourceMember.Lon == null)
             {
                 throw new NoNullAllowedException();
             }
-            return new GeoCoordinate((double) sourceMember.Lat, (double) sourceMember.Lon);
+
+            return new Point((double) sourceMember.Lon, (double) sourceMember.Lat) { SRID = 4326 };
         }
 
-        public SvcModels.GeoCoordinate Convert(GeoCoordinate sourceMember, ResolutionContext context)
+        public SvcModels.GeoCoordinate Convert(Point sourceMember, ResolutionContext context)
         {
             _context = context;
-            return new SvcModels.GeoCoordinate(){Lat = sourceMember.Latitude, Lon = sourceMember.Longitude};
+            return new SvcModels.GeoCoordinate(){Lon = sourceMember.X, Lat = sourceMember.Y};
         }
     }
 }
