@@ -21,7 +21,7 @@ steps:
   displayName: 'Install dotnet ef'
   continueOnError: true
 
-- script: dotnet ef migrations script --output $(Build.ArtifactStagingDirectory)/SQL/migrationScript.sql --context **/TechnikumDirekt.DataAccess.Sql.TechnikumDirektContext --idempotent
+- script: dotnet ef migrations script --output $(Build.ArtifactStagingDirectory)/SQL/migrationScript.sql --startup-project $(Build.SourcesDirectory)/Services/TechnikumDirekt.Services --project $(Build.SourcesDirectory)/DataAccess/TechnikumDirekt.DataAccess.Sql --idempotent
   displayName: generate SQL Migration Script
 - task: DotNetCoreCLI@2
   displayName: Publish (create)
