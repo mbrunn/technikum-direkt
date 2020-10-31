@@ -17,8 +17,13 @@ namespace TechnikumDirekt.DataAccess.Sql
         public DbSet<Transferwarehouse> Transferwarehouses { get; set; } 
         public DbSet<Truck> Trucks { get; set; } 
         public DbSet<Warehouse> Warehouses { get; set; }
-        public DatabaseFacade Database { get; set; }
-        public IModel Model { get; set; }
+        public new DatabaseFacade Database
+        {
+            get { return base.Database; }
+            set{} }
+        public new IModel Model {             
+            get { return base.Model; }
+            set{} }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
