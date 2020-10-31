@@ -21,8 +21,11 @@ steps:
   displayName: 'Install dotnet ef'
   continueOnError: true
 
+- script: cp $(Build.SourcesDirectory)/Services/TechnikumDirekt.Services/appsettings_default.json $(Build.SourcesDirectory)/Services/TechnikumDirekt.Services/appsettings.json
+  displayName: Copy appsettings file
+
 - script: ./tools/dotnet-ef migrations script --output $(Build.ArtifactStagingDirectory)/SQL/migrationScript.sql --startup-project $(Build.SourcesDirectory)/Services/TechnikumDirekt.Services --project $(Build.SourcesDirectory)/DataAccess/TechnikumDirekt.DataAccess.Sql --idempotent
-  displayName: generate SQL Migration Script
+  displayName: Generate SQL Migration Script
 
 - task: DotNetCoreCLI@2
   displayName: Publish (create)
