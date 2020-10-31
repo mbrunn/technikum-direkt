@@ -67,6 +67,8 @@ namespace TechnikumDirekt.DataAccess.Tests
             _technikumDirektContext = dbMock.Object;
         }
 
+        #region GetByTrackingId
+        
         [Test]
         public void GetByTrackingId_ReturnsValidParcel_WithValidTrackingId()
         {
@@ -83,7 +85,10 @@ namespace TechnikumDirekt.DataAccess.Tests
             var parcel = _parcelRepository.GetByTrackingId(InvalidTrackingNumber);
             Assert.Null(parcel);
         }
+        
+        #endregion
 
+        #region Update
         [Test]
         public void Update_DoesNotThrow_WithValidParcel()
         {
@@ -92,7 +97,10 @@ namespace TechnikumDirekt.DataAccess.Tests
             updatedParcel.Weight = _validParcel.Weight + 1.0f;
             Assert.DoesNotThrow(() => _parcelRepository.Update(_validParcel));
         }
+        
+        #endregion
 
+        #region Add
         [Test]
         public void Add_ReturnsTrackingId_WithValidParcel()
         {
@@ -100,7 +108,10 @@ namespace TechnikumDirekt.DataAccess.Tests
             var trackingId = _parcelRepository.Add(_validParcel);
             Assert.AreEqual(_validParcel.TrackingId, trackingId );
         }
+        
+        #endregion
 
+        #region Delete
         [Test]
         public void Delete_DoesNotThrow_WithValidParcel()
         {
@@ -120,5 +131,6 @@ namespace TechnikumDirekt.DataAccess.Tests
         {
             //???
         }
+        #endregion
     }
 }

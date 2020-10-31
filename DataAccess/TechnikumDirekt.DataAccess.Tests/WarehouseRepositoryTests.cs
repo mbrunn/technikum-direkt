@@ -66,6 +66,7 @@ namespace TechnikumDirekt.DataAccess.Tests
             _technikumDirektContext = dbMock.Object;
         }
 
+        #region GetAll
         [Test]
         public void GetAll_ReturnsWarehouseStructure_ValidWarehouseStructure()
         {
@@ -75,7 +76,9 @@ namespace TechnikumDirekt.DataAccess.Tests
             Assert.IsInstanceOf<Warehouse>(wh.FirstOrDefault());
             Assert.AreSame(_validWarehouse, wh.FirstOrDefault());
         }
+        #endregion
         
+        #region GetWarehouseByCode
         [Test]
         public void GetWarehouseByCode_ReturnsValidWarehouse_ValidHopCode()
         {
@@ -92,12 +95,15 @@ namespace TechnikumDirekt.DataAccess.Tests
             var wh = _warehouseRepository.GetWarehouseByCode(InvalidHopCode);
             Assert.Null(wh);
         }
+        #endregion
         
+        #region ImportWarehouse
         [Test]
         public void ImportWarehouses_Throws_InValidHopCode()
         {
             _warehouseRepository = new WarehouseRepository(_technikumDirektContext);
             Assert.DoesNotThrow(() => _warehouseRepository.ImportWarehouses(_validWarehouse));
         }
+        #endregion
     }
 }

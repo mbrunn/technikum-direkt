@@ -20,7 +20,6 @@ namespace TechnikumDirekt.DataAccess.Interfaces
         
         public IModel Model { get; set; }
         public int SaveChanges();
-        
         public EntityEntry<T> Remove<T>(T entity) where T: class;
     }
 }

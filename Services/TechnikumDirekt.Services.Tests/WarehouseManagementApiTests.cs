@@ -97,6 +97,21 @@ namespace TechnikumDirekt.Services.Tests
             Assert.AreEqual(404, statusCode);
         }
 
+        [Test]
+        public void ExportWarehouse_BlReturnsNull_NotFound()
+        {
+            var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper);
+
+            var response = controller.ExportWarehouses();
+
+            Assert.IsInstanceOf<NotFoundObjectResult>(response);
+
+            var typedResponse = (NotFoundObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
+
+            Assert.AreEqual(404, statusCode);
+        }
+
         #endregion
 
         #region GetWarehouse Tests

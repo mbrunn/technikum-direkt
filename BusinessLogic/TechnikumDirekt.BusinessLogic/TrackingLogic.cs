@@ -88,11 +88,13 @@ namespace TechnikumDirekt.BusinessLogic
 
             var hopToEdit = parcel.HopArrivals.Find(x => x.HopCode == code);
             if (hopToEdit == null) throw new TrackingLogicException($"Hop with code {code} is not part of this parcel's route.");
+            
             parcel.HopArrivals.Remove(hopToEdit);
             
             hopToEdit.HopArrivalTime = DateTime.Now;
-            
+
             parcel.HopArrivals.Add(hopToEdit);
+            
             _parcelRepository.Update(parcel);
         }
         
@@ -134,7 +136,7 @@ namespace TechnikumDirekt.BusinessLogic
                     _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
                     return parcel.TrackingId;
                 }
-                catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException)
                 {
                     //this exception is thrown if trackingId already exists.
                 }

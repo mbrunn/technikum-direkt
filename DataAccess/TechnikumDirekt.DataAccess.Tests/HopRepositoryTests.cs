@@ -46,7 +46,9 @@ namespace TechnikumDirekt.DataAccess.Tests
 
             _technikumDirektContext = dbMock.Object;
         }
-        
+
+        #region GetHopByCode
+
         [Test]
         public void GetHopByCode_ReturnsValidHop_WithValidHopCode()
         {
@@ -71,5 +73,7 @@ namespace TechnikumDirekt.DataAccess.Tests
             var entity = _hopRepository.GetHopByCode(null);
             Assert.Null(entity);
         }
+
+        #endregion
     }
 }
