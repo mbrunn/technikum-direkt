@@ -21,8 +21,9 @@ steps:
   displayName: 'Install dotnet ef'
   continueOnError: true
 
-- script: dotnet ef migrations script --output $(Build.ArtifactStagingDirectory)/SQL/migrationScript.sql --startup-project $(Build.SourcesDirectory)/Services/TechnikumDirekt.Services --project $(Build.SourcesDirectory)/DataAccess/TechnikumDirekt.DataAccess.Sql --idempotent
+- script: ./tools/dotnet-ef migrations script --output $(Build.ArtifactStagingDirectory)/SQL/migrationScript.sql --startup-project $(Build.SourcesDirectory)/Services/TechnikumDirekt.Services --project $(Build.SourcesDirectory)/DataAccess/TechnikumDirekt.DataAccess.Sql --idempotent
   displayName: generate SQL Migration Script
+
 - task: DotNetCoreCLI@2
   displayName: Publish (create)
   inputs:
@@ -45,7 +46,7 @@ steps:
 
 - script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic*;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
   displayName: 'Run ReportGenerator tool'
-  
+
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage'
   inputs:
