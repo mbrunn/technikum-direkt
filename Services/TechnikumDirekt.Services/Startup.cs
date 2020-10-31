@@ -88,7 +88,7 @@ namespace TechnikumDirekt.Services
             services.AddTransient<ITrackingLogic, TrackingLogic>();
 
             services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
+                options.UseSqlServer(Configuration.GetConnectionString("SQLAZURECONNSTR_TechnikumDirektDatabase"),
                     x =>
                     {
                         x.UseNetTopologySuite();

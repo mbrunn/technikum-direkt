@@ -125,7 +125,7 @@ namespace TechnikumDirekt.Services.Controllers
                 _blWarehouseLogic.ImportWarehouses(blWh);
                 return Ok(body);
             }
-            catch
+            catch 
             {
                 return BadRequest(StatusCode(400, new Error
                 {
