@@ -17,8 +17,12 @@ steps:
     command: build
     projects: '**/*.csproj'
 
-- script: dotnet ef migrations script --output $(Build.ArtifactStagingDirectory)\SQL\migrationScript --context TechnikumDirektContext  --idempotent
+- script: dotnet tool install --tool-path tools dotnet-ef
+  displayName: 'Install dotnet ef'
+  continueOnError: true
 
+- script: dotnet ef migrations script --output $(Build.ArtifactStagingDirectory)\SQL\migrationScript --context TechnikumDirektContext  --idempotent
+  displayName: generate SQL Migration Script
 - task: DotNetCoreCLI@2
   displayName: Publish (create)
   inputs:
