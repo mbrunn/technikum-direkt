@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using TechnikumDirekt.DataAccess.Interfaces;
+﻿using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.DataAccess.Sql
