@@ -16,13 +16,13 @@ namespace TechnikumDirekt.DataAccess.Sql
             _dbContext = dbContext;
             _logger = logger;
         }
-        
+
         public Parcel GetByTrackingId(string trackingId)
         {
             var parcel = _dbContext.Parcels
                 .Include(p => p.HopArrivals)
                 .FirstOrDefault(p => p.TrackingId == trackingId);
-            
+
             if (parcel != null)
             {
                 _logger.LogTrace($"Parcel with trackingId {trackingId} has been found.");
@@ -41,16 +41,16 @@ namespace TechnikumDirekt.DataAccess.Sql
             _dbContext.SaveChanges();
             _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been updated.");
         }
-        
+
         public string Add(Parcel parcel)
         {
             _dbContext.Parcels.Add(parcel);
 
             _dbContext.HopArrivals.AddRange(parcel.HopArrivals);
-            
+
             _dbContext.SaveChanges();
             _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been added.");
-            
+
             return parcel.TrackingId;
         }
 

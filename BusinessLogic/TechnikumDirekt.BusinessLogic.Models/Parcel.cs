@@ -10,18 +10,22 @@ namespace TechnikumDirekt.BusinessLogic.Models
             /// Enum PickupEnum for Pickup
             /// </summary>
             PickupEnum = 0,
+
             /// <summary>
             /// Enum InTransportEnum for InTransport
             /// </summary>
             InTransportEnum = 1,
+
             /// <summary>
             /// Enum InTruckDeliveryEnum for InTruckDelivery
             /// </summary>
             InTruckDeliveryEnum = 2,
+
             /// <summary>
             /// Enum TransferredEnum for Transferred
             /// </summary>
             TransferredEnum = 3,
+
             /// <summary>
             /// Enum DeliveredEnum for Delivered
             /// </summary>
@@ -48,7 +52,7 @@ namespace TechnikumDirekt.BusinessLogic.Models
         ///     Gets or Sets Sender
         /// </summary>
         public Recipient Sender { get; set; }
-        
+
         /// <summary>
         ///     Hops visited in the past.
         /// </summary>
@@ -60,7 +64,7 @@ namespace TechnikumDirekt.BusinessLogic.Models
         /// </summary>
         /// <value>Hops coming up in the future - their times are estimations.</value>
         public List<HopArrival> FutureHops { get; set; }
-        
+
         public string TrackingId { get; set; }
     }
 }

@@ -1,30 +1,32 @@
 using System;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace TechnikumDirekt.Services.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
     [ApiController]
     public class StaffApiController : ControllerBase
-    { 
+    {
         private readonly ITrackingLogic _trackingLogic;
         private readonly ILogger _logger;
+
         public StaffApiController(ITrackingLogic trackingLogic, ILogger<StaffApiController> logger)
         {
             _trackingLogic = trackingLogic;
             _logger = logger;
         }
-        
+
         /// <summary>
         /// Report that a Parcel has been delivered at it&#x27;s final destination address. 
         /// </summary>
@@ -37,7 +39,8 @@ namespace TechnikumDirekt.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("ReportParcelDelivery")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult ReportParcelDelivery([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
+        public virtual IActionResult ReportParcelDelivery([FromRoute] [Required] [RegularExpression("^[A-Z0-9]{9}$")]
+            string trackingId)
         {
             try
             {
@@ -53,13 +56,13 @@ namespace TechnikumDirekt.Services.Controllers
                     ErrorMessage = e.Message
                 }));
             }
-            catch (FluentValidation.ValidationException e)
+            catch (ValidationException e)
             {
                 _logger.LogWarning(e?.Message + " with Value: " + e.Errors.FirstOrDefault()?.AttemptedValue);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));  
+                }));
             }
             catch (Exception e)
             {
@@ -67,7 +70,7 @@ namespace TechnikumDirekt.Services.Controllers
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));  
+                }));
             }
         }
 
@@ -84,12 +87,15 @@ namespace TechnikumDirekt.Services.Controllers
         [ValidateModelState]
         [SwaggerOperation("ReportParcelHop")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult ReportParcelHop([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId, [FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
+        public virtual IActionResult ReportParcelHop([FromRoute] [Required] [RegularExpression("^[A-Z0-9]{9}$")]
+            string trackingId, [FromRoute] [Required] [RegularExpression("^[A-Z]{4}\\d{1,4}$")]
+            string code)
         {
             try
             {
                 _trackingLogic.ReportParcelHop(trackingId, code);
-                _logger.LogInformation("Successfully reported hop with hopcode: " + code + " and trackingId: " + trackingId);
+                _logger.LogInformation("Successfully reported hop with hopcode: " + code + " and trackingId: " +
+                                       trackingId);
                 return Ok("Successfully reported hop.");
             }
             catch (TrackingLogicException e)
@@ -100,7 +106,7 @@ namespace TechnikumDirekt.Services.Controllers
                     ErrorMessage = e.Message
                 }));
             }
-            catch (FluentValidation.ValidationException e)
+            catch (ValidationException e)
             {
                 var errorMessage = string.Empty;
                 foreach (var error in e.Errors)
@@ -112,7 +118,7 @@ namespace TechnikumDirekt.Services.Controllers
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));  
+                }));
             }
             catch (Exception e)
             {
@@ -120,7 +126,7 @@ namespace TechnikumDirekt.Services.Controllers
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));  
+                }));
             }
         }
     }

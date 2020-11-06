@@ -8,13 +8,13 @@ namespace TechnikumDirekt.DataAccess.Sql
     {
         private readonly ITechnikumDirektContext _dbContext;
         private readonly ILogger<HopRepository> _logger;
-        
+
         public HopRepository(ITechnikumDirektContext dbContext, ILogger<HopRepository> logger)
         {
             _dbContext = dbContext;
             _logger = logger;
         }
-        
+
         public Hop GetHopByCode(string hopCode)
         {
             var hop = _dbContext.Hops.Find(hopCode);
@@ -26,6 +26,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             {
                 _logger.LogTrace($"Hop with code {hopCode} couldn't be found.");
             }
+
             return hop;
         }
     }

@@ -5,8 +5,9 @@ using Moq;
 
 namespace TechnikumDirekt.DataAccess.Tests
 {
-    public static class DbContextMock {
-        public static DbSet <T> GetQueryableMockDbSet <T> (List <T> sourceList) where T: class 
+    public static class DbContextMock
+    {
+        public static DbSet<T> GetQueryableMockDbSet<T>(List<T> sourceList) where T : class
         {
             var queryable = sourceList.AsQueryable();
             var dbSet = new Mock<DbSet<T>>();

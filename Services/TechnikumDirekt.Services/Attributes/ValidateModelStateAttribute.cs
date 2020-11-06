@@ -26,7 +26,7 @@ namespace TechnikumDirekt.Services.Attributes
                 {
                     object args = null;
                     if (context.ActionArguments.ContainsKey(parameter.Name))
-                    { 
+                    {
                         args = context.ActionArguments[parameter.Name];
                     }
 
@@ -52,7 +52,8 @@ namespace TechnikumDirekt.Services.Attributes
                     var isValid = validationAttribute.IsValid(args);
                     if (!isValid)
                     {
-                        modelState.AddModelError(parameter.Name, validationAttribute.FormatErrorMessage(parameter.Name));
+                        modelState.AddModelError(parameter.Name,
+                            validationAttribute.FormatErrorMessage(parameter.Name));
                     }
                 }
             }

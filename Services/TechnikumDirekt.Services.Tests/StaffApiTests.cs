@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Castle.Core.Logging;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -8,10 +6,8 @@ using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Controllers;
-using TechnikumDirekt.Services.Mapper;
 using BlParcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
 using BlRecipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
-using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Tests
 {
@@ -27,21 +23,27 @@ namespace TechnikumDirekt.Services.Tests
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
         private const string NotfoundHopCode = "ABCD0000";
-        
+
         [OneTimeSetUp]
         public void Setup()
         {
             var mockTrackingLogic = new Mock<ITrackingLogic>();
             // Setup - ReportParcelDelivery
             mockTrackingLogic.Setup(m => m.ReportParcelDelivery(ValidTrackingNumber));
-            mockTrackingLogic.Setup(m => m.ReportParcelDelivery(InvalidTrackingNumber)).Throws(new ValidationException(""));
-            mockTrackingLogic.Setup(m => m.ReportParcelDelivery(NotfoundTrackingNumber)).Throws<TrackingLogicException>();
+            mockTrackingLogic.Setup(m => m.ReportParcelDelivery(InvalidTrackingNumber))
+                .Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.ReportParcelDelivery(NotfoundTrackingNumber))
+                .Throws<TrackingLogicException>();
             // Setup - ReportParcelHop
             mockTrackingLogic.Setup(m => m.ReportParcelHop(ValidTrackingNumber, ValidHopCode));
-            mockTrackingLogic.Setup(m => m.ReportParcelHop(InvalidTrackingNumber, It.IsAny<string>())).Throws(new ValidationException(""));
-            mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), InvalidHopCode)).Throws(new ValidationException(""));
-            mockTrackingLogic.Setup(m => m.ReportParcelHop(NotfoundTrackingNumber, It.IsAny<string>())).Throws<TrackingLogicException>();
-            mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), NotfoundHopCode)).Throws<TrackingLogicException>();
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(InvalidTrackingNumber, It.IsAny<string>()))
+                .Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), InvalidHopCode))
+                .Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(NotfoundTrackingNumber, It.IsAny<string>()))
+                .Throws<TrackingLogicException>();
+            mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), NotfoundHopCode))
+                .Throws<TrackingLogicException>();
 
             _trackingLogic = mockTrackingLogic.Object;
             _logger = NullLogger<StaffApiController>.Instance;
@@ -53,7 +55,7 @@ namespace TechnikumDirekt.Services.Tests
         public void ReportParcelDelivery_ValidTrackingId_Ok()
         {
             var controller = new StaffApiController(_trackingLogic, _logger);
-            
+
             var response = controller.ReportParcelDelivery(ValidTrackingNumber);
 
             Assert.IsInstanceOf<OkObjectResult>(response);
@@ -63,7 +65,7 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.AreEqual(200, statusCode);
         }
-        
+
         [Test]
         public void ReportParcelDelivery_NonexistentTrackingId_NotFound()
         {
@@ -78,7 +80,7 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.AreEqual(404, statusCode);
         }
-        
+
         [Test]
         public void ReportParcelDelivery_InvalidTrackingId_BadRequest()
         {
@@ -97,12 +99,12 @@ namespace TechnikumDirekt.Services.Tests
         #endregion
 
         #region ReportParcelHop Tests
-        
+
         [Test]
         public void ReportParcelHop_ValidTrackingID_OkRequest()
         {
             var controller = new StaffApiController(_trackingLogic, _logger);
-            
+
             var response = controller.ReportParcelHop(ValidTrackingNumber, ValidHopCode);
 
             Assert.IsInstanceOf<OkObjectResult>(response);
@@ -117,7 +119,7 @@ namespace TechnikumDirekt.Services.Tests
         public void ReportParcelHop_InvalidHopCode_BadRequest()
         {
             var controller = new StaffApiController(_trackingLogic, _logger);
-            
+
             var response = controller.ReportParcelHop(ValidTrackingNumber, InvalidHopCode);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
@@ -132,7 +134,7 @@ namespace TechnikumDirekt.Services.Tests
         public void ReportParcelHop_InvalidTrackingID_BadRequest()
         {
             var controller = new StaffApiController(_trackingLogic, _logger);
-            
+
             var response = controller.ReportParcelHop(InvalidTrackingNumber, ValidHopCode);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
@@ -142,12 +144,12 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.AreEqual(400, statusCode);
         }
-        
+
         [Test]
         public void ReportParcelHop_InvalidTrackingIDandHopCode_BadRequest()
         {
             var controller = new StaffApiController(_trackingLogic, _logger);
-            
+
             var response = controller.ReportParcelHop(InvalidTrackingNumber, InvalidHopCode);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
@@ -157,12 +159,12 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.AreEqual(400, statusCode);
         }
-        
+
         [Test]
         public void ReportParcelHop_NonExistingTrackingId_NotFound()
         {
             var controller = new StaffApiController(_trackingLogic, _logger);
-            
+
             var response = controller.ReportParcelHop(NotfoundTrackingNumber, ValidHopCode);
 
             Assert.IsInstanceOf<NotFoundObjectResult>(response);
@@ -172,12 +174,12 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.AreEqual(404, statusCode);
         }
-        
+
         [Test]
         public void ReportParcelHop_NonExistingHopCode_NotFound()
         {
             var controller = new StaffApiController(_trackingLogic, _logger);
-            
+
             var response = controller.ReportParcelHop(ValidTrackingNumber, NotfoundHopCode);
 
             Assert.IsInstanceOf<NotFoundObjectResult>(response);
@@ -187,7 +189,7 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.AreEqual(404, statusCode);
         }
-        
+
         #endregion
     }
 }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace TechnikumDirekt.Services.Models
 {
@@ -24,34 +25,34 @@ namespace TechnikumDirekt.Services.Models
         ///     State of the parcel.
         /// </summary>
         /// <value>State of the parcel.</value>
-        [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        [JsonConverter(typeof(StringEnumConverter))]
         public enum StateEnum
         {
             /// <summary>
             /// Enum PickupEnum for Pickup
             /// </summary>
-            [EnumMember(Value = "Pickup")]
-            PickupEnum = 0,
+            [EnumMember(Value = "Pickup")] PickupEnum = 0,
+
             /// <summary>
             /// Enum InTransportEnum for InTransport
             /// </summary>
-            [EnumMember(Value = "InTransport")]
-            InTransportEnum = 1,
+            [EnumMember(Value = "InTransport")] InTransportEnum = 1,
+
             /// <summary>
             /// Enum InTruckDeliveryEnum for InTruckDelivery
             /// </summary>
             [EnumMember(Value = "InTruckDelivery")]
             InTruckDeliveryEnum = 2,
+
             /// <summary>
             /// Enum TransferredEnum for Transferred
             /// </summary>
-            [EnumMember(Value = "Transferred")]
-            TransferredEnum = 3,
+            [EnumMember(Value = "Transferred")] TransferredEnum = 3,
+
             /// <summary>
             /// Enum DeliveredEnum for Delivered
             /// </summary>
-            [EnumMember(Value = "Delivered")]
-            DeliveredEnum = 4
+            [EnumMember(Value = "Delivered")] DeliveredEnum = 4
         }
 
         /// <summary>

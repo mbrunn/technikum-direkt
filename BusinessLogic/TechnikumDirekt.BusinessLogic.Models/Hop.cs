@@ -4,7 +4,6 @@ namespace TechnikumDirekt.BusinessLogic.Models
 {
     /// <summary>
     /// </summary>
-    
     public class Hop
     {
         /// <summary>

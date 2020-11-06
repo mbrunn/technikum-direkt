@@ -9,7 +9,7 @@ namespace TechnikumDirekt.DataAccess.Interfaces
         string Add(Parcel parcel);
         void Delete(Parcel parcel);
         void Delete(string trackingId);
-        
+
         /*
          //wahrscheinlich sinnvoll:
         IEnumerable<Parcel> GetParcelsAsOldAs(DateTime dateTime);

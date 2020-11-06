@@ -9,19 +9,20 @@
  */
 
 using System;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace TechnikumDirekt.Services.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
@@ -31,7 +32,9 @@ namespace TechnikumDirekt.Services.Controllers
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
         private ILogger _logger;
-        public RecipientApiController(ITrackingLogic trackingLogic, IMapper mapper, ILogger<RecipientApiController> logger)
+
+        public RecipientApiController(ITrackingLogic trackingLogic, IMapper mapper,
+            ILogger<RecipientApiController> logger)
         {
             _trackingLogic = trackingLogic;
             _mapper = mapper;
@@ -49,17 +52,19 @@ namespace TechnikumDirekt.Services.Controllers
         [Route("/parcel/{trackingId}")]
         [ValidateModelState]
         [SwaggerOperation("TrackParcel")]
-        [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation), description: "Parcel exists, here&#x27;s the tracking information.")]
-        
-        public virtual IActionResult TrackParcel([FromRoute][Required][RegularExpression("^[A-Z0-9]{9}$")]string trackingId)
+        [SwaggerResponse(statusCode: 200, type: typeof(TrackingInformation),
+            description: "Parcel exists, here&#x27;s the tracking information.")]
+        public virtual IActionResult TrackParcel([FromRoute] [Required] [RegularExpression("^[A-Z0-9]{9}$")]
+            string trackingId)
         {
             try
             {
                 var tlParcel = _trackingLogic.TrackParcel(trackingId);
-                
+
                 var svcTrackingInformation = _mapper.Map<TrackingInformation>(tlParcel);
-                
-                _logger.LogInformation("Parcel with trackingId: " + trackingId + "exists. Trackinginformation is transmitted.");
+
+                _logger.LogInformation("Parcel with trackingId: " + trackingId +
+                                       "exists. Trackinginformation is transmitted.");
                 return Ok(svcTrackingInformation); //TODO add Msg to response
             }
             catch (TrackingLogicException e)
@@ -70,13 +75,13 @@ namespace TechnikumDirekt.Services.Controllers
                     ErrorMessage = "No hierarchy loaded yet."
                 }));
             }
-            catch (FluentValidation.ValidationException e)
+            catch (ValidationException e)
             {
                 _logger.LogWarning(e?.Message + " with Value: " + e.Errors.FirstOrDefault()?.AttemptedValue);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));  
+                }));
             }
             catch (Exception e)
             {

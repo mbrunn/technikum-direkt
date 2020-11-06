@@ -1,4 +1,3 @@
-
 namespace TechnikumDirekt.DataAccess.Models
 {
     /// <summary>
@@ -9,7 +8,7 @@ namespace TechnikumDirekt.DataAccess.Models
         /// PK
         /// </summary>
         public int Id { get; set; }
-        
+
         /// <summary>
         ///     Name of person or company.
         /// </summary>

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using TechnikumDirekt.DataAccess.Models;
+﻿using TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.DataAccess.Interfaces
 {

@@ -1,18 +1,18 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace TechnikumDirekt.Services.Controllers
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
@@ -73,8 +73,8 @@ namespace TechnikumDirekt.Services.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, 
-                    new Error{ ErrorMessage = "An error occured loading."}));
+                return BadRequest(StatusCode(400,
+                    new Error {ErrorMessage = "An error occured loading."}));
             }
         }
 
@@ -92,19 +92,21 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "Warehouse id not found")]
-        public virtual IActionResult GetWarehouse([FromRoute][Required][RegularExpression("^[A-Z]{4}\\d{1,4}$")]string code)
+        public virtual IActionResult GetWarehouse([FromRoute] [Required] [RegularExpression("^[A-Z]{4}\\d{1,4}$")]
+            string code)
         {
             try
             {
                 var blWh = _blWarehouseLogic.GetWarehouse(code);
                 var svcWarehouse = _mapper.Map<Warehouse>(blWh);
-                _logger.LogInformation("Successfully fetched hop with hopcode: "+ code + " - Name: " + svcWarehouse.LocationName);
+                _logger.LogInformation("Successfully fetched hop with hopcode: " + code + " - Name: " +
+                                       svcWarehouse.LocationName);
                 return Ok(svcWarehouse);
             }
-            catch (FluentValidation.ValidationException e)
+            catch (ValidationException e)
             {
                 _logger.LogError(e?.Message + " with Value: " + e.Errors.FirstOrDefault()?.AttemptedValue);
-                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
+                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
             }
             catch (TrackingLogicException e)
             {
@@ -117,10 +119,10 @@ namespace TechnikumDirekt.Services.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
+                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
             }
         }
-        
+
         /// <summary>
         /// Imports a hierarchy of Warehouse and Truck objects. 
         /// </summary>
@@ -133,7 +135,7 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerOperation("ImportWarehouses")]
         [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successfully loaded")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "The operation failed due to an error.")]
-        public virtual IActionResult ImportWarehouses([FromBody]Warehouse body)
+        public virtual IActionResult ImportWarehouses([FromBody] Warehouse body)
         {
             try
             {
@@ -142,7 +144,7 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation("Successfully imported new warehousestructure");
                 return Ok(body);
             }
-            catch (FluentValidation.ValidationException e)
+            catch (ValidationException e)
             {
                 var errorMessage = string.Empty;
                 foreach (var error in e.Errors)
@@ -151,19 +153,19 @@ namespace TechnikumDirekt.Services.Controllers
                 }
 
                 _logger.LogError(errorMessage.Trim());
-                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
+                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
             }
             catch (TrackingLogicException e)
             {
                 _logger.LogWarning(e.Message);
-                return BadRequest(StatusCode(400, 
-                    new Error{ErrorMessage = "The operation failed due to an error."}));
+                return BadRequest(StatusCode(400,
+                    new Error {ErrorMessage = "The operation failed due to an error."}));
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, 
-                    new Error{ErrorMessage = "The operation failed due to an error."}));
+                return BadRequest(StatusCode(400,
+                    new Error {ErrorMessage = "The operation failed due to an error."}));
             }
         }
     }
