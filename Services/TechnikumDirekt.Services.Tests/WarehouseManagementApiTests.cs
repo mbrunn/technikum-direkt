@@ -2,6 +2,7 @@
 using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
@@ -23,6 +24,7 @@ namespace TechnikumDirekt.Services.Tests
         private IWarehouseLogic _warehouseLogic;
         private IWarehouseLogic _emptyWarehouseLogic;
         private IMapper _mapper;
+        private NullLogger<WarehouseManagementApiController> _logger;
 
         private readonly BlWarehouse _validWarehouse = new BlWarehouse
         {
@@ -63,6 +65,7 @@ namespace TechnikumDirekt.Services.Tests
 
             _warehouseLogic = mockWarehouseLogic.Object;
             _emptyWarehouseLogic = emptyMockWarehouseLogic.Object;
+            _logger = NullLogger<WarehouseManagementApiController>.Instance;
         }
 
         #region ExportWarehouses Tests
@@ -70,7 +73,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ExportWarehouses_Valid_Ok()
         {
-            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper, _logger);
 
             var response = controller.ExportWarehouses();
 
@@ -85,7 +88,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ExportWarehouses_Empty_Notfound()
         {
-            var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper, _logger );
 
             var response = controller.ExportWarehouses();
 
@@ -100,7 +103,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ExportWarehouse_BlReturnsNull_NotFound()
         {
-            var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper, _logger );
 
             var response = controller.ExportWarehouses();
 
@@ -119,7 +122,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void GetWarehouse_ValidHopCode_Ok()
         {
-            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper, _logger);
 
             var response = controller.GetWarehouse(ValidHopCode);
 
@@ -134,7 +137,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void GetWarehouse_NonexistentHopCode_NotFound()
         {
-            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper, _logger);
 
             var response = controller.GetWarehouse(NotfoundHopCode);
 
@@ -149,7 +152,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void GetWarehouse_InvalidHopCode_BadRequest()
         {
-            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper, _logger);
 
             var response = controller.GetWarehouse(InvalidHopCode);
 
@@ -168,7 +171,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ImportWarehouses_ValidBody_Ok()
         {
-            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper, _logger);
             var warehouse = new Warehouse
             {
                 HopType = "Warehouse",
@@ -198,7 +201,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ImportWarehouses_InValidBody_BadRequest()
         {
-            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper);
+            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper, _logger);
 
             var response = controller.ImportWarehouses(null);
 

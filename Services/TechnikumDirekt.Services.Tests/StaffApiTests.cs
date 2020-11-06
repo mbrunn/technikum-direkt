@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Castle.Core.Logging;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
@@ -17,6 +19,7 @@ namespace TechnikumDirekt.Services.Tests
     public class StaffApiTests
     {
         private ITrackingLogic _trackingLogic;
+        private NullLogger<StaffApiController> _logger;
 
         private const string ValidTrackingNumber = "A123BCD23";
         private const string InvalidTrackingNumber = "A123BaD23";
@@ -41,6 +44,7 @@ namespace TechnikumDirekt.Services.Tests
             mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), NotfoundHopCode)).Throws<TrackingLogicException>();
 
             _trackingLogic = mockTrackingLogic.Object;
+            _logger = NullLogger<StaffApiController>.Instance;
         }
 
         #region ReportParcelDelivery Tests
@@ -48,7 +52,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelDelivery_ValidTrackingId_Ok()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
             
             var response = controller.ReportParcelDelivery(ValidTrackingNumber);
 
@@ -63,7 +67,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelDelivery_NonexistentTrackingId_NotFound()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
 
             var response = controller.ReportParcelDelivery(NotfoundTrackingNumber);
 
@@ -78,7 +82,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelDelivery_InvalidTrackingId_BadRequest()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
 
             var response = controller.ReportParcelDelivery(InvalidTrackingNumber);
 
@@ -97,7 +101,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelHop_ValidTrackingID_OkRequest()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
             
             var response = controller.ReportParcelHop(ValidTrackingNumber, ValidHopCode);
 
@@ -112,7 +116,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelHop_InvalidHopCode_BadRequest()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
             
             var response = controller.ReportParcelHop(ValidTrackingNumber, InvalidHopCode);
 
@@ -127,7 +131,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelHop_InvalidTrackingID_BadRequest()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
             
             var response = controller.ReportParcelHop(InvalidTrackingNumber, ValidHopCode);
 
@@ -142,7 +146,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelHop_InvalidTrackingIDandHopCode_BadRequest()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
             
             var response = controller.ReportParcelHop(InvalidTrackingNumber, InvalidHopCode);
 
@@ -157,7 +161,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelHop_NonExistingTrackingId_NotFound()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
             
             var response = controller.ReportParcelHop(NotfoundTrackingNumber, ValidHopCode);
 
@@ -172,7 +176,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void ReportParcelHop_NonExistingHopCode_NotFound()
         {
-            var controller = new StaffApiController(_trackingLogic);
+            var controller = new StaffApiController(_trackingLogic, _logger);
             
             var response = controller.ReportParcelHop(ValidTrackingNumber, NotfoundHopCode);
 

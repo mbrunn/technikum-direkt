@@ -62,7 +62,7 @@ namespace TechnikumDirekt.Services.Mapper
                 .ForMember(dest => dest.Hop,
                     opt => 
                         opt.MapFrom(src => src));
-
+            
             CreateMap<DalModels.Warehouse, BlModels.Hop>()
                 .As<BlModels.Warehouse>();
             
@@ -71,7 +71,7 @@ namespace TechnikumDirekt.Services.Mapper
             
             CreateMap<DalModels.Transferwarehouse, BlModels.Hop>()
                 .As<BlModels.Transferwarehouse>();
-
+            
             CreateMap<BlModels.Truck, DalModels.Truck>().ReverseMap();
             CreateMap<BlModels.Transferwarehouse, DalModels.Transferwarehouse>().ReverseMap();
             CreateMap<BlModels.HopArrival, DalModels.HopArrival>()
@@ -80,7 +80,7 @@ namespace TechnikumDirekt.Services.Mapper
                 .ReverseMap();
             
             CreateMap<BlModels.Parcel, DalModels.Parcel>().ReverseMap();
-
+            
             CreateMap<BlModels.Parcel, DalModels.Parcel>()
                 .BeforeMap((src, dest) =>
                 {

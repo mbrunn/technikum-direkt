@@ -97,6 +97,8 @@ namespace TechnikumDirekt.Services
             
             //other validators are also added with this command.
             services.AddControllers().AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
+
+            services.AddLogging();
         }
 
         /// <summary>

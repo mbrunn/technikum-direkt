@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Interfaces;
@@ -17,6 +18,7 @@ namespace TechnikumDirekt.Services.Tests
     {
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
+        private NullLogger<LogisticsPartnerApiController> _logger;
         
         private readonly Recipient _recipient1 = new Recipient
         {
@@ -59,12 +61,13 @@ namespace TechnikumDirekt.Services.Tests
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(null, It.IsAny<string>())).Throws(new ValidationException(""));
             
             _trackingLogic = mockTrackingLogic.Object;
+            _logger = NullLogger<LogisticsPartnerApiController>.Instance;
         }
         
         [Test]
         public void TransitionParcel_ValidTrackingID_OkRequest()
         {
-            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper);
+            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
             {
                 Weight = 2.0f,
@@ -85,7 +88,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void TransitionParcel_nullParcel_BadRequest()
         {
-            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper);
+            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
 
             var response = controller.TransitionParcel(null, ValidTrackingNumber);
             
@@ -100,7 +103,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void TransitionParcel_invalidTrackingID_BadRequest()
         {
-            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper);
+            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
             {
                 Weight = 2.0f,

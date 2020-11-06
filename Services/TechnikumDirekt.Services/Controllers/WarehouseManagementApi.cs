@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Linq;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
@@ -21,10 +21,14 @@ namespace TechnikumDirekt.Services.Controllers
     {
         private IWarehouseLogic _blWarehouseLogic;
         private IMapper _mapper;
-        public WarehouseManagementApiController(IWarehouseLogic blWarehouseLogic, IMapper automapper)
+        private readonly ILogger _logger;
+
+        public WarehouseManagementApiController(IWarehouseLogic blWarehouseLogic, IMapper automapper,
+            ILogger<WarehouseManagementApiController> logger)
         {
             _blWarehouseLogic = blWarehouseLogic;
             _mapper = automapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -42,23 +46,25 @@ namespace TechnikumDirekt.Services.Controllers
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "No hierarchy loaded yet.")]
         public virtual IActionResult ExportWarehouses()
         {
-            //Exceptionhandling for statusCode 400.
             try
             {
                 var exportWarehouse = _blWarehouseLogic.ExportWarehouses();
 
                 if (exportWarehouse == null)
                 {
+                    _logger.LogWarning("No hierarchy loaded yet.");
                     return NotFound(StatusCode(404, new Error
                     {
                         ErrorMessage = "No hierarchy loaded yet."
                     }));
                 }
 
+                _logger.LogInformation("Successfully exported hierarchy.");
                 return Ok(_mapper.Map<Warehouse>(exportWarehouse));
             }
-            catch (TrackingLogicException)
+            catch (TrackingLogicException e)
             {
+                _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
                 {
                     ErrorMessage = "No hierarchy loaded yet."
@@ -66,10 +72,9 @@ namespace TechnikumDirekt.Services.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(StatusCode(400, new List<Error> {
-                    new Error{ ErrorMessage = "An error occured loading."},
-                    new Error{ErrorMessage = e.Message}
-                }));
+                _logger.LogError(e.Message);
+                return BadRequest(StatusCode(400, 
+                    new Error{ ErrorMessage = "An error occured loading."}));
             }
         }
 
@@ -93,17 +98,25 @@ namespace TechnikumDirekt.Services.Controllers
             {
                 var blWh = _blWarehouseLogic.GetWarehouse(code);
                 var svcWarehouse = _mapper.Map<Warehouse>(blWh);
+                _logger.LogInformation("Successfully fetched hop with hopcode: "+ code + " - Name: " + svcWarehouse.LocationName);
                 return Ok(svcWarehouse);
             }
-            catch (TrackingLogicException)
+            catch (FluentValidation.ValidationException e)
             {
+                _logger.LogError(e?.Message + " with Value: " + e.Errors.FirstOrDefault()?.AttemptedValue);
+                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
+            }
+            catch (TrackingLogicException e)
+            {
+                _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
                 {
                     ErrorMessage = "Warehouse id not found"
                 }));
             }
-            catch
+            catch (Exception e)
             {
+                _logger.LogError(e.Message);
                 return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
             }
         }
@@ -126,15 +139,31 @@ namespace TechnikumDirekt.Services.Controllers
             {
                 var blWh = _mapper.Map<BusinessLogic.Models.Warehouse>(body);
                 _blWarehouseLogic.ImportWarehouses(blWh);
+                _logger.LogInformation("Successfully imported new warehousestructure");
                 return Ok(body);
+            }
+            catch (FluentValidation.ValidationException e)
+            {
+                var errorMessage = string.Empty;
+                foreach (var error in e.Errors)
+                {
+                    errorMessage += ("\n" + error?.ErrorMessage + " with Value: " + error?.AttemptedValue);
+                }
+
+                _logger.LogError(errorMessage.Trim());
+                return BadRequest(StatusCode(400, new Error{ ErrorMessage = "An error occured loading."}));
+            }
+            catch (TrackingLogicException e)
+            {
+                _logger.LogWarning(e.Message);
+                return BadRequest(StatusCode(400, 
+                    new Error{ErrorMessage = "The operation failed due to an error."}));
             }
             catch (Exception e)
             {
-                return BadRequest(StatusCode(400, new List<Error>
-                {
-                   new Error{ErrorMessage = "The operation failed due to an error."},
-                   new Error{ErrorMessage = e.Message}
-                }));
+                _logger.LogError(e.Message);
+                return BadRequest(StatusCode(400, 
+                    new Error{ErrorMessage = "The operation failed due to an error."}));
             }
         }
     }

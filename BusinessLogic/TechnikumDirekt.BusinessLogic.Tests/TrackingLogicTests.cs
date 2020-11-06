@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
@@ -19,6 +21,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private IMapper _mapper;
         private IParcelRepository _parcelRepository;
         private IHopRepository _hopRepository;
+        private NullLogger<TrackingLogic> _logger;
         
         private readonly Recipient _recipient1 = new Recipient
             { Name = "Michi Mango", Street = "TestStreet 1", PostalCode = "1234", City = "Mistelbach Weltstadt", Country = "AT" };
@@ -88,13 +91,14 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             mockHopRepository.Setup(m => m.GetHopByCode(NotfoundHopCode)).Returns<DalModels.Hop>(null);
 
             _hopRepository = mockHopRepository.Object;
+            _logger = NullLogger<TrackingLogic>.Instance;
         }
 
         [SetUp]
         public void Setup()
         {
             _trackingLogic = new TrackingLogic(new ParcelValidator(), new RecipientValidator(), new HopArrivalValidator(), new HopValidator(),
-                _hopRepository, _parcelRepository, _mapper);
+                _hopRepository, _parcelRepository, _mapper, _logger);
         }
         
         #region ReportParcelDelivery Tests

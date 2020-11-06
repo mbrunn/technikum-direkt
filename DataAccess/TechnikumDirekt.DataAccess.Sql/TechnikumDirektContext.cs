@@ -20,10 +20,13 @@ namespace TechnikumDirekt.DataAccess.Sql
         public new DatabaseFacade Database
         {
             get { return base.Database; }
-            set{} }
-        public new IModel Model {             
+            set{} 
+        }
+        public new IModel Model 
+        {             
             get { return base.Model; }
-            set{} }
+            set{} 
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,7 +43,7 @@ namespace TechnikumDirekt.DataAccess.Sql
                 .HasOne(ha => ha.Hop)
                 .WithMany(h => h.HopArrivals)
                 .HasForeignKey(ha => ha.HopCode);
-
+            
             /*modelBuilder.Entity<Hop>()
                 .HasOne(h => h.ParentWarehouse)
                 .WithMany(pw => pw.NextHops)

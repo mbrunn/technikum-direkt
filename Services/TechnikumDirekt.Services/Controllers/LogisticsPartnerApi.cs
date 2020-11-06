@@ -1,12 +1,12 @@
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
-using ValidationException = FluentValidation.ValidationException;
 
 namespace TechnikumDirekt.Services.Controllers
 { 
@@ -18,10 +18,12 @@ namespace TechnikumDirekt.Services.Controllers
     { 
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
-        public LogisticsPartnerApiController(ITrackingLogic trackingLogic, IMapper mapper)
+        private ILogger _logger;
+        public LogisticsPartnerApiController(ITrackingLogic trackingLogic, IMapper mapper, ILogger<LogisticsPartnerApiController> logger)
         {
             _trackingLogic = trackingLogic;
             _mapper = mapper;
+            _logger = logger;
         }
         
         /// <summary>
@@ -43,17 +45,26 @@ namespace TechnikumDirekt.Services.Controllers
             {
                 var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
                 _trackingLogic.TransitionParcelFromPartner(blParcel, trackingId);
+                _logger.LogInformation("Successfully transitioned a parcel with trackingId: " + trackingId + "from partner.");
                 return Ok("Successfully transitioned the parcel");
             }
-            catch (ValidationException )
+            catch (FluentValidation.ValidationException e)
             {
+                var errorMessage = string.Empty;
+                foreach (var error in e.Errors)
+                {
+                    errorMessage += ("\n" + error?.ErrorMessage + " with Value: " + error?.AttemptedValue);
+                }
+
+                _logger.LogInformation(errorMessage.Trim());
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The Parcel or the trackingId is not valid."
                 }));  
             }
-            catch
+            catch (Exception e)
             {
+                _logger.LogError(e.Message);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."

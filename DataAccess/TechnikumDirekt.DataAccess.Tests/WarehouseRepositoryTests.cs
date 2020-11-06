@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using FizzWare.NBuilder;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
@@ -19,6 +20,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         private ITechnikumDirektContext  _technikumDirektContext;
         private IWarehouseRepository _warehouseRepository;
         private List<Hop> _entities;
+        private NullLogger<WarehouseRepository> _logger;
         
         private const string ValidHopCode = "AUTA05";
         private const string InvalidHopCode = "AUTA99";
@@ -64,13 +66,14 @@ namespace TechnikumDirekt.DataAccess.Tests
                     (Warehouse) _entities.FirstOrDefault(y => y.Code == (string) keyValues.GetValue(0)));
             
             _technikumDirektContext = dbMock.Object;
+            _logger = NullLogger<WarehouseRepository>.Instance;
         }
 
         #region GetAll
         [Test]
         public void GetAll_ReturnsWarehouseStructure_ValidWarehouseStructure()
         {
-            _warehouseRepository = new WarehouseRepository(_technikumDirektContext);
+            _warehouseRepository = new WarehouseRepository(_technikumDirektContext, _logger);
             var wh = _warehouseRepository.GetAll();
             Assert.NotNull(wh);
             Assert.IsInstanceOf<Warehouse>(wh.FirstOrDefault());
@@ -82,7 +85,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void GetWarehouseByCode_ReturnsValidWarehouse_ValidHopCode()
         {
-            _warehouseRepository = new WarehouseRepository(_technikumDirektContext);
+            _warehouseRepository = new WarehouseRepository(_technikumDirektContext, _logger);
             var wh = _warehouseRepository.GetWarehouseByCode(ValidHopCode);
             Assert.NotNull(wh);
             Assert.IsInstanceOf<Warehouse>(wh);
@@ -91,7 +94,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void GetWarehouseByCode_ReturnsNull_InValidHopCode()
         {
-            _warehouseRepository = new WarehouseRepository(_technikumDirektContext);
+            _warehouseRepository = new WarehouseRepository(_technikumDirektContext, _logger);
             var wh = _warehouseRepository.GetWarehouseByCode(InvalidHopCode);
             Assert.Null(wh);
         }
@@ -101,7 +104,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void ImportWarehouses_Throws_InValidHopCode()
         {
-            _warehouseRepository = new WarehouseRepository(_technikumDirektContext);
+            _warehouseRepository = new WarehouseRepository(_technikumDirektContext, _logger);
             Assert.DoesNotThrow(() => _warehouseRepository.ImportWarehouses(_validWarehouse));
         }
         #endregion

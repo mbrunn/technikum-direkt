@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
@@ -17,6 +19,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         private IParcelRepository _parcelRepository;
         private List<Parcel> _entities;
         private List<HopArrival> _hopArrivals;
+        private ILogger<ParcelRepository> _logger;
         
         private const string ValidTrackingNumber = "A123BCD23";
         private const string ValidTrackingNumber2 = "B123BCD56";
@@ -65,6 +68,7 @@ namespace TechnikumDirekt.DataAccess.Tests
                     _entities.FirstOrDefault(y => y.TrackingId == (string) keyValues.GetValue(0)));
 
             _technikumDirektContext = dbMock.Object;
+            _logger = NullLogger<ParcelRepository>.Instance;
         }
 
         #region GetByTrackingId
@@ -72,7 +76,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void GetByTrackingId_ReturnsValidParcel_WithValidTrackingId()
         {
-            _parcelRepository = new ParcelRepository(_technikumDirektContext);
+            _parcelRepository = new ParcelRepository(_technikumDirektContext, _logger);
             var parcel = _parcelRepository.GetByTrackingId(ValidTrackingNumber);
             Assert.NotNull(parcel);
             Assert.AreSame(_validParcel, parcel);
@@ -81,7 +85,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void GetByTrackingId_ReturnsNull_WithInValidTrackingId()
         {
-            _parcelRepository = new ParcelRepository(_technikumDirektContext);
+            _parcelRepository = new ParcelRepository(_technikumDirektContext, _logger);
             var parcel = _parcelRepository.GetByTrackingId(InvalidTrackingNumber);
             Assert.Null(parcel);
         }
@@ -92,7 +96,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void Update_DoesNotThrow_WithValidParcel()
         {
-            _parcelRepository = new ParcelRepository(_technikumDirektContext);
+            _parcelRepository = new ParcelRepository(_technikumDirektContext, _logger);
             var updatedParcel = _validParcel;
             updatedParcel.Weight = _validParcel.Weight + 1.0f;
             Assert.DoesNotThrow(() => _parcelRepository.Update(_validParcel));
@@ -104,7 +108,7 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void Add_ReturnsTrackingId_WithValidParcel()
         {
-            _parcelRepository = new ParcelRepository(_technikumDirektContext);
+            _parcelRepository = new ParcelRepository(_technikumDirektContext, _logger);
             var trackingId = _parcelRepository.Add(_validParcel);
             Assert.AreEqual(_validParcel.TrackingId, trackingId );
         }
@@ -115,14 +119,14 @@ namespace TechnikumDirekt.DataAccess.Tests
         [Test]
         public void Delete_DoesNotThrow_WithValidParcel()
         {
-            _parcelRepository = new ParcelRepository(_technikumDirektContext);
+            _parcelRepository = new ParcelRepository(_technikumDirektContext, _logger);
             Assert.DoesNotThrow(() => _parcelRepository.Delete(_validParcel));
         }
         
         [Test]
         public void Delete_DoesNotThrow_WithValidTrackingId()
         {
-            _parcelRepository = new ParcelRepository(_technikumDirektContext);
+            _parcelRepository = new ParcelRepository(_technikumDirektContext, _logger);
             Assert.DoesNotThrow(() => _parcelRepository.Delete(_validParcel.TrackingId));
         }
         

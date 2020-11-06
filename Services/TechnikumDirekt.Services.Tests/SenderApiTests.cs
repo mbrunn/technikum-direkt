@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
@@ -18,6 +19,7 @@ namespace TechnikumDirekt.Services.Tests
     {
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
+        private NullLogger<SenderApiController> _logger;
         
         private readonly Recipient _recipient1 = new Recipient
         {
@@ -55,12 +57,13 @@ namespace TechnikumDirekt.Services.Tests
             mockTrackingLogic.Setup(m => m.SubmitParcel(null)).Throws(new ValidationException(""));
 
             _trackingLogic = mockTrackingLogic.Object;
+            _logger = NullLogger<SenderApiController>.Instance;
         }
         
         [Test]
         public void SubmitParcel_ValidParcel_Ok()
         {
-            var controller = new SenderApiController(_trackingLogic, _mapper);
+            var controller = new SenderApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
             {
                 Weight = 2.0f,
@@ -81,7 +84,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void SubmitParcel_NullParcel_BadRequest()
         {
-            var controller = new SenderApiController(_trackingLogic, _mapper);
+            var controller = new SenderApiController(_trackingLogic, _mapper, _logger);
 
             var response = controller.SubmitParcel(null);
 

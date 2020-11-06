@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
@@ -18,6 +19,7 @@ namespace TechnikumDirekt.Services.Tests
     {
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
+        private NullLogger<RecipientApiController> _logger;
         
         private readonly Recipient _recipient1 = new Recipient
         {
@@ -60,12 +62,13 @@ namespace TechnikumDirekt.Services.Tests
             mockTrackingLogic.Setup(m => m.TrackParcel(NotfoundTrackingNumber)).Throws<TrackingLogicException>();
 
             _trackingLogic = mockTrackingLogic.Object;
+            _logger = NullLogger<RecipientApiController>.Instance;
         }
         
         [Test]
         public void TrackParcel_ValidParcel_Ok()
         {
-            var controller = new RecipientApiController(_trackingLogic, _mapper);
+            var controller = new RecipientApiController(_trackingLogic, _mapper, _logger);
             
             var response = controller.TrackParcel(ValidTrackingNumber);
             
@@ -81,7 +84,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void TrackParcel_InvalidParcel_BadRequest()
         {
-            var controller = new RecipientApiController(_trackingLogic, _mapper);
+            var controller = new RecipientApiController(_trackingLogic, _mapper, _logger);
             
             var response = controller.TrackParcel(InvalidTrackingNumber);
             
@@ -96,7 +99,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void TrackParcel_NonExistingParcel_NotFound()
         {
-            var controller = new RecipientApiController(_trackingLogic, _mapper);
+            var controller = new RecipientApiController(_trackingLogic, _mapper, _logger);
             
             var response = controller.TrackParcel(NotfoundTrackingNumber);
             
