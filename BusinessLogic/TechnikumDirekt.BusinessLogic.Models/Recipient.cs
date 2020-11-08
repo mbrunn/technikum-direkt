@@ -1,4 +1,3 @@
-
 namespace TechnikumDirekt.BusinessLogic.Models
 {
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using Parcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
+﻿using TechnikumDirekt.BusinessLogic.Models;
 
 namespace TechnikumDirekt.BusinessLogic.Interfaces
 {

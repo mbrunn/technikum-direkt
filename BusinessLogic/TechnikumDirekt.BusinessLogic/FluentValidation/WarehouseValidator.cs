@@ -3,7 +3,7 @@ using TechnikumDirekt.BusinessLogic.Models;
 
 namespace TechnikumDirekt.BusinessLogic.FluentValidation
 {
-    public class WarehouseValidator: AbstractValidator<Warehouse>
+    public class WarehouseValidator : AbstractValidator<Warehouse>
     {
         public WarehouseValidator()
         {

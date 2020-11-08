@@ -11,7 +11,7 @@ namespace TechnikumDirekt.DataAccess.Models
         /// </summary>
         /// <value>GeoJSON of the area covered by the truck.</value>
         public Geometry RegionGeometry { get; set; }
-        
+
         /// <summary>
         /// The truck's number plate.
         /// </summary>

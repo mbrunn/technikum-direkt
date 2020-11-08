@@ -15,7 +15,6 @@ namespace TechnikumDirekt.BusinessLogic.Models
     /// <summary>
     /// This is used to track where a parcel has been or is heading.
     /// </summary>
-
     public class HopArrival
     {
         /// <summary>

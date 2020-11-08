@@ -23,7 +23,7 @@ namespace TechnikumDirekt.Services.Models
         /// Gets or Sets Level
         /// </summary>
         [Required]
-        [DataMember(Name="level")]
+        [DataMember(Name = "level")]
         public int? Level { get; set; }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace TechnikumDirekt.Services.Models
         /// </summary>
         /// <value>Next hops after this warehouse (warehouses or trucks).</value>
         [Required]
-        [DataMember(Name="nextHops")]
+        [DataMember(Name = "nextHops")]
         public List<WarehouseNextHops> NextHops { get; set; }
     }
 }

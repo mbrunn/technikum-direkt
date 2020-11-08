@@ -10,13 +10,14 @@ namespace TechnikumDirekt.Services.Mapper
     public class GeoJsonConverter : IValueConverter<string, Geometry>, IValueConverter<Geometry, string>
     {
         private ResolutionContext _context;
+
         public Geometry Convert(string sourceMember, ResolutionContext context)
         {
             _context = context;
-            
+
             var reader = new GeoJsonReader();
             var featureCollection = reader.Read<Feature>(sourceMember);
-            
+
             return featureCollection.Geometry;
         }
 
@@ -27,7 +28,7 @@ namespace TechnikumDirekt.Services.Mapper
             var feature = new Feature {Geometry = sourceMember};
             var writer = new GeoJsonWriter();
             var geoJsonString = writer.Write(feature);
-            
+
             return geoJsonString;
         }
     }

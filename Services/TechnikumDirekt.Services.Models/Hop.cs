@@ -83,11 +83,13 @@ namespace TechnikumDirekt.Services.Models
                 else if (hopTypeString == "Transferwarehouse")
                 {
                     return new Transferwarehouse();
-                } else
+                }
+                else
                 {
                     return new Warehouse();
                 }
             }
+
             return new Hop();
         }
     }

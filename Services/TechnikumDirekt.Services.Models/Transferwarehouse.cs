@@ -23,7 +23,7 @@ namespace TechnikumDirekt.Services.Models
         /// </summary>
         /// <value>GeoJSON of the area covered by the logistics partner.</value>
         [Required]
-        [DataMember(Name="regionGeoJson")]
+        [DataMember(Name = "regionGeoJson")]
         public string RegionGeoJson { get; set; }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace TechnikumDirekt.Services.Models
         /// </summary>
         /// <value>Name of the logistics partner.</value>
         [Required]
-        [DataMember(Name="logisticsPartner")]
+        [DataMember(Name = "logisticsPartner")]
         public string LogisticsPartner { get; set; }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace TechnikumDirekt.Services.Models
         /// </summary>
         /// <value>BaseURL of the logistics partner&#x27;s REST service.</value>
         [Required]
-        [DataMember(Name="logisticsPartnerUrl")]
+        [DataMember(Name = "logisticsPartnerUrl")]
         public string LogisticsPartnerUrl { get; set; }
     }
 }

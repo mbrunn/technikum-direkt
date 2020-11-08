@@ -1,12 +1,10 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace TechnikumDirekt.DataAccess.Models
 {
     /// <summary>
     /// n:m intermediate table for Parcel <-> Hop
     /// </summary>
-
     public class HopArrival
     {
         public string ParcelTrackingId { get; set; }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
@@ -20,7 +20,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private IMapper _mapper;
         private IWarehouseRepository _warehouseRepository;
         private IWarehouseRepository _emptyWarehouseRepository;
-        
+        private NullLogger<WarehouseLogic> _logger;
+
         private readonly Warehouse _validWarehouse = new Warehouse
         {
             Code = "WENA04",
@@ -31,7 +32,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             LocationCoordinates = new Point(16.3725042, 48.2083537),
             ProcessingDelayMins = 160
         };
-        
+
         private readonly Warehouse _invalidWarehouse = new Warehouse
         {
             Code = "WENA04",
@@ -42,7 +43,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             LocationCoordinates = new Point(16.3725042, 48.2083537),
             ProcessingDelayMins = 160
         };
-        
+
         private readonly DalModels.Warehouse _validDalWarehouse = new DalModels.Warehouse
         {
             Code = "WENA04",
@@ -53,7 +54,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             LocationCoordinates = new Point(16.3725042, 48.2083537),
             ProcessingDelayMins = 160
         };
-        
+
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
 
@@ -65,11 +66,11 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         {
             var mockMapperConfig = new MapperConfiguration(c => c.AddProfile(new DalMapperProfile()));
             _mapper = new Mapper(mockMapperConfig);
-            
+
             /* ------------- Mock WarehouseRepository Setup ------------- */
             var mockWarehouseRepository = new Mock<IWarehouseRepository>();
             // Setup - GetAll
-            mockWarehouseRepository.Setup(m => m.GetAll()).Returns(new List<DalModels.Hop> { _validDalWarehouse });
+            mockWarehouseRepository.Setup(m => m.GetAll()).Returns(new List<DalModels.Hop> {_validDalWarehouse});
             // Setup - GetWarehouse
             mockWarehouseRepository.Setup(m => m.GetWarehouseByCode(It.IsAny<string>())).Returns(_validDalWarehouse);
 
@@ -81,16 +82,17 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             emptyMockWarehouseRepository.Setup(m => m.GetAll()).Returns(new List<DalModels.Hop>());
 
             _emptyWarehouseRepository = emptyMockWarehouseRepository.Object;
+            _logger = NullLogger<WarehouseLogic>.Instance;
         }
 
         [SetUp]
         public void Setup()
         {
             _warehouseLogic = new WarehouseLogic(new WarehouseValidator(), new HopValidator(),
-                _warehouseRepository, _mapper);
-            
+                _warehouseRepository, _mapper, _logger);
+
             _emptyWarehouseLogic = new WarehouseLogic(new WarehouseValidator(), new HopValidator(),
-                _emptyWarehouseRepository, _mapper);
+                _emptyWarehouseRepository, _mapper, _logger);
         }
 
         #region ExportWarehouses Tests
@@ -100,15 +102,15 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         {
             Assert.Throws<TrackingLogicException>(() => _emptyWarehouseLogic.ExportWarehouses());
         }
-        
+
         [Test]
         public void ExportWarehouses_DoesNotThrowAndReturnsData_WithNonEmptyWarehouseList()
         {
             _warehouseLogic.ImportWarehouses(_validWarehouse);
-            
+
             Warehouse warehouses = null;
             Assert.DoesNotThrow(() => warehouses = _warehouseLogic.ExportWarehouses());
-            
+
             Assert.IsNotNull(warehouses);
         }
 
@@ -121,7 +123,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         {
             Assert.DoesNotThrow(() => _warehouseLogic.ImportWarehouses(_validWarehouse));
         }
-        
+
         [Test]
         public void ImportWarehouses_Throws_WithInvalidWarehouse()
         {
@@ -137,7 +139,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         {
             Assert.DoesNotThrow(() => _warehouseLogic.GetWarehouse(ValidHopCode));
         }
-        
+
         [Test]
         public void GetWarehouse_Throws_OnInvalidHopCode()
         {

@@ -1,8 +1,6 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using JsonConverter = Newtonsoft.Json.JsonConverter;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace TechnikumDirekt.Services.Models
 {
@@ -10,10 +8,7 @@ namespace TechnikumDirekt.Services.Models
     {
         public override bool CanWrite
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         protected abstract T Create(Type objectType, JObject jObject);
@@ -24,7 +19,8 @@ namespace TechnikumDirekt.Services.Models
         }
 
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             if (reader == null) throw new ArgumentNullException("reader");
             if (serializer == null) throw new ArgumentNullException("serializer");
