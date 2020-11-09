@@ -18,6 +18,8 @@ using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql;
+using TechnikumDirekt.ServiceAgents;
+using TechnikumDirekt.ServiceAgents.Interfaces;
 
 namespace TechnikumDirekt.Services
 {
@@ -87,6 +89,8 @@ namespace TechnikumDirekt.Services
 
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();
+            
+            services.AddTransient<IGeoEncodingAgent, OsmGeoEncodingAgent>();
 
             services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
@@ -101,6 +105,12 @@ namespace TechnikumDirekt.Services
                 config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
 
             services.AddLogging();
+
+            services.AddHttpClient("osm", c =>
+            {
+                c.BaseAddress = new Uri(Configuration.GetSection("ApiUrls").GetValue<string>("OsmApiUrl"));
+                c.DefaultRequestHeaders.Add("User-Agent", "TechnikumDirektApi");
+            });
         }
 
         /// <summary>
