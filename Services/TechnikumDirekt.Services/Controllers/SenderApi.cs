@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.ServiceAgents.Interfaces;
+using TechnikumDirekt.ServiceAgents.Models;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
 
@@ -19,7 +21,6 @@ namespace TechnikumDirekt.Services.Controllers
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
         private ILogger _logger;
-
         public SenderApiController(ITrackingLogic trackingLogic, IMapper mapper, ILogger<SenderApiController> logger)
         {
             _trackingLogic = trackingLogic;
