@@ -10,6 +10,7 @@ using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 using TechnikumDirekt.Services.Mapper;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -88,7 +89,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var mockParcelRepository = new Mock<IParcelRepository>();
             // Setup - GetByTrackingId
             mockParcelRepository.Setup(m => m.GetByTrackingId(It.IsAny<string>())).Returns(validParcel);
-            mockParcelRepository.Setup(m => m.GetByTrackingId(NotfoundTrackingNumber)).Returns<DalModels.Parcel>(null);
+            mockParcelRepository.Setup(m => m.GetByTrackingId(NotfoundTrackingNumber)).Throws<DataAccessNotFoundException>();
             // Setup - Update
             mockParcelRepository.Setup(m => m.Update(validParcel));
             // Setup - Add
@@ -100,7 +101,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var mockHopRepository = new Mock<IHopRepository>();
             // Setup - GetHopByCode
             mockHopRepository.Setup(m => m.GetHopByCode(It.IsAny<string>())).Returns(validHop);
-            mockHopRepository.Setup(m => m.GetHopByCode(NotfoundHopCode)).Returns<DalModels.Hop>(null);
+            mockHopRepository.Setup(m => m.GetHopByCode(NotfoundHopCode)).Throws<DataAccessNotFoundException>();
 
             _hopRepository = mockHopRepository.Object;
             _logger = NullLogger<TrackingLogic>.Instance;
@@ -136,13 +137,13 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void ReportParcelDelivery_Throws_WithNotfoundTrackingId()
         {
-            Assert.Throws<TrackingLogicException>(() => _trackingLogic.ReportParcelDelivery(NotfoundTrackingNumber));
+            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.ReportParcelDelivery(NotfoundTrackingNumber));
         }
 
         [Test]
         public void ReportParcelDelivery_Throws_WithInvalidTrackingId()
         {
-            Assert.Throws<ValidationException>(() => _trackingLogic.ReportParcelDelivery(InvalidTrackingNumber));
+            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.ReportParcelDelivery(InvalidTrackingNumber));
         }
 
         #endregion
@@ -169,7 +170,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void ReportParcelHop_Throws_WithNotfoundTrackingId()
         {
-            Assert.Throws<TrackingLogicException>(() =>
+            Assert.Throws<BusinessLogicNotFoundException>(() =>
                 _trackingLogic.ReportParcelHop(NotfoundTrackingNumber, ValidHopCode));
         }
 
@@ -187,21 +188,21 @@ namespace TechnikumDirekt.BusinessLogic.Tests
 
             _trackingLogic.SubmitParcel(parcel);
 
-            Assert.Throws<TrackingLogicException>(() =>
+            Assert.Throws<BusinessLogicNotFoundException>(() =>
                 _trackingLogic.ReportParcelHop(parcel.TrackingId, NotfoundHopCode));
         }
 
         [Test]
         public void ReportParcelHop_Throws_WithInvalidTrackingId()
         {
-            Assert.Throws<ValidationException>(
+            Assert.Throws<BusinessLogicValidationException>(
                 () => _trackingLogic.ReportParcelHop(InvalidTrackingNumber, ValidHopCode));
         }
 
         [Test]
         public void ReportParcelHop_Throws_WithInvalidHopCode()
         {
-            Assert.Throws<ValidationException>(
+            Assert.Throws<BusinessLogicValidationException>(
                 () => _trackingLogic.ReportParcelHop(ValidTrackingNumber, InvalidHopCode));
         }
 
@@ -236,7 +237,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 FutureHops = new List<HopArrival>()
             };
 
-            Assert.Throws<ValidationException>(() => _trackingLogic.SubmitParcel(parcel));
+            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.SubmitParcel(parcel));
         }
 
         #endregion
@@ -269,13 +270,13 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void TrackParcel_Throws_WithNonexistentTrackingId()
         {
-            Assert.Throws<TrackingLogicException>(() => _trackingLogic.TrackParcel(NotfoundTrackingNumber));
+            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.TrackParcel(NotfoundTrackingNumber));
         }
 
         [Test]
         public void TrackParcel_Throws_WithInvalidTrackingId()
         {
-            Assert.Throws<ValidationException>(() => _trackingLogic.TrackParcel(InvalidTrackingNumber));
+            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.TrackParcel(InvalidTrackingNumber));
         }
 
         #endregion
@@ -311,7 +312,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
 
             // Repo is mocked -> parcel is not actually persisted
             // Assert.DoesNotThrow(() => _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingNumber));
-            Assert.Throws<TrackingLogicException>(() =>
+            Assert.Throws<BusinessLogicBadArgumentException>(() =>
                 _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingNumber));
         }
 
@@ -327,7 +328,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 FutureHops = new List<HopArrival>()
             };
 
-            Assert.Throws<ValidationException>(() =>
+            Assert.Throws<BusinessLogicValidationException>(() =>
                 _trackingLogic.TransitionParcelFromPartner(parcel, InvalidTrackingNumber));
         }
 
@@ -343,7 +344,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 FutureHops = new List<HopArrival>()
             };
 
-            Assert.Throws<ValidationException>(() =>
+            Assert.Throws<BusinessLogicValidationException>(() =>
                 _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingNumber));
         }
 

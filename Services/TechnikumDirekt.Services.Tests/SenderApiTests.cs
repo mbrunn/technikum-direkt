@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Controllers;
 using TechnikumDirekt.Services.Mapper;
@@ -53,7 +54,7 @@ namespace TechnikumDirekt.Services.Tests
             var mockTrackingLogic = new Mock<ITrackingLogic>();
             // Setup - SubmitParcel
             mockTrackingLogic.Setup(m => m.SubmitParcel(validParcel)).Returns(validParcel.TrackingId);
-            mockTrackingLogic.Setup(m => m.SubmitParcel(null)).Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.SubmitParcel(null)).Throws<BusinessLogicValidationException>();
 
             _trackingLogic = mockTrackingLogic.Object;
             _logger = NullLogger<SenderApiController>.Instance;

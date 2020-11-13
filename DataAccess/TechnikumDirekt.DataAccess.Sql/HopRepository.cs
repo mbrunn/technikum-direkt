@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 
 namespace TechnikumDirekt.DataAccess.Sql
 {
@@ -17,6 +18,8 @@ namespace TechnikumDirekt.DataAccess.Sql
 
         public Hop GetHopByCode(string hopCode)
         {
+            if (string.IsNullOrEmpty(hopCode)) throw new DataAccessArgumentNullException("HopCode is null.");
+            
             var hop = _dbContext.Hops.Find(hopCode);
             if (hop != null)
             {
@@ -25,6 +28,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             else
             {
                 _logger.LogTrace($"Hop with code {hopCode} couldn't be found.");
+                throw new DataAccessNotFoundException($"Hop with code {hopCode} couldn't be found.");
             }
 
             return hop;

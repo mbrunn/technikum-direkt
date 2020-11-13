@@ -100,7 +100,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void ExportWarehouses_Throws_WithEmptyWarehouseList()
         {
-            Assert.Throws<TrackingLogicException>(() => _emptyWarehouseLogic.ExportWarehouses());
+            Assert.Throws<BusinessLogicNotFoundException>(() => _emptyWarehouseLogic.ExportWarehouses());
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void ImportWarehouses_Throws_WithInvalidWarehouse()
         {
-            Assert.Throws<ValidationException>(() => _warehouseLogic.ImportWarehouses(_invalidWarehouse));
+            Assert.Throws<BusinessLogicValidationException>(() => _warehouseLogic.ImportWarehouses(_invalidWarehouse));
         }
 
         #endregion
@@ -143,7 +143,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void GetWarehouse_Throws_OnInvalidHopCode()
         {
-            Assert.Throws<ValidationException>(() => _warehouseLogic.GetWarehouse(InvalidHopCode));
+            Assert.Throws<BusinessLogicValidationException>(() => _warehouseLogic.GetWarehouse(InvalidHopCode));
         }
 
         #endregion
