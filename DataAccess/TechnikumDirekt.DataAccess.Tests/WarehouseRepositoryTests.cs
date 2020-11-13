@@ -7,6 +7,7 @@ using NUnit.Framework;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 using TechnikumDirekt.DataAccess.Sql;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 
 namespace TechnikumDirekt.DataAccess.Tests
 {
@@ -90,11 +91,11 @@ namespace TechnikumDirekt.DataAccess.Tests
         }
 
         [Test]
-        public void GetWarehouseByCode_ReturnsNull_InValidHopCode()
+        public void GetWarehouseByCode_Throws_InValidHopCode()
         {
             _warehouseRepository = new WarehouseRepository(_technikumDirektContext, _logger);
-            var wh = _warehouseRepository.GetWarehouseByCode(InvalidHopCode);
-            Assert.Null(wh);
+            Assert.Throws<DataAccessNotFoundException>(
+                () => _warehouseRepository.GetWarehouseByCode(InvalidHopCode));
         }
 
         #endregion

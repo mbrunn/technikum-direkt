@@ -67,7 +67,7 @@ namespace TechnikumDirekt.Services.Controllers
                                        "exists. Trackinginformation is transmitted.");
                 return Ok(svcTrackingInformation); //TODO add Msg to response
             }
-            catch (TrackingLogicException e)
+            catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
@@ -75,9 +75,9 @@ namespace TechnikumDirekt.Services.Controllers
                     ErrorMessage = "No hierarchy loaded yet."
                 }));
             }
-            catch (ValidationException e)
+            catch (BusinessLogicValidationException e)
             {
-                _logger.LogWarning(e?.Message + " with Value: " + e.Errors.FirstOrDefault()?.AttemptedValue);
+                _logger.LogWarning(e?.Message);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."

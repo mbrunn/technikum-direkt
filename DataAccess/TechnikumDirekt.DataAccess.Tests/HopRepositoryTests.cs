@@ -7,6 +7,7 @@ using NUnit.Framework;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 using TechnikumDirekt.DataAccess.Sql;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 
 namespace TechnikumDirekt.DataAccess.Tests
 {
@@ -62,19 +63,17 @@ namespace TechnikumDirekt.DataAccess.Tests
         }
 
         [Test]
-        public void GetHopByCode_ReturnsNull_WithInValidHopCode()
+        public void GetHopByCode_Throws_WithInValidHopCode()
         {
             _hopRepository = new HopRepository(_technikumDirektContext, _logger);
-            var entity = _hopRepository.GetHopByCode(InvalidHopCode);
-            Assert.Null(entity);
+            Assert.Throws<DataAccessNotFoundException>(() => _hopRepository.GetHopByCode(InvalidHopCode));
         }
 
         [Test]
-        public void GetHopByCode_ReturnsNull_WithNullHopCode()
+        public void GetHopByCode_Throws_WithNullHopCode()
         {
             _hopRepository = new HopRepository(_technikumDirektContext, _logger);
-            var entity = _hopRepository.GetHopByCode(null);
-            Assert.Null(entity);
+            Assert.Throws<DataAccessArgumentNullException>(() => _hopRepository.GetHopByCode(null));
         }
 
         #endregion

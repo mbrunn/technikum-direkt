@@ -31,19 +31,19 @@ namespace TechnikumDirekt.Services.Tests
             // Setup - ReportParcelDelivery
             mockTrackingLogic.Setup(m => m.ReportParcelDelivery(ValidTrackingNumber));
             mockTrackingLogic.Setup(m => m.ReportParcelDelivery(InvalidTrackingNumber))
-                .Throws(new ValidationException(""));
+                .Throws<BusinessLogicValidationException>();
             mockTrackingLogic.Setup(m => m.ReportParcelDelivery(NotfoundTrackingNumber))
-                .Throws<TrackingLogicException>();
+                .Throws<BusinessLogicNotFoundException>();
             // Setup - ReportParcelHop
             mockTrackingLogic.Setup(m => m.ReportParcelHop(ValidTrackingNumber, ValidHopCode));
             mockTrackingLogic.Setup(m => m.ReportParcelHop(InvalidTrackingNumber, It.IsAny<string>()))
-                .Throws(new ValidationException(""));
+                .Throws<BusinessLogicValidationException>();
             mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), InvalidHopCode))
-                .Throws(new ValidationException(""));
+                .Throws<BusinessLogicValidationException>();
             mockTrackingLogic.Setup(m => m.ReportParcelHop(NotfoundTrackingNumber, It.IsAny<string>()))
-                .Throws<TrackingLogicException>();
+                .Throws<BusinessLogicNotFoundException>();
             mockTrackingLogic.Setup(m => m.ReportParcelHop(It.IsAny<string>(), NotfoundHopCode))
-                .Throws<TrackingLogicException>();
+                .Throws<BusinessLogicNotFoundException>();
 
             _trackingLogic = mockTrackingLogic.Object;
             _logger = NullLogger<StaffApiController>.Instance;

@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 
 namespace TechnikumDirekt.DataAccess.Sql
 {
@@ -19,6 +21,8 @@ namespace TechnikumDirekt.DataAccess.Sql
 
         public Parcel GetByTrackingId(string trackingId)
         {
+            if (string.IsNullOrEmpty(trackingId)) throw new DataAccessArgumentNullException("TrackingId is null.");
+            
             var parcel = _dbContext.Parcels
                 .Include(p => p.HopArrivals)
                 .FirstOrDefault(p => p.TrackingId == trackingId);
@@ -30,6 +34,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             else
             {
                 _logger.LogTrace($"Parcel with trackingId {trackingId} couldn't be found.");
+                throw new DataAccessNotFoundException($"Parcel with trackingId {trackingId} couldn't be found.");
             }
 
             return parcel;

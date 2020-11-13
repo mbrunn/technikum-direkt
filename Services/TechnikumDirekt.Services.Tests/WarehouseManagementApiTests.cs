@@ -54,14 +54,14 @@ namespace TechnikumDirekt.Services.Tests
             // Setup - ExportWarehouses
             mockWarehouseLogic.Setup(m => m.ExportWarehouses()).Returns(_validWarehouse);
             mockWarehouseLogic.Setup(m => m.GetWarehouse(ValidHopCode)).Returns(_validWarehouse);
-            mockWarehouseLogic.Setup(m => m.GetWarehouse(InvalidHopCode)).Throws(new ValidationException(""));
-            mockWarehouseLogic.Setup(m => m.GetWarehouse(NotfoundHopCode)).Throws<TrackingLogicException>();
+            mockWarehouseLogic.Setup(m => m.GetWarehouse(InvalidHopCode)).Throws<BusinessLogicValidationException>();
+            mockWarehouseLogic.Setup(m => m.GetWarehouse(NotfoundHopCode)).Throws<BusinessLogicNotFoundException>();
             mockWarehouseLogic.Setup(m => m.ImportWarehouses(It.IsAny<BlWarehouse>()));
-            mockWarehouseLogic.Setup(m => m.ImportWarehouses(null)).Throws(new ValidationException(""));
+            mockWarehouseLogic.Setup(m => m.ImportWarehouses(null)).Throws<BusinessLogicValidationException>();
 
             var emptyMockWarehouseLogic = new Mock<IWarehouseLogic>();
             // Setup - ExportWarehouses
-            emptyMockWarehouseLogic.Setup(m => m.ExportWarehouses()).Throws<TrackingLogicException>(); // TODO - ?
+            emptyMockWarehouseLogic.Setup(m => m.ExportWarehouses()).Throws<BusinessLogicNotFoundException>(); // TODO - ?
 
             _warehouseLogic = mockWarehouseLogic.Object;
             _emptyWarehouseLogic = emptyMockWarehouseLogic.Object;

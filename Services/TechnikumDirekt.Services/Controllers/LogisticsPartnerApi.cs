@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
@@ -55,15 +56,9 @@ namespace TechnikumDirekt.Services.Controllers
                                        "from partner.");
                 return Ok("Successfully transitioned the parcel");
             }
-            catch (ValidationException e)
+            catch (BusinessLogicValidationException e)
             {
-                var errorMessage = string.Empty;
-                foreach (var error in e.Errors)
-                {
-                    errorMessage += ("\n" + error?.ErrorMessage + " with Value: " + error?.AttemptedValue);
-                }
-
-                _logger.LogInformation(errorMessage.Trim());
+                _logger.LogInformation(e.Message);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The Parcel or the trackingId is not valid."

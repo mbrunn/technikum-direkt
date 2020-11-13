@@ -62,7 +62,7 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation("Successfully exported hierarchy.");
                 return Ok(_mapper.Map<Warehouse>(exportWarehouse));
             }
-            catch (TrackingLogicException e)
+            catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
@@ -103,12 +103,12 @@ namespace TechnikumDirekt.Services.Controllers
                                        svcWarehouse.LocationName);
                 return Ok(svcWarehouse);
             }
-            catch (ValidationException e)
+            catch (BusinessLogicValidationException e)
             {
-                _logger.LogError(e?.Message + " with Value: " + e.Errors.FirstOrDefault()?.AttemptedValue);
+                _logger.LogError(e?.Message);
                 return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
             }
-            catch (TrackingLogicException e)
+            catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
@@ -144,22 +144,10 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation("Successfully imported new warehousestructure");
                 return Ok(body);
             }
-            catch (ValidationException e)
+            catch (BusinessLogicValidationException e)
             {
-                var errorMessage = string.Empty;
-                foreach (var error in e.Errors)
-                {
-                    errorMessage += ("\n" + error?.ErrorMessage + " with Value: " + error?.AttemptedValue);
-                }
-
-                _logger.LogError(errorMessage.Trim());
+                _logger.LogError(e.Message);
                 return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
-            }
-            catch (TrackingLogicException e)
-            {
-                _logger.LogWarning(e.Message);
-                return BadRequest(StatusCode(400,
-                    new Error {ErrorMessage = "The operation failed due to an error."}));
             }
             catch (Exception e)
             {
