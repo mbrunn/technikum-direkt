@@ -7,6 +7,7 @@ using NUnit.Framework;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 using TechnikumDirekt.DataAccess.Sql;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 
 namespace TechnikumDirekt.DataAccess.Tests
 {
@@ -87,11 +88,10 @@ namespace TechnikumDirekt.DataAccess.Tests
         }
 
         [Test]
-        public void GetByTrackingId_ReturnsNull_WithInValidTrackingId()
+        public void GetByTrackingId_Throws_WithInValidTrackingId()
         {
             _parcelRepository = new ParcelRepository(_technikumDirektContext, _logger);
-            var parcel = _parcelRepository.GetByTrackingId(InvalidTrackingNumber);
-            Assert.Null(parcel);
+            Assert.Throws<DataAccessNotFoundException>(() => _parcelRepository.GetByTrackingId(InvalidTrackingNumber));
         }
 
         #endregion

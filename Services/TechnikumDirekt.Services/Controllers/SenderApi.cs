@@ -4,7 +4,10 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
+using TechnikumDirekt.ServiceAgents.Interfaces;
+using TechnikumDirekt.ServiceAgents.Models;
 using TechnikumDirekt.Services.Attributes;
 using TechnikumDirekt.Services.Models;
 
@@ -19,7 +22,6 @@ namespace TechnikumDirekt.Services.Controllers
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
         private ILogger _logger;
-
         public SenderApiController(ITrackingLogic trackingLogic, IMapper mapper, ILogger<SenderApiController> logger)
         {
             _trackingLogic = trackingLogic;
@@ -50,13 +52,13 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation("Successfully submitted a new parcel with trackingId: " + trackingId);
                 return Ok(newParcelInfo);
             }
-            catch (ValidationException e)
+            catch (BusinessLogicValidationException e)
             {
                 var errorMessage = string.Empty;
-                foreach (var error in e.Errors)
+                /*foreach (var error in e.Errors)
                 {
                     errorMessage += ("\n" + error?.ErrorMessage + " with Value: " + error?.AttemptedValue);
-                }
+                }*/
 
                 _logger.LogWarning(errorMessage.Trim());
                 return BadRequest(StatusCode(400, new Error

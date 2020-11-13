@@ -58,8 +58,8 @@ namespace TechnikumDirekt.Services.Tests
             var mockTrackingLogic = new Mock<ITrackingLogic>();
             // Setup - TrackParcel
             mockTrackingLogic.Setup(m => m.TrackParcel(ValidTrackingNumber)).Returns(validParcel);
-            mockTrackingLogic.Setup(m => m.TrackParcel(InvalidTrackingNumber)).Throws(new ValidationException(""));
-            mockTrackingLogic.Setup(m => m.TrackParcel(NotfoundTrackingNumber)).Throws<TrackingLogicException>();
+            mockTrackingLogic.Setup(m => m.TrackParcel(InvalidTrackingNumber)).Throws<BusinessLogicValidationException>();
+            mockTrackingLogic.Setup(m => m.TrackParcel(NotfoundTrackingNumber)).Throws<BusinessLogicNotFoundException>();
 
             _trackingLogic = mockTrackingLogic.Object;
             _logger = NullLogger<RecipientApiController>.Instance;

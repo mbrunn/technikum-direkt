@@ -48,7 +48,7 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation($"Successfully reported hop with TrackingId: " + trackingId);
                 return Ok("Successfully reported hop.");
             }
-            catch (TrackingLogicException e)
+            catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
@@ -56,9 +56,9 @@ namespace TechnikumDirekt.Services.Controllers
                     ErrorMessage = e.Message
                 }));
             }
-            catch (ValidationException e)
+            catch (BusinessLogicValidationException e)
             {
-                _logger.LogWarning(e?.Message + " with Value: " + e.Errors.FirstOrDefault()?.AttemptedValue);
+                _logger.LogWarning(e?.Message);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
@@ -98,7 +98,7 @@ namespace TechnikumDirekt.Services.Controllers
                                        trackingId);
                 return Ok("Successfully reported hop.");
             }
-            catch (TrackingLogicException e)
+            catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
@@ -106,15 +106,9 @@ namespace TechnikumDirekt.Services.Controllers
                     ErrorMessage = e.Message
                 }));
             }
-            catch (ValidationException e)
+            catch (BusinessLogicValidationException e)
             {
-                var errorMessage = string.Empty;
-                foreach (var error in e.Errors)
-                {
-                    errorMessage += ("\n" + error?.ErrorMessage + " with Value: " + error?.AttemptedValue);
-                }
-
-                _logger.LogWarning(errorMessage.Trim());
+                _logger.LogWarning(e.Message);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The operation failed due to an error."

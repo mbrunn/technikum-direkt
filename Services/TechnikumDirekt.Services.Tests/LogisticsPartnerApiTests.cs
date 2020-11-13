@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Controllers;
 using TechnikumDirekt.Services.Mapper;
@@ -58,9 +59,9 @@ namespace TechnikumDirekt.Services.Tests
             // Setup - TransitionParcelFromPartner
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(validParcel, ValidTrackingNumber));
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(It.IsAny<BlParcel>(), InvalidTrackingNumber))
-                .Throws(new ValidationException(""));
+                .Throws<BusinessLogicValidationException>();
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(null, It.IsAny<string>()))
-                .Throws(new ValidationException(""));
+                .Throws<BusinessLogicValidationException>();
 
             _trackingLogic = mockTrackingLogic.Object;
             _logger = NullLogger<LogisticsPartnerApiController>.Instance;

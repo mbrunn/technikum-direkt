@@ -9,6 +9,7 @@ using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.BusinessLogic
@@ -46,56 +47,85 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void ReportParcelDelivery(string trackingId)
         {
-            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
-                options =>
-                {
-                    options.IncludeRuleSets("trackingId");
-                    options.ThrowOnFailures();
-                });
+            try
+            {
+                _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                    options =>
+                    {
+                        options.IncludeRuleSets("trackingId");
+                        options.ThrowOnFailures();
+                    });
+            }
+            catch (ValidationException e)
+            {
+                throw new BusinessLogicValidationException("Parcel validation failed.", e);
+            }
 
-            var parcel = _parcelRepository.GetByTrackingId(trackingId);
-
-            if (parcel == null)
+            try
+            {
+                var parcel = _parcelRepository.GetByTrackingId(trackingId);
+                parcel.State = DalModels.Parcel.StateEnum.DeliveredEnum;
+                _parcelRepository.Update(parcel);
+            }
+            catch (DataAccessNotFoundException e)
             {
                 _logger.LogTrace($"Parcel for TrackingId {trackingId} not found");
-                throw new TrackingLogicException($"Parcel for TrackingId {trackingId} not found");
+                throw new BusinessLogicNotFoundException($"Parcel for TrackingId {trackingId} not found", e);
             }
 
             //TODO - Check if Parcel is already delivered ?
-            parcel.State = DalModels.Parcel.StateEnum.DeliveredEnum;
-            _parcelRepository.Update(parcel);
             _logger.LogDebug($"Parcel with TrackingId {trackingId} has been set to delivered.");
         }
 
         public void ReportParcelHop(string trackingId, string code)
         {
-            _hopCodeValidator.Validate(new Hop {Code = code},
-                options =>
-                {
-                    options.IncludeRuleSets("code");
-                    options.ThrowOnFailures();
-                });
-
-            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
-                options =>
-                {
-                    options.IncludeRuleSets("trackingId");
-                    options.ThrowOnFailures();
-                });
-
-            var parcel = _parcelRepository.GetByTrackingId(trackingId);
-            var hop = _hopRepository.GetHopByCode(code);
-
-            if (parcel == null)
+            try
             {
-                _logger.LogTrace($"Parcel with TrackingId {trackingId} couldn't be found.");
-                throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
+                _hopCodeValidator.Validate(new Hop {Code = code},
+                    options =>
+                    {
+                        options.IncludeRuleSets("code");
+                        options.ThrowOnFailures();
+                    });
+            }
+            catch (ValidationException e)
+            {
+                throw new BusinessLogicValidationException("Hop code validation failed.", e);
+            }
+            
+            try
+            {
+                _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                    options =>
+                    {
+                        options.IncludeRuleSets("trackingId");
+                        options.ThrowOnFailures();
+                    });
+            }
+            catch (ValidationException e)
+            {
+                throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
-            if (hop == null)
+            DalModels.Parcel parcel = null;
+            try
+            {
+                parcel = _parcelRepository.GetByTrackingId(trackingId);
+            }
+            catch (DataAccessNotFoundException e)
+            {
+                _logger.LogTrace($"Parcel for TrackingId {trackingId} not found");
+                throw new BusinessLogicNotFoundException($"Parcel for TrackingId {trackingId} not found", e);
+            }
+
+            try
+            {
+                _hopRepository.GetHopByCode(code);
+            }
+            catch (DataAccessNotFoundException e)
             {
                 _logger.LogTrace($"Hop with hopCode {code} couldn't be found.");
-                throw new TrackingLogicException($"Warehouse for code {code} not found");
+                throw new BusinessLogicNotFoundException($"Warehouse for code {code} not found", e);
             }
 
             var hopToEdit = parcel.HopArrivals.Find(x => x.HopCode == code);
@@ -104,7 +134,7 @@ namespace TechnikumDirekt.BusinessLogic
             {
                 _logger.LogTrace($"Hop to edit with hopCode {code} couldn't be found.");
                 _logger.LogTrace($"Parcel with TrackingId {trackingId} has been set to delivered.");
-                throw new TrackingLogicException($"Hop with code {code} is not part of this parcel's route.");
+                throw new BusinessLogicBadArgumentException($"Hop with code {code} is not part of this parcel's route.");
             }
 
             parcel.HopArrivals.Remove(hopToEdit);
@@ -114,42 +144,19 @@ namespace TechnikumDirekt.BusinessLogic
             parcel.HopArrivals.Add(hopToEdit);
 
             _parcelRepository.Update(parcel);
-            _logger.LogDebug($"Hop with hopCode {code} couldn't be found.");
+            _logger.LogDebug($"Parcel with trackingId {trackingId} updated.");
         }
 
         public string SubmitParcel(Parcel parcel)
         {
-            ValidateParcel(parcel);
-
-            #region TestDataInsertion
-
-            /*parcel.VisitedHops = new List<HopArrival>()
+            try
             {
-                new HopArrival()
-                {
-                    HopArrivalTime = DateTime.Now,
-                    Code = "WSTB02",
-                    Description = "Warehouse Level 2 - Wien Stadt"
-                }
-            };
-            
-            parcel.FutureHops = new List<HopArrival>()
+                ValidateParcel(parcel);
+            }
+            catch (ValidationException e)
             {
-                new HopArrival()
-                {
-                    HopArrivalTime = null,    
-                    Code = "WENB01",
-                    Description = "Warehouse Level 1 - Wien"
-                },
-                new HopArrival()
-                {
-                    HopArrivalTime = null,
-                    Code = "WTTA087",
-                    Description = "Truck in Süssenbrunn"
-                }
-            };*/
-
-            #endregion
+                throw new BusinessLogicValidationException("Parcel validation failed.", e);
+            }
 
             while (true)
             {
@@ -170,20 +177,31 @@ namespace TechnikumDirekt.BusinessLogic
 
         public Parcel TrackParcel(string trackingId)
         {
-            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
-                options =>
-                {
-                    options.IncludeRuleSets("trackingId");
-                    options.ThrowOnFailures();
-                });
-
-            var parcel = _mapper.Map<Parcel>(_parcelRepository.GetByTrackingId(trackingId));
-
-            if (parcel == null)
+            try
             {
-                _logger.LogTrace($"Parcel with trackingId {trackingId} not found");
-                throw new TrackingLogicException($"Parcel for tracking id {trackingId} not found");
+                _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                    options =>
+                    {
+                        options.IncludeRuleSets("trackingId");
+                        options.ThrowOnFailures();
+                    });
             }
+            catch (ValidationException e)
+            {
+                throw new BusinessLogicValidationException("Parcel validation failed.", e);
+            }
+
+            DalModels.Parcel dalParcel = null;
+            try
+            {
+                dalParcel = _parcelRepository.GetByTrackingId(trackingId);
+            }
+            catch (DataAccessNotFoundException e)
+            {
+                _logger.LogTrace($"Parcel for TrackingId {trackingId} not found");
+                throw new BusinessLogicNotFoundException($"Parcel for TrackingId {trackingId} not found", e);
+            }
+            var parcel = _mapper.Map<Parcel>(dalParcel);
 
             _logger.LogDebug($"Parcel with trackingId {trackingId} is being tracked.");
             return parcel;
@@ -191,23 +209,33 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void TransitionParcelFromPartner(Parcel parcel, string trackingId)
         {
-            _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
-                options =>
-                {
-                    options.IncludeRuleSets("trackingId");
-                    options.ThrowOnFailures();
-                });
-            _parcelValidator.ValidateAndThrow(parcel);
-
-            if (_parcelRepository.GetByTrackingId(trackingId) != null)
+            try
             {
-                _logger.LogTrace($"A parcel with tracking id {trackingId} has already been registered");
-                throw new TrackingLogicException($"A parcel with tracking id {trackingId} has already been registered");
+                _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                    options =>
+                    {
+                        options.IncludeRuleSets("trackingId");
+                        options.ThrowOnFailures();
+                    });
+                _parcelValidator.ValidateAndThrow(parcel);
+            }
+            catch (ValidationException e)
+            {
+                throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
-            parcel.TrackingId = trackingId;
-            _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
-            _logger.LogDebug($"Parcel with trackingId {trackingId} has been transitioned from partner");
+            try
+            {
+                _parcelRepository.GetByTrackingId(trackingId);
+                _logger.LogTrace($"A parcel with tracking id {trackingId} has already been registered");
+                throw new BusinessLogicBadArgumentException($"A parcel with tracking id {trackingId} has already been registered");
+            }
+            catch (DataAccessNotFoundException)
+            {
+                parcel.TrackingId = trackingId;
+                _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
+                _logger.LogDebug($"Parcel with trackingId {trackingId} has been transitioned from partner");
+            }
         }
 
         //Generator to generate Base 32 based ID with built in GUID as random generator

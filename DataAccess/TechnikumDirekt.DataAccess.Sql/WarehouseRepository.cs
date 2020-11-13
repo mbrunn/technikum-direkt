@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 
 namespace TechnikumDirekt.DataAccess.Sql
 {
@@ -28,6 +29,8 @@ namespace TechnikumDirekt.DataAccess.Sql
 
         public Warehouse GetWarehouseByCode(string code)
         {
+            if (string.IsNullOrEmpty(code)) throw new DataAccessArgumentNullException("Code is null.");
+            
             var wh = _dbContext.Warehouses.Find(code);
 
             if (wh != null)
@@ -37,6 +40,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             else
             {
                 _logger.LogTrace($"Hop with code {code} couldn't be found.");
+                throw new DataAccessNotFoundException($"Hop with code {code} couldn't be found.");
             }
 
             return wh;

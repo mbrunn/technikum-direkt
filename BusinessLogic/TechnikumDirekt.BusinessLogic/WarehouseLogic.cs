@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -5,6 +6,7 @@ using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.BusinessLogic
@@ -42,7 +44,7 @@ namespace TechnikumDirekt.BusinessLogic
             if (rootWarehouse == null)
             {
                 _logger.LogTrace($"No warehouses imported.");
-                throw new TrackingLogicException("No warehouses imported.");
+                throw new BusinessLogicNotFoundException("No warehouses imported.");
             }
 
             var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
@@ -52,19 +54,29 @@ namespace TechnikumDirekt.BusinessLogic
 
         public Warehouse GetWarehouse(string code)
         {
-            _hopValidator.Validate(new Hop {Code = code},
-                options =>
-                {
-                    options.IncludeRuleSets("code");
-                    options.ThrowOnFailures();
-                });
+            try
+            {
+                _hopValidator.Validate(new Hop {Code = code},
+                    options =>
+                    {
+                        options.IncludeRuleSets("code");
+                        options.ThrowOnFailures();
+                    });
+            }
+            catch (ValidationException e)
+            {
+                throw new BusinessLogicValidationException("Hop validation failed.", e);
+            }
 
-            var dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
-
-            if (dalWarehouse == null)
+            DalModels.Warehouse dalWarehouse;
+            try
+            {
+                dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
+            }
+            catch (DataAccessNotFoundException e)
             {
                 _logger.LogTrace("Hüfe, i hob kan Code gfunden!");
-                throw new TrackingLogicException("Hüfe, i hob kan Code gfunden!"); //DO NOT CHANGE
+                throw new BusinessLogicNotFoundException("Hüfe, i hob kan Code gfunden!", e); //DO NOT CHANGE
             }
 
             var blWarehouse = _mapper.Map<Warehouse>(dalWarehouse);
@@ -74,7 +86,14 @@ namespace TechnikumDirekt.BusinessLogic
 
         public void ImportWarehouses(Warehouse warehouse)
         {
-            ValidateWarehouseTree(warehouse);
+            try
+            {
+                ValidateWarehouseTree(warehouse);
+            }
+            catch (ValidationException e)
+            {
+                throw new BusinessLogicValidationException("Warehouse tree validation failed.", e);
+            }
             _warehouseRepository.ClearWarehouses();
             var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
             _warehouseRepository.ImportWarehouses(dalWh);
