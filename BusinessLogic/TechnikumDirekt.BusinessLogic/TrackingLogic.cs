@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using AutoMapper;
 using FluentValidation;
@@ -10,6 +12,8 @@ using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql.Exceptions;
+using TechnikumDirekt.ServiceAgents.Interfaces;
+using TechnikumDirekt.ServiceAgents.Models;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.BusinessLogic
@@ -21,17 +25,21 @@ namespace TechnikumDirekt.BusinessLogic
         private readonly IValidator<HopArrival> _hopArrivalValidator;
         private readonly IValidator<Hop> _hopCodeValidator;
 
-        private readonly IMapper _mapper;
-
         private readonly IHopRepository _hopRepository;
         private readonly IParcelRepository _parcelRepository;
+        private readonly IWarehouseLogic _warehouseLogic;
+
+        private readonly IGeoEncodingAgent _geoEncodingAgent;
+        
+        private readonly IMapper _mapper;
 
         private ILogger _logger;
 
         public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator,
             IValidator<HopArrival> hopArrivalValidator,
             IValidator<Hop> hopCodeValidator, IHopRepository hopRepository, IParcelRepository parcelRepository,
-            IMapper mapper, ILogger<TrackingLogic> logger)
+            IGeoEncodingAgent geoEncodingAgent, IWarehouseLogic warehouseLogic, IMapper mapper, 
+            ILogger<TrackingLogic> logger)
         {
             _parcelValidator = parcelValidator;
             _recipientValidator = recipientValidator;
@@ -39,6 +47,8 @@ namespace TechnikumDirekt.BusinessLogic
             _hopCodeValidator = hopCodeValidator;
             _hopRepository = hopRepository;
             _parcelRepository = parcelRepository;
+            _geoEncodingAgent = geoEncodingAgent;
+            _warehouseLogic = warehouseLogic;
             _mapper = mapper;
             _logger = logger;
         }
@@ -157,6 +167,14 @@ namespace TechnikumDirekt.BusinessLogic
             {
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
+            
+            /*
+             TODO: generate shortest path for the parcel
+                1. find Trucks for Sender and Recipient.
+                2. find shortest path from Sender to Recipient.
+            */
+
+            parcel.FutureHops = findShortestPath(parcel.Sender, parcel.Recipient);
 
             while (true)
             {
@@ -268,6 +286,42 @@ namespace TechnikumDirekt.BusinessLogic
             {
                 _hopArrivalValidator.ValidateAndThrow(visitedHop);
             }
+        }
+
+        private List<HopArrival> findShortestPath(Recipient sender, Recipient recipient)
+        {
+            var futureHops = new List<HopArrival>();
+            /*
+             * TODO:
+             *     1. get Coordinates of Sender and Recipient
+             *     2. get nearest Truck to Sender and Recipient
+             *     3. get shortest path between Sender and Recipient Hop.
+             */
+            
+            //1. get Coordinates of Sender and Recipient:
+            var senderAddress = new Address()
+            {
+                City = sender.City,
+                Country = sender.Country,
+                PostalCode = sender.PostalCode,
+                Street = sender.Street
+            };
+            
+            var recipientAddress = new Address()
+            {
+                City = recipient.City,
+                Country = recipient.Country,
+                PostalCode = recipient.PostalCode,
+                Street = recipient.Street
+            };
+
+            var senderPoint = _geoEncodingAgent.EncodeAddress(senderAddress);
+            var recipientPoint = _geoEncodingAgent.EncodeAddress(recipientAddress);
+            
+            //2. get nearest Truck/Hop to Sender and Recipient:
+            _warehouseLogic.getHopByPoint(senderPoint);
+
+            return futureHops;
         }
     }
 }
