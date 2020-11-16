@@ -1,4 +1,6 @@
-﻿using TechnikumDirekt.BusinessLogic.Models;
+﻿using System.Collections.Generic;
+using NetTopologySuite.Geometries;
+using TechnikumDirekt.BusinessLogic.Models;
 
 namespace TechnikumDirekt.BusinessLogic.Interfaces
 {
@@ -14,5 +16,7 @@ namespace TechnikumDirekt.BusinessLogic.Interfaces
         /// <summary> Imports a list of warehouses into the system. </summary>
         /// <param name="warehouses">Warehouses to import</param>
         public void ImportWarehouses(Warehouse warehouse);
+
+        public Hop GetHopContainingPoint(Point point);
     }
 }

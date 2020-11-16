@@ -20,6 +20,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private IMapper _mapper;
         private IWarehouseRepository _warehouseRepository;
         private IWarehouseRepository _emptyWarehouseRepository;
+        private IHopRepository _hopRepository;
         private NullLogger<WarehouseLogic> _logger;
 
         private readonly Warehouse _validWarehouse = new Warehouse
@@ -89,10 +90,10 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         public void Setup()
         {
             _warehouseLogic = new WarehouseLogic(new WarehouseValidator(), new HopValidator(),
-                _warehouseRepository, _mapper, _logger);
+                _warehouseRepository, _hopRepository, _mapper, _logger);
 
             _emptyWarehouseLogic = new WarehouseLogic(new WarehouseValidator(), new HopValidator(),
-                _emptyWarehouseRepository, _mapper, _logger);
+                _emptyWarehouseRepository, _hopRepository, _mapper, _logger);
         }
 
         #region ExportWarehouses Tests

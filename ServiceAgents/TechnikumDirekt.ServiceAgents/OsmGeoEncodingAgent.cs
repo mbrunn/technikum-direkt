@@ -39,7 +39,7 @@ namespace TechnikumDirekt.ServiceAgents
 
                 if (responseObject != null && responseObject.Count > 0)
                 {
-                    return new Point(responseObject.First().Lon, responseObject.First().Lat);
+                    return new Point(responseObject.First().Lon, responseObject.First().Lat) {SRID = 4326};
                 }
             }
             else

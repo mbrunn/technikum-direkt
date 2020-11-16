@@ -168,14 +168,8 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
             
-            /*
-             TODO: generate shortest path for the parcel
-                1. find Trucks for Sender and Recipient.
-                2. find shortest path from Sender to Recipient.
-            */
-
-            parcel.FutureHops = findShortestPath(parcel.Sender, parcel.Recipient);
-
+            parcel = FindShortestPath(parcel);
+            
             while (true)
             {
                 try
@@ -210,6 +204,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
 
             DalModels.Parcel dalParcel = null;
+            
             try
             {
                 dalParcel = _parcelRepository.GetByTrackingId(trackingId);
@@ -219,6 +214,7 @@ namespace TechnikumDirekt.BusinessLogic
                 _logger.LogTrace($"Parcel for TrackingId {trackingId} not found");
                 throw new BusinessLogicNotFoundException($"Parcel for TrackingId {trackingId} not found", e);
             }
+            
             var parcel = _mapper.Map<Parcel>(dalParcel);
 
             _logger.LogDebug($"Parcel with trackingId {trackingId} is being tracked.");
@@ -288,40 +284,107 @@ namespace TechnikumDirekt.BusinessLogic
             }
         }
 
-        private List<HopArrival> findShortestPath(Recipient sender, Recipient recipient)
+        private Parcel FindShortestPath(Parcel parcel)
         {
             var futureHops = new List<HopArrival>();
-            /*
-             * TODO:
-             *     1. get Coordinates of Sender and Recipient
-             *     2. get nearest Truck to Sender and Recipient
-             *     3. get shortest path between Sender and Recipient Hop.
-             */
             
             //1. get Coordinates of Sender and Recipient:
             var senderAddress = new Address()
             {
-                City = sender.City,
-                Country = sender.Country,
-                PostalCode = sender.PostalCode,
-                Street = sender.Street
+                City = parcel.Sender.City,
+                Country = parcel.Sender.Country,
+                PostalCode = parcel.Sender.PostalCode,
+                Street = parcel.Sender.Street
             };
             
             var recipientAddress = new Address()
             {
-                City = recipient.City,
-                Country = recipient.Country,
-                PostalCode = recipient.PostalCode,
-                Street = recipient.Street
+                City = parcel.Recipient.City,
+                Country = parcel.Recipient.Country,
+                PostalCode = parcel.Recipient.PostalCode,
+                Street = parcel.Recipient.Street
             };
 
             var senderPoint = _geoEncodingAgent.EncodeAddress(senderAddress);
             var recipientPoint = _geoEncodingAgent.EncodeAddress(recipientAddress);
             
             //2. get nearest Truck/Hop to Sender and Recipient:
-            _warehouseLogic.getHopByPoint(senderPoint);
+            var nearestHoptoSender = _warehouseLogic.GetHopContainingPoint(senderPoint);
+            var nearestHoptoReceipient = _warehouseLogic.GetHopContainingPoint(recipientPoint);
+            
+            //3. find shortest path.
+            parcel.FutureHops = StartTheMagicThing(nearestHoptoSender, nearestHoptoReceipient);
+            
+            parcel.VisitedHops = new List<HopArrival>()
+            {
+                new HopArrival()
+                {
+                    Code = nearestHoptoSender.Code,
+                    Description = nearestHoptoSender.Description,
+                    HopArrivalTime = DateTime.Now
+                }
+            };
 
-            return futureHops;
+            parcel.State = Parcel.StateEnum.PickupEnum;
+            
+            return parcel;
+        }
+
+        private List<HopArrival> StartTheMagicThing(Hop senderHop, Hop recipientHop)
+        {
+            var senderHopArrivals = new List<HopArrival>();
+            var recipientHopArrivals = new List<HopArrival>();
+            
+            var futureHopArrivals = new List<HopArrival>();
+
+            var currentSenderHop = _hopRepository.GetHopByCode(senderHop.Code);
+            var currentRecipientHop = _hopRepository.GetHopByCode(recipientHop.Code);
+            
+            var senderWhCode = currentSenderHop.ParentWarehouseCode;
+            var recipientWhCode = currentRecipientHop.ParentWarehouseCode;
+            
+            while (senderWhCode != recipientWhCode)
+            {
+                currentSenderHop = _hopRepository.GetHopByCode(senderWhCode);
+                senderWhCode = DoTheMagicThing(currentSenderHop, senderHopArrivals);
+
+                currentRecipientHop = _hopRepository.GetHopByCode(recipientWhCode);
+                recipientWhCode = DoTheMagicThing(currentRecipientHop, recipientHopArrivals);
+            }
+            
+            //needed for top most Wh.
+            currentSenderHop = _hopRepository.GetHopByCode(senderWhCode);
+            senderHopArrivals.Add(new HopArrival()
+            {
+                Code = currentSenderHop.Code,
+                Description = currentSenderHop.Description,
+                HopArrivalTime = null
+            });
+            
+            futureHopArrivals = senderHopArrivals.Union(recipientHopArrivals).ToList();
+            futureHopArrivals.Add(new HopArrival()
+            {
+                Code = recipientHop.Code,
+                Description = recipientHop.Description,
+                HopArrivalTime = null
+            });
+            
+            return futureHopArrivals;
+        }
+
+        private string DoTheMagicThing(DalModels.Hop currentHop, List<HopArrival> currentHopArrivals)
+        {
+            //var currentSenderHop = _hopRepository.GetHopByCode(senderHop.Code);
+            currentHopArrivals.Add(new HopArrival()
+            {
+                Code = currentHop.Code,
+                Description = currentHop.Description,
+                HopArrivalTime = null
+            });
+            
+            var currentSenderWh = (DalModels.Warehouse) _hopRepository.GetHopByCode(currentHop.ParentWarehouseCode);
+            
+            return currentSenderWh.Code;
         }
     }
 }

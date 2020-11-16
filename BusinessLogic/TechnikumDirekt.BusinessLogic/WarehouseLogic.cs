@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Utilities;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
@@ -16,16 +19,18 @@ namespace TechnikumDirekt.BusinessLogic
         private readonly IValidator<Warehouse> _warehouseValidator;
         private readonly IValidator<Hop> _hopValidator;
         private readonly IWarehouseRepository _warehouseRepository;
+        private readonly IHopRepository _hopRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<WarehouseLogic> _logger;
 
         public WarehouseLogic(IValidator<Warehouse> warehouseValidator, IValidator<Hop> hopValidator,
-            IWarehouseRepository warehouseRepository,
+            IWarehouseRepository warehouseRepository, IHopRepository hopRepository,
             IMapper mapper, ILogger<WarehouseLogic> logger)
         {
             _warehouseValidator = warehouseValidator;
             _hopValidator = hopValidator;
             _warehouseRepository = warehouseRepository;
+            _hopRepository = hopRepository;
             _mapper = mapper;
             _logger = logger;
         }
@@ -99,7 +104,7 @@ namespace TechnikumDirekt.BusinessLogic
             _warehouseRepository.ImportWarehouses(dalWh);
             _logger.LogDebug($"Imporeted warehouse with hopcode {warehouse.Code}");
         }
-
+        
         private void ValidateWarehouseTree(Hop node)
         {
             switch (node.HopType)
@@ -119,6 +124,17 @@ namespace TechnikumDirekt.BusinessLogic
                     _hopValidator.ValidateAndThrow(node);
                     break;
             }
+        }
+
+        public Hop GetHopContainingPoint(Point point)
+        {
+            var hop = _hopRepository.GetHopContainingPoint(point);
+            if (hop == null)
+            {
+                throw new BusinessLogicNotFoundException($"Hop containing the point {point.Coordinate} couldn't be found.");
+            }
+
+            return _mapper.Map<Hop>(hop);
         }
     }
 }

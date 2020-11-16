@@ -11,6 +11,7 @@ using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql.Exceptions;
+using TechnikumDirekt.ServiceAgents.Interfaces;
 using TechnikumDirekt.Services.Mapper;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -20,7 +21,9 @@ namespace TechnikumDirekt.BusinessLogic.Tests
     {
         private IMapper _mapper;
         private IParcelRepository _parcelRepository;
+        private IWarehouseLogic _warehouseLogic;
         private IHopRepository _hopRepository;
+        private IGeoEncodingAgent _geoEncodingAgent;
         private NullLogger<TrackingLogic> _logger;
 
         private readonly Recipient _recipient1 = new Recipient
@@ -112,7 +115,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         {
             _trackingLogic = new TrackingLogic(new ParcelValidator(), new RecipientValidator(),
                 new HopArrivalValidator(), new HopValidator(),
-                _hopRepository, _parcelRepository, _mapper, _logger);
+                _hopRepository, _parcelRepository, _geoEncodingAgent, _warehouseLogic, _mapper, _logger);
         }
 
         #region ReportParcelDelivery Tests
