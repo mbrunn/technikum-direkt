@@ -60,6 +60,10 @@ namespace TechnikumDirekt.Services.Mapper
 
             CreateMap<BlModels.Parcel, SvcModels.TrackingInformation>();
 
+            CreateMap<BlModels.HopArrival, SvcModels.HopArrival>()
+                .ForMember(dest => dest.DateTime,
+                    dest => dest.MapFrom(src => src.HopArrivalTime));
+
             CreateMap<BlModels.Parcel, SvcModels.NewParcelInfo>();
 
             CreateMap<SvcModels.Parcel, BlModels.Parcel>()
@@ -69,6 +73,8 @@ namespace TechnikumDirekt.Services.Mapper
                     parcel.FutureHops ??= new List<BlModels.HopArrival>();
                 });
 
+            
+            
             CreateMap<SvcModels.Recipient, BlModels.Recipient>().ReverseMap();
         }
     }

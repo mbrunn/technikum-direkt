@@ -216,7 +216,19 @@ namespace TechnikumDirekt.BusinessLogic
             }
             
             var parcel = _mapper.Map<Parcel>(dalParcel);
-
+            
+            //TODO: REALLY ?????
+            foreach (var fh in parcel.FutureHops)
+            {
+                fh.Description = _hopRepository.GetHopByCode(fh.Code).Description;
+            }
+            
+            foreach (var vh in parcel.VisitedHops)
+            {
+                vh.Description = _hopRepository.GetHopByCode(vh.Code).Description;
+                vh.HopArrivalTime = parcel.VisitedHops.FirstOrDefault(ha => ha.Code == vh.Code)?.HopArrivalTime;
+            }
+            
             _logger.LogDebug($"Parcel with trackingId {trackingId} is being tracked.");
             return parcel;
         }

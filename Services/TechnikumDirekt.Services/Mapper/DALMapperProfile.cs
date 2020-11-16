@@ -86,6 +86,14 @@ namespace TechnikumDirekt.Services.Mapper
                 .ForMember(dest => dest.HopArrivals,
                     opt => opt.MapFrom(src => src.VisitedHops));
 
+            CreateMap<DalModels.Parcel, BlModels.Parcel>()
+                .ForMember(dest => dest.FutureHops,
+                    opt => opt.MapFrom(src => src.HopArrivals.Where(ha => ha.HopArrivalTime == null)))
+                .ForMember(dest => dest.VisitedHops,
+                    opt => opt.MapFrom(src =>
+                        src.HopArrivals.Where(ha => ha.HopArrivalTime != null)
+                            .OrderByDescending(ha => ha.HopArrivalTime)));
+
             CreateMap<BlModels.Recipient, DalModels.Recipient>().ReverseMap();
         }
     }
