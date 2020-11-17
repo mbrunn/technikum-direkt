@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Routing.Constraints;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -92,8 +93,40 @@ namespace TechnikumDirekt.Services.Mapper
                 .ForMember(dest => dest.VisitedHops,
                     opt => opt.MapFrom(src =>
                         src.HopArrivals.Where(ha => ha.HopArrivalTime != null)
-                            .OrderByDescending(ha => ha.HopArrivalTime)));
+                            .OrderByDescending(ha => ha.HopArrivalTime)))
+                .ForMember(dest => dest.FutureHops,
+                    opt =>
+                    {
+                        opt.MapFrom(src =>
+                            src.HopArrivals.Where(ha => ha.HopArrivalTime == null)
+                                .OrderByDescending(ha => ha.HopArrivalTime));
+                    })
+                .AfterMap((src, dest, context) =>
+                {
+                    foreach (var destFutureHop in dest.FutureHops)
+                    {
+                        destFutureHop.Description = src.HopArrivals
+                            .FirstOrDefault(ha => ha.HopCode == destFutureHop.Code)
+                            ?.Hop.Description;
+                    }
+                    
+                    foreach (var visitedHop in dest.VisitedHops)
+                    {
+                        visitedHop.Description = src.HopArrivals
+                            .FirstOrDefault(ha => ha.HopCode == visitedHop.Code)
+                            ?.Hop.Description;
+                    }
 
+                    /*
+                    var allWh = src.HopArrivals.FindAll(ha => ha.Hop.HopType == DalModels.HopType.Warehouse)
+                        .Select(ha => ha.Hop).Cast<BlModels.Warehouse>().ToList();
+
+                    var topMostWhLevel = allWh.Min(wh => wh.Level);
+                    
+                    var topMostWh = allWh.FirstOrDefault(wh => wh.Level == topMostWhLevel);
+                    */
+                });
+            
             CreateMap<BlModels.Recipient, DalModels.Recipient>().ReverseMap();
         }
     }

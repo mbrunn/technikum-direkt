@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TechnikumDirekt.DataAccess.Interfaces;
@@ -25,6 +26,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             
             var parcel = _dbContext.Parcels
                 .Include(p => p.HopArrivals)
+                .ThenInclude(p => p.Hop)
                 .FirstOrDefault(p => p.TrackingId == trackingId);
 
             if (parcel != null)

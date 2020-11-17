@@ -217,18 +217,6 @@ namespace TechnikumDirekt.BusinessLogic
             
             var parcel = _mapper.Map<Parcel>(dalParcel);
             
-            //TODO: REALLY ?????
-            foreach (var fh in parcel.FutureHops)
-            {
-                fh.Description = _hopRepository.GetHopByCode(fh.Code).Description;
-            }
-            
-            foreach (var vh in parcel.VisitedHops)
-            {
-                vh.Description = _hopRepository.GetHopByCode(vh.Code).Description;
-                vh.HopArrivalTime = parcel.VisitedHops.FirstOrDefault(ha => ha.Code == vh.Code)?.HopArrivalTime;
-            }
-            
             _logger.LogDebug($"Parcel with trackingId {trackingId} is being tracked.");
             return parcel;
         }
@@ -364,7 +352,7 @@ namespace TechnikumDirekt.BusinessLogic
                 recipientWhCode = DoTheMagicThing(currentRecipientHop, recipientHopArrivals);
             }
             
-            //needed for top most Wh.
+            //add the top Most Wh
             currentSenderHop = _hopRepository.GetHopByCode(senderWhCode);
             senderHopArrivals.Add(new HopArrival()
             {
@@ -373,6 +361,7 @@ namespace TechnikumDirekt.BusinessLogic
                 HopArrivalTime = null
             });
             
+            //add the truck/transferWarehouse that delivers the parcel
             futureHopArrivals = senderHopArrivals.Union(recipientHopArrivals).ToList();
             futureHopArrivals.Add(new HopArrival()
             {

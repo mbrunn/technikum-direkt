@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
@@ -60,6 +61,28 @@ namespace TechnikumDirekt.DataAccess.Sql
 
             _logger.LogTrace($"Hop containing the point {point.Coordinate} couldn't be found.");
             throw new DataAccessNotFoundException($"Hop containing the point {point.Coordinate} couldn't be found.");
+        }
+
+        public string GetHopDescriptionByCode(string hopCode)
+        {
+            if (string.IsNullOrEmpty(hopCode)) throw new DataAccessArgumentNullException("HopCode is null.");
+            
+            var hopDescription = _dbContext.Hops
+                .Where(h => h.Code == hopCode)
+                .Select(d => d.Description)
+                .SingleOrDefault();
+            
+            if (hopDescription != null)
+            {
+                _logger.LogTrace($"Hop with code {hopCode} has been found.");
+            }
+            else
+            {
+                _logger.LogTrace($"Hop with code {hopCode} couldn't be found.");
+                throw new DataAccessNotFoundException($"Hop with code {hopCode} couldn't be found.");
+            }
+
+            return hopDescription;
         }
     }
 }
