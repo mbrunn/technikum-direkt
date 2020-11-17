@@ -313,7 +313,7 @@ namespace TechnikumDirekt.BusinessLogic
             var nearestHoptoReceipient = _warehouseLogic.GetHopContainingPoint(recipientPoint);
             
             //3. find shortest path.
-            parcel.FutureHops = StartTheMagicThing(nearestHoptoSender, nearestHoptoReceipient);
+            parcel.FutureHops = FindFutureHops(nearestHoptoSender, nearestHoptoReceipient);
             
             parcel.VisitedHops = new List<HopArrival>()
             {
@@ -330,7 +330,7 @@ namespace TechnikumDirekt.BusinessLogic
             return parcel;
         }
 
-        private List<HopArrival> StartTheMagicThing(Hop senderHop, Hop recipientHop)
+        private List<HopArrival> FindFutureHops(Hop senderHop, Hop recipientHop)
         {
             var senderHopArrivals = new List<HopArrival>();
             var recipientHopArrivals = new List<HopArrival>();
@@ -346,10 +346,10 @@ namespace TechnikumDirekt.BusinessLogic
             while (senderWhCode != recipientWhCode)
             {
                 currentSenderHop = _hopRepository.GetHopByCode(senderWhCode);
-                senderWhCode = DoTheMagicThing(currentSenderHop, senderHopArrivals);
+                senderWhCode = AddToListAndFindParent(currentSenderHop, senderHopArrivals);
 
                 currentRecipientHop = _hopRepository.GetHopByCode(recipientWhCode);
-                recipientWhCode = DoTheMagicThing(currentRecipientHop, recipientHopArrivals);
+                recipientWhCode = AddToListAndFindParent(currentRecipientHop, recipientHopArrivals);
             }
             
             //add the top Most Wh
@@ -373,9 +373,8 @@ namespace TechnikumDirekt.BusinessLogic
             return futureHopArrivals;
         }
 
-        private string DoTheMagicThing(DalModels.Hop currentHop, List<HopArrival> currentHopArrivals)
+        private string AddToListAndFindParent(DalModels.Hop currentHop, List<HopArrival> currentHopArrivals)
         {
-            //var currentSenderHop = _hopRepository.GetHopByCode(senderHop.Code);
             currentHopArrivals.Add(new HopArrival()
             {
                 Code = currentHop.Code,

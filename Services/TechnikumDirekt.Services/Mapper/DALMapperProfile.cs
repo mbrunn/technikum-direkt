@@ -99,7 +99,7 @@ namespace TechnikumDirekt.Services.Mapper
                     {
                         opt.MapFrom(src =>
                             src.HopArrivals.Where(ha => ha.HopArrivalTime == null)
-                                .OrderByDescending(ha => ha.HopArrivalTime));
+                                .OrderBy(ha => ha.Order));
                     })
                 .AfterMap((src, dest, context) =>
                 {

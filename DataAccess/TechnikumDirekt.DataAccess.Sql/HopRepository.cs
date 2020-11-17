@@ -38,11 +38,9 @@ namespace TechnikumDirekt.DataAccess.Sql
             return hop;
         }
 
-        public Hop GetHopContainingPoint(Point point) //can return Transferwh or Truck ?
+        public Hop GetHopContainingPoint(Point point)
         {
             if(point.IsEmpty) throw new DataAccessArgumentNullException("Point is null.");
-
-            //https://docs.microsoft.com/en-us/ef/ef6/querying/
             
             var truck = _dbContext.Trucks.FirstOrDefault(t => t.RegionGeometry.Contains(point));
             

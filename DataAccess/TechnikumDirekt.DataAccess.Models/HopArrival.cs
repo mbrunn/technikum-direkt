@@ -20,6 +20,6 @@ namespace TechnikumDirekt.DataAccess.Models
 
         public DateTime? HopArrivalTime { get; set; }
         
-        public int OrderId { get; set; }
+        public int Order { get; set; }
     }
 }

@@ -53,6 +53,14 @@ namespace TechnikumDirekt.DataAccess.Sql
         {
             _dbContext.Parcels.Add(parcel);
 
+            int i = 0;
+            
+            foreach (var ha in parcel.HopArrivals)
+            {
+                ha.Order = i;
+                i++;
+            }
+            
             _dbContext.HopArrivals.AddRange(parcel.HopArrivals);
 
             _dbContext.SaveChanges();
