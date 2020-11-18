@@ -4,15 +4,9 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-using NetTopologySuite.Geometries;
 using NUnit.Framework;
-using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.ServiceAgents.Exceptions;
-using TechnikumDirekt.ServiceAgents.Models;
 using TechnikumDirekt.Services.Models;
-using Parcel = TechnikumDirekt.Services.Models.Parcel;
-using Recipient = TechnikumDirekt.Services.Models.Recipient;
-using Transferwarehouse = TechnikumDirekt.Services.Models.Transferwarehouse;
 
 namespace TechnikumDirekt.ServiceAgents.Tests
 {
@@ -111,6 +105,7 @@ namespace TechnikumDirekt.ServiceAgents.Tests
             var inValidTransferWarehouse = _validTransferWarehouse;
             inValidTransferWarehouse.LogisticsPartnerUrl = "http://invalidUrl.ru/";
 
+            //liefert immer 200 zurück. sollte aber bad request sein.
             Assert.Throws<ServiceAgentsNotFoundException>(() => _parcelToPartnerAgent.TransitionParcelToPartner(ValidTrackingId, _validParcel, inValidTransferWarehouse));
         }
 
