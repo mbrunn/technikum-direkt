@@ -20,6 +20,7 @@ using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql;
 using TechnikumDirekt.ServiceAgents;
 using TechnikumDirekt.ServiceAgents.Interfaces;
+using TechnikumDirekt.Services.Controllers;
 
 namespace TechnikumDirekt.Services
 {
@@ -91,6 +92,7 @@ namespace TechnikumDirekt.Services
             services.AddTransient<ITrackingLogic, TrackingLogic>();
             
             services.AddTransient<IGeoEncodingAgent, OsmGeoEncodingAgent>();
+            services.AddTransient<ILogisticsPartnerAgent, TransferParcelToPartnerAgent>();
 
             services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),

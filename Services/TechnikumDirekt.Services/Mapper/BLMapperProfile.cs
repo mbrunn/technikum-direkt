@@ -73,6 +73,8 @@ namespace TechnikumDirekt.Services.Mapper
                     parcel.FutureHops ??= new List<BlModels.HopArrival>();
                 });
 
+            CreateMap<BlModels.Parcel, SvcModels.Parcel>();
+
             
             
             CreateMap<SvcModels.Recipient, BlModels.Recipient>().ReverseMap();

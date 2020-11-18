@@ -5,6 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\BusinessLogic\TechnikumDirekt.BusinessLogic.Models\TechnikumDirekt.BusinessLogic.Models.csproj" />
+      <ProjectReference Include="..\..\Services\TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj" />
       <ProjectReference Include="..\TechnikumDirekt.ServiceAgents.Interfaces\TechnikumDirekt.ServiceAgents.Interfaces.csproj" />
     </ItemGroup>
 

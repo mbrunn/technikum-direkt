@@ -7,11 +7,13 @@ using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite.Geometries;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql.Exceptions;
+using TechnikumDirekt.ServiceAgents.Exceptions;
 using TechnikumDirekt.ServiceAgents.Interfaces;
 using TechnikumDirekt.ServiceAgents.Models;
 using DalModels = TechnikumDirekt.DataAccess.Models;
@@ -30,15 +32,16 @@ namespace TechnikumDirekt.BusinessLogic
         private readonly IWarehouseLogic _warehouseLogic;
 
         private readonly IGeoEncodingAgent _geoEncodingAgent;
+        private readonly ILogisticsPartnerAgent _logisticsPartnerAgent;
         
         private readonly IMapper _mapper;
 
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator,
             IValidator<HopArrival> hopArrivalValidator,
             IValidator<Hop> hopCodeValidator, IHopRepository hopRepository, IParcelRepository parcelRepository,
-            IGeoEncodingAgent geoEncodingAgent, IWarehouseLogic warehouseLogic, IMapper mapper, 
+            IGeoEncodingAgent geoEncodingAgent, ILogisticsPartnerAgent logisticsPartnerAgent, IWarehouseLogic warehouseLogic, IMapper mapper, 
             ILogger<TrackingLogic> logger)
         {
             _parcelValidator = parcelValidator;
@@ -48,6 +51,7 @@ namespace TechnikumDirekt.BusinessLogic
             _hopRepository = hopRepository;
             _parcelRepository = parcelRepository;
             _geoEncodingAgent = geoEncodingAgent;
+            _logisticsPartnerAgent = logisticsPartnerAgent;
             _warehouseLogic = warehouseLogic;
             _mapper = mapper;
             _logger = logger;
@@ -75,6 +79,7 @@ namespace TechnikumDirekt.BusinessLogic
             {
                 var parcel = _parcelRepository.GetByTrackingId(trackingId);
                 parcel.State = DalModels.Parcel.StateEnum.DeliveredEnum;
+                parcel.HopArrivals.OrderBy(ha => ha.Order).Last().HopArrivalTime = DateTime.Now;
                 _parcelRepository.Update(parcel);
             }
             catch (DataAccessNotFoundException e)
@@ -146,7 +151,64 @@ namespace TechnikumDirekt.BusinessLogic
                 _logger.LogTrace($"Parcel with TrackingId {trackingId} has been set to delivered.");
                 throw new BusinessLogicBadArgumentException($"Hop with code {code} is not part of this parcel's route.");
             }
+            
+            if (hopToEdit.HopCode == "WTTA014")
+            {
+                var hop = (DalModels.Truck) hopToEdit.Hop;
+                hopToEdit.Hop = new DalModels.Transferwarehouse()
+                {
+                    Code = hopToEdit.HopCode,
+                    Description = "Transferwarehouse in Testcity",
+                    HopArrivals = new List<DalModels.HopArrival>(),
+                    HopType = DalModels.HopType.TransferWarehouse,
+                    LocationCoordinates = hop.LocationCoordinates,
+                    LocationName = "AUSLAND",
+                    LogisticsPartner = "Yeetmann Gruppe",
+                    LogisticsPartnerUrl = "https://technikumdirektapi.azurewebsites.net/"
+                };
+            }
+            
+            if (hopToEdit.Hop.HopType == DalModels.HopType.TransferWarehouse)
+            {
+                Parcel blParcel = _mapper.Map<Parcel>(parcel);
+                Services.Models.Parcel svcParcel = _mapper.Map<Services.Models.Parcel>(blParcel);
+            
+                Transferwarehouse blHop = _mapper.Map<Transferwarehouse>(hopToEdit.Hop);
+                Services.Models.Transferwarehouse svcHop = _mapper.Map<Services.Models.Transferwarehouse>(blHop);
 
+                try
+                {
+                    _logisticsPartnerAgent.TransitionParcelToPartner(parcel.TrackingId, svcParcel, svcHop);
+                }
+                catch (ServiceAgentsBadResponseException e)
+                {
+                    _logger.LogTrace($"Transferwarehouse {svcHop.Description} is not responding or has invalid URL.");
+                    throw new BusinessLogicBadArgumentException(
+                        $"Transferwarehouse {svcHop.Description} is not responding or has invalid URL.");
+                }
+            }
+
+            switch (hopToEdit.Hop.HopType)
+            {
+                case DalModels.HopType.Warehouse:
+                    parcel.State = DalModels.Parcel.StateEnum.InTransportEnum;
+                    hopToEdit.HopArrivalTime = DateTime.Now;
+                    break;
+                case DalModels.HopType.Truck:
+                    if (parcel.HopArrivals.Count(ha => ha.HopArrivalTime != null) > 1)
+                    {
+                        parcel.State = DalModels.Parcel.StateEnum.InTruckDeliveryEnum;
+                        hopToEdit.HopArrivalTime = DateTime.Now;
+                    }
+                    break;
+                case DalModels.HopType.TransferWarehouse:
+                    parcel.State = DalModels.Parcel.StateEnum.TransferredEnum;
+                    hopToEdit.HopArrivalTime = DateTime.Now;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
             parcel.HopArrivals.Remove(hopToEdit);
 
             hopToEdit.HopArrivalTime = DateTime.Now;
@@ -203,7 +265,7 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
-            DalModels.Parcel dalParcel = null;
+            DalModels.Parcel dalParcel;
             
             try
             {
@@ -289,6 +351,16 @@ namespace TechnikumDirekt.BusinessLogic
             var futureHops = new List<HopArrival>();
             
             //1. get Coordinates of Sender and Recipient:
+            if (parcel.Sender == null)
+            {
+                throw new BusinessLogicBadArgumentException($"Sender can not be null.");
+            }
+            
+            if (parcel.Recipient == null)
+            {
+                throw new BusinessLogicBadArgumentException($"Recipient can not be null.");
+            }
+            
             var senderAddress = new Address()
             {
                 City = parcel.Sender.City,
@@ -304,13 +376,53 @@ namespace TechnikumDirekt.BusinessLogic
                 PostalCode = parcel.Recipient.PostalCode,
                 Street = parcel.Recipient.Street
             };
-
-            var senderPoint = _geoEncodingAgent.EncodeAddress(senderAddress);
-            var recipientPoint = _geoEncodingAgent.EncodeAddress(recipientAddress);
             
+            Point senderPoint;
+            
+            try
+            {
+                senderPoint = _geoEncodingAgent.EncodeAddress(senderAddress);
+            }
+            catch (ServiceAgentsNotFoundException e)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"Address of Sender {parcel.Sender.Name} could not be decoded into GPS Coordinates.");
+            }
+            
+            Point recipientPoint;
+
+            try
+            {
+                recipientPoint = _geoEncodingAgent.EncodeAddress(recipientAddress);
+            }
+            catch (ServiceAgentsNotFoundException e)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"Address of Sender {parcel.Recipient.Name} could not be decoded into GPS Coordinates.");
+            }
+
+
             //2. get nearest Truck/Hop to Sender and Recipient:
-            var nearestHoptoSender = _warehouseLogic.GetHopContainingPoint(senderPoint);
-            var nearestHoptoReceipient = _warehouseLogic.GetHopContainingPoint(recipientPoint);
+            
+            Hop nearestHoptoSender;
+            
+            try
+            { 
+                nearestHoptoSender = _warehouseLogic.GetHopContainingPoint(senderPoint);
+            }
+            catch (DataAccessArgumentNullException e)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"No Hop contains the given Point {senderPoint.AsText()} could not be decoded into GPS Coordinates.");
+            }
+
+            Hop nearestHoptoReceipient;
+            
+            try
+            { 
+                nearestHoptoReceipient = _warehouseLogic.GetHopContainingPoint(recipientPoint);
+            }
+            catch (DataAccessArgumentNullException e)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"No Hop contains the given Point {recipientPoint.AsText()} could not be decoded into GPS Coordinates.");
+            }
             
             //3. find shortest path.
             parcel.FutureHops = FindFutureHops(nearestHoptoSender, nearestHoptoReceipient);
@@ -334,21 +446,114 @@ namespace TechnikumDirekt.BusinessLogic
         {
             var senderHopArrivals = new List<HopArrival>();
             var recipientHopArrivals = new List<HopArrival>();
-            
-            var futureHopArrivals = new List<HopArrival>();
 
-            var currentSenderHop = _hopRepository.GetHopByCode(senderHop.Code);
-            var currentRecipientHop = _hopRepository.GetHopByCode(recipientHop.Code);
+            DalModels.Hop currentSenderHop;
+            DalModels.Hop currentRecipientHop;
+
+            try
+            {
+                currentSenderHop = _hopRepository.GetHopByCode(senderHop.Code);
+            }
+            catch (DataAccessNotFoundException)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"Nearest Hop to Sender with code {senderHop.Code} does not exist. FutureHops Prediction failed.");
+            }
+            
+            try
+            {
+                currentRecipientHop = _hopRepository.GetHopByCode(recipientHop.Code);
+            }
+            catch (DataAccessNotFoundException)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"Nearest Hop to Recipient with code {recipientHop.Code} does not exist. FutureHops Prediction failed.");
+            }
             
             var senderWhCode = currentSenderHop.ParentWarehouseCode;
             var recipientWhCode = currentRecipientHop.ParentWarehouseCode;
+
+            #region BringToSameLevel
+
+            var senderWh = new DalModels.Warehouse();
+            var recipientWh = new DalModels.Warehouse();
+            
+            try
+            {
+                senderWh = (DalModels.Warehouse) _hopRepository.GetHopByCode(senderWhCode);
+            }
+            catch (DataAccessNotFoundException)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
+            }
+            
+            try
+            {
+                recipientWh = (DalModels.Warehouse) _hopRepository.GetHopByCode(recipientWhCode);
+            }
+            catch (DataAccessNotFoundException)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
+            }
+            
+            if (senderWh.Level != recipientWh.Level)
+            {
+                //not on matching levels:
+                if (currentRecipientHop.ParentWarehouse.Level < currentSenderHop.ParentWarehouse.Level)
+                {
+                    //recipient is lower down the tree -> go the same level as the currentSender
+                    while (currentRecipientHop.ParentWarehouse.Level < currentSenderHop.ParentWarehouse.Level)
+                    {
+                        try
+                        {
+                            currentRecipientHop = _hopRepository.GetHopByCode(recipientWhCode);
+                        }
+                        catch (DataAccessNotFoundException)
+                        {
+                            throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
+                        }
+                        recipientWhCode = AddToListAndFindParent(currentRecipientHop, recipientHopArrivals);
+                    }
+                }
+                else
+                {
+                    while (currentSenderHop.ParentWarehouse.Level < currentRecipientHop.ParentWarehouse.Level)
+                    {
+                        try
+                        {
+                            currentSenderHop = _hopRepository.GetHopByCode(senderWhCode);
+                        }
+                        catch (DataAccessNotFoundException)
+                        {
+                            throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
+                        }
+                        senderWhCode = AddToListAndFindParent(currentSenderHop, senderHopArrivals);
+                    }
+                }
+            }
+
+            #endregion
             
             while (senderWhCode != recipientWhCode)
             {
-                currentSenderHop = _hopRepository.GetHopByCode(senderWhCode);
+                try
+                {
+                    currentSenderHop = _hopRepository.GetHopByCode(senderWhCode);
+                }
+                catch (DataAccessNotFoundException)
+                {
+                    throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
+                }
+                
                 senderWhCode = AddToListAndFindParent(currentSenderHop, senderHopArrivals);
 
-                currentRecipientHop = _hopRepository.GetHopByCode(recipientWhCode);
+                try
+                {
+                    currentRecipientHop = _hopRepository.GetHopByCode(recipientWhCode);
+                }
+                catch (DataAccessNotFoundException)
+                {
+                    throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
+                }
+
                 recipientWhCode = AddToListAndFindParent(currentRecipientHop, recipientHopArrivals);
             }
             
@@ -362,7 +567,7 @@ namespace TechnikumDirekt.BusinessLogic
             });
             
             //add the truck/transferWarehouse that delivers the parcel
-            futureHopArrivals = senderHopArrivals.Union(recipientHopArrivals).ToList();
+            var futureHopArrivals = senderHopArrivals.Union(recipientHopArrivals).ToList();
             futureHopArrivals.Add(new HopArrival()
             {
                 Code = recipientHop.Code,
@@ -381,10 +586,16 @@ namespace TechnikumDirekt.BusinessLogic
                 Description = currentHop.Description,
                 HopArrivalTime = null
             });
-            
-            var currentSenderWh = (DalModels.Warehouse) _hopRepository.GetHopByCode(currentHop.ParentWarehouseCode);
-            
-            return currentSenderWh.Code;
+
+            try
+            {
+                var currentSenderWh = (DalModels.Warehouse) _hopRepository.GetHopByCode(currentHop.ParentWarehouseCode);
+                return currentSenderWh.Code;
+            }
+            catch (DataAccessNotFoundException)
+            {
+                throw new BusinessLogicFutureHopsPrediction($"Parrenthop with code {currentHop.ParentWarehouseCode} does not exist.");
+            }
         }
     }
 }

@@ -93,7 +93,7 @@ namespace TechnikumDirekt.Services.Mapper
                 .ForMember(dest => dest.VisitedHops,
                     opt => opt.MapFrom(src =>
                         src.HopArrivals.Where(ha => ha.HopArrivalTime != null)
-                            .OrderByDescending(ha => ha.HopArrivalTime)))
+                            .OrderBy(ha => ha.HopArrivalTime)))
                 .ForMember(dest => dest.FutureHops,
                     opt =>
                     {

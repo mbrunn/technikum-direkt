@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
+using TechnikumDirekt.ServiceAgents.Exceptions;
 using TechnikumDirekt.ServiceAgents.Models;
 
 namespace TechnikumDirekt.ServiceAgents.Tests
@@ -39,8 +40,8 @@ namespace TechnikumDirekt.ServiceAgents.Tests
 
             _encodingAgent = new OsmGeoEncodingAgent(mockFactory.Object);
         }
-        
-        public class DelegatingHandlerStub : DelegatingHandler {
+
+        private class DelegatingHandlerStub : DelegatingHandler {
             private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _handlerFunc;
             public DelegatingHandlerStub() {
                 _handlerFunc = (request, cancellationToken) => Task.FromResult(new HttpResponseMessage());
@@ -88,10 +89,8 @@ namespace TechnikumDirekt.ServiceAgents.Tests
                 City = "Wien",
                 Street = "nonexistent"
             };
-
-            var point = _encodingAgent.EncodeAddress(address);
             
-            Assert.IsNull(point);
+            Assert.Throws<ServiceAgentsNotFoundException>(() => _encodingAgent.EncodeAddress(address));
         }
 
         #endregion

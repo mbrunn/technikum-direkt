@@ -52,7 +52,7 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation("Successfully submitted a new parcel with trackingId: " + trackingId);
                 return Ok(newParcelInfo);
             }
-            catch (BusinessLogicValidationException e)
+            catch (BusinessLogicValidationException)
             {
                 var errorMessage = string.Empty;
                 /*foreach (var error in e.Errors)

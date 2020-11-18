@@ -40,7 +40,7 @@ namespace TechnikumDirekt.DataAccess.Sql
 
         public Hop GetHopContainingPoint(Point point)
         {
-            if(point.IsEmpty) throw new DataAccessArgumentNullException("Point is null.");
+            if(point == null) throw new DataAccessArgumentNullException("Point is null.");
             
             var truck = _dbContext.Trucks.FirstOrDefault(t => t.RegionGeometry.Contains(point));
             

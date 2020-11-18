@@ -11,7 +11,9 @@ using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql.Exceptions;
+using TechnikumDirekt.ServiceAgents.Exceptions;
 using TechnikumDirekt.ServiceAgents.Interfaces;
+using TechnikumDirekt.ServiceAgents.Models;
 using TechnikumDirekt.Services.Mapper;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -24,6 +26,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private IWarehouseLogic _warehouseLogic;
         private IHopRepository _hopRepository;
         private IGeoEncodingAgent _geoEncodingAgent;
+        private ILogisticsPartnerAgent _logisticsPartnerAgent;
+        
         private NullLogger<TrackingLogic> _logger;
 
         private readonly Recipient _recipient1 = new Recipient
@@ -50,6 +54,36 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             Country = "AT"
         };
 
+        private readonly Address _validAddress1 = new Address()
+        {
+            Street = "TestStreet 1", PostalCode = "1234", City = "Mistelbach Weltstadt",
+            Country = "AT"
+        };
+
+        private readonly Address _validAddress2 = new Address()
+        {
+            Street = "Banana Street 2", PostalCode = "4242", City = "Banana City",
+            Country = "AT"
+        };
+
+        private readonly Address _inValidAddress = new Address()
+        {
+            Street = "invalidStreet"
+        };
+
+        private readonly Hop _validHop = new Hop()
+        {
+            Code = "ABC123",
+            Description = "description",
+            HopType = HopType.Truck,
+            LocationCoordinates = new Point(123, 123),
+            LocationName = "Truck in BananaCity",
+            ProcessingDelayMins = 10
+        };
+
+        private readonly Point _validPoint = new Point(42.5, 42.5);
+        private readonly Point _inValidPoint = new Point(66.6, 66.6);
+
         private const string ValidTrackingNumber = "A123BCD23";
         private const string ValidTrackingNumber2 = "B123BCD56";
         private const string InvalidTrackingNumber = "A123BaD23";
@@ -66,16 +100,6 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var mockMapperConfig = new MapperConfiguration(c => c.AddProfile(new DalMapperProfile()));
             _mapper = new Mapper(mockMapperConfig);
 
-            var validParcel = new DalModels.Parcel
-            {
-                TrackingId = ValidTrackingNumber,
-                Weight = 2.0f,
-                Sender = _dalRecipient1,
-                Recipient = _dalRecipient2,
-                HopArrivals = new List<DalModels.HopArrival>
-                    {new DalModels.HopArrival {HopCode = ValidHopCode, ParcelTrackingId = ValidTrackingNumber}}
-            };
-
             DalModels.Hop validHop = new DalModels.Warehouse
             {
                 HopType = DalModels.HopType.Warehouse,
@@ -87,12 +111,23 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 Level = 5,
                 NextHops = new List<DalModels.Hop>()
             };
+            
+            var validParcel = new DalModels.Parcel
+            {
+                TrackingId = ValidTrackingNumber,
+                Weight = 2.0f,
+                Sender = _dalRecipient1,
+                Recipient = _dalRecipient2,
+                HopArrivals = new List<DalModels.HopArrival>
+                    {new DalModels.HopArrival {HopCode = ValidHopCode, ParcelTrackingId = ValidTrackingNumber, Hop = validHop}}
+            };
 
             /* ------------- Mock ParcelRepository Setup ------------- */
             var mockParcelRepository = new Mock<IParcelRepository>();
             // Setup - GetByTrackingId
             mockParcelRepository.Setup(m => m.GetByTrackingId(It.IsAny<string>())).Returns(validParcel);
-            mockParcelRepository.Setup(m => m.GetByTrackingId(NotfoundTrackingNumber)).Throws<DataAccessNotFoundException>();
+            mockParcelRepository.Setup(m => m.GetByTrackingId(NotfoundTrackingNumber))
+                .Throws<DataAccessNotFoundException>();
             // Setup - Update
             mockParcelRepository.Setup(m => m.Update(validParcel));
             // Setup - Add
@@ -106,6 +141,20 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             mockHopRepository.Setup(m => m.GetHopByCode(It.IsAny<string>())).Returns(validHop);
             mockHopRepository.Setup(m => m.GetHopByCode(NotfoundHopCode)).Throws<DataAccessNotFoundException>();
 
+            /* ------------- Mock HopRepository Setup ------------- */
+            var geoEncodingAgent = new Mock<IGeoEncodingAgent>();
+            // Setup - GetHopByCode
+            geoEncodingAgent.Setup(m => m.EncodeAddress(It.IsAny<Address>())).Returns(_validPoint);
+            geoEncodingAgent.Setup(m => m.EncodeAddress(_inValidAddress)).Throws<ServiceAgentsNotFoundException>();
+
+            /* ------------- Mock HopRepository Setup ------------- */
+            var warehouseLogic = new Mock<IWarehouseLogic>();
+            // Setup - GetHopByCode
+            warehouseLogic.Setup(m => m.GetHopContainingPoint(_validPoint)).Returns(_validHop);
+            warehouseLogic.Setup(m => m.GetHopContainingPoint(_inValidPoint)).Returns(new Hop());
+
+            _warehouseLogic = warehouseLogic.Object;
+            _geoEncodingAgent = geoEncodingAgent.Object;
             _hopRepository = mockHopRepository.Object;
             _logger = NullLogger<TrackingLogic>.Instance;
         }
@@ -115,7 +164,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         {
             _trackingLogic = new TrackingLogic(new ParcelValidator(), new RecipientValidator(),
                 new HopArrivalValidator(), new HopValidator(),
-                _hopRepository, _parcelRepository, _geoEncodingAgent, _warehouseLogic, _mapper, _logger);
+                _hopRepository, _parcelRepository, _geoEncodingAgent,_logisticsPartnerAgent, _warehouseLogic, _mapper, _logger);
         }
 
         #region ReportParcelDelivery Tests
@@ -140,13 +189,15 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void ReportParcelDelivery_Throws_WithNotfoundTrackingId()
         {
-            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.ReportParcelDelivery(NotfoundTrackingNumber));
+            Assert.Throws<BusinessLogicNotFoundException>(() =>
+                _trackingLogic.ReportParcelDelivery(NotfoundTrackingNumber));
         }
 
         [Test]
         public void ReportParcelDelivery_Throws_WithInvalidTrackingId()
         {
-            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.ReportParcelDelivery(InvalidTrackingNumber));
+            Assert.Throws<BusinessLogicValidationException>(() =>
+                _trackingLogic.ReportParcelDelivery(InvalidTrackingNumber));
         }
 
         #endregion
@@ -255,14 +306,15 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 Weight = 2.0f,
                 Sender = _recipient1,
                 Recipient = _recipient2,
-                VisitedHops = new List<HopArrival>(),
+                VisitedHops = new List<HopArrival>()
+                ,
                 FutureHops = new List<HopArrival>()
             };
 
             parcel.TrackingId = _trackingLogic.SubmitParcel(parcel);
 
             Parcel result = null;
-            Assert.DoesNotThrow(() => { result = _trackingLogic.TrackParcel(ValidTrackingNumber); });
+            Assert.DoesNotThrow(() => { result = _trackingLogic.TrackParcel(parcel.TrackingId); });
 
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result.TrackingId);

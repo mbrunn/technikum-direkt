@@ -4,6 +4,7 @@ using NetTopologySuite.Geometries;
 using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
+using TechnikumDirekt.ServiceAgents.Exceptions;
 using TechnikumDirekt.ServiceAgents.Interfaces;
 using TechnikumDirekt.ServiceAgents.Models;
 
@@ -31,7 +32,11 @@ namespace TechnikumDirekt.ServiceAgents
             if (address == null) throw new ArgumentNullException(nameof(address));
             var client = _clientFactory.CreateClient("osm");
 
-            var response = client.GetAsync($"search?q={address.PostalCode}+{address.City}+{address.Street}&format=json").Result;
+            //TODO: is this clean enough ?
+            address.PostalCode = address.PostalCode.Substring(address.PostalCode.LastIndexOf('-')+1);
+            
+            var response = client.GetAsync($"search?q={address.Country}+{address.PostalCode}+{address.City}+{address.Street}&format=json").Result;
+            
             if (response.IsSuccessStatusCode)
             {
                 var responseString = response.Content.ReadAsStringAsync().Result;
@@ -44,10 +49,10 @@ namespace TechnikumDirekt.ServiceAgents
             }
             else
             {
-                throw new Exception("This should be some custom exception");
+                throw new ServiceAgentsBadResponseException($"Unsuccessful response: {response.StatusCode}");
             }
 
-            return null;
+            throw new ServiceAgentsNotFoundException($"Address could not be resolved to GPS coordinates.");
         }
     }
 

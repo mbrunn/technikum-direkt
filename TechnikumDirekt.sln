@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.ServiceAgen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.ServiceAgents.Tests", "ServiceAgents\TechnikumDirekt.ServiceAgents.Tests\TechnikumDirekt.ServiceAgents.Tests.csproj", "{2639D1D2-F45D-47E0-B11C-0ECB1D67D55F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{7CDA6847-BAF2-49F8-8CBA-CCF764788662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTests\IntegrationTest\IntegrationTest.csproj", "{15F0BD1E-253C-4B2E-A2FF-5F140CD7D26E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +114,10 @@ Global
 		{2639D1D2-F45D-47E0-B11C-0ECB1D67D55F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2639D1D2-F45D-47E0-B11C-0ECB1D67D55F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2639D1D2-F45D-47E0-B11C-0ECB1D67D55F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15F0BD1E-253C-4B2E-A2FF-5F140CD7D26E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15F0BD1E-253C-4B2E-A2FF-5F140CD7D26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15F0BD1E-253C-4B2E-A2FF-5F140CD7D26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15F0BD1E-253C-4B2E-A2FF-5F140CD7D26E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0DDBC80F-FE9C-4B19-AD33-A9307BE8E7DE} = {D4D483FF-AC5D-4416-B2AE-62BE36611CD7}
@@ -128,5 +136,6 @@ Global
 		{9452E01B-EF8D-4C0F-9599-528D46E12AA5} = {9815FED8-32BC-48F8-B8A2-91A7C7EB519C}
 		{6AC62991-0A07-4BB2-8861-B9D48D725A07} = {9815FED8-32BC-48F8-B8A2-91A7C7EB519C}
 		{2639D1D2-F45D-47E0-B11C-0ECB1D67D55F} = {9815FED8-32BC-48F8-B8A2-91A7C7EB519C}
+		{15F0BD1E-253C-4B2E-A2FF-5F140CD7D26E} = {7CDA6847-BAF2-49F8-8CBA-CCF764788662}
 	EndGlobalSection
 EndGlobal
