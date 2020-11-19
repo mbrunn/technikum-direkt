@@ -43,7 +43,7 @@ steps:
     projects: '**/*Test*.csproj'
     publishTestResults: true
 
-- script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.6.7
+- script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.8.0
   displayName: 'Install ReportGenerator tool'
   continueOnError: true
 
