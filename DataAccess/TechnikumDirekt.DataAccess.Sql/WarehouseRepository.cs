@@ -56,13 +56,12 @@ namespace TechnikumDirekt.DataAccess.Sql
         public void ClearWarehouses()
         {
             _dbContext.Database.ExecuteSqlRaw(
+                $"DELETE FROM {_dbContext.Model.FindEntityType(typeof(Parcel)).GetTableName()}");
+            _dbContext.Database.ExecuteSqlRaw(
+                $"DELETE FROM {_dbContext.Model.FindEntityType(typeof(Recipient)).GetTableName()}");
+            _dbContext.Database.ExecuteSqlRaw(
                 $"DELETE FROM {_dbContext.Model.FindEntityType(typeof(Hop)).GetTableName()}");
-            _logger.LogTrace($"Cleared Warehousestructure.");
-        }
-
-        public IEnumerable<Warehouse> GetWarehousesOnLevel(int level)
-        {
-            throw new NotImplementedException();
+            _logger.LogTrace($"Cleared Warehousestructure and all other data.");
         }
     }
 }

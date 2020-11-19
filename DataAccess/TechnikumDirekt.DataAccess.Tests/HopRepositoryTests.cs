@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
@@ -20,13 +22,16 @@ namespace TechnikumDirekt.DataAccess.Tests
 
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
+        
+        private readonly Point _validPoint = new Point(42.0, 42.0);
+        private readonly Point _inValidPoint = new Point(25.0, 25.0);
 
         [SetUp]
         public void Setup()
         {
             var validHop = new Hop()
             {
-                HopType = HopType.Truck,
+                HopType = HopType.Warehouse,
                 Code = ValidHopCode,
                 Description = "Valid Truck in Siebenhirten",
                 LocationName = "Siebenhirten",
@@ -46,7 +51,9 @@ namespace TechnikumDirekt.DataAccess.Tests
             dbMock.Setup(p => p.Hops.Find(It.IsAny<object[]>()))
                 .Returns<object[]>((keyValues) =>
                     _entities.FirstOrDefault(y => y.Code == (string) keyValues.GetValue(0)));
-
+            
+            
+            
             _technikumDirektContext = dbMock.Object;
             _logger = NullLogger<HopRepository>.Instance;
         }
@@ -74,6 +81,33 @@ namespace TechnikumDirekt.DataAccess.Tests
         {
             _hopRepository = new HopRepository(_technikumDirektContext, _logger);
             Assert.Throws<DataAccessArgumentNullException>(() => _hopRepository.GetHopByCode(null));
+        }
+
+        #endregion
+        
+        #region GetHopContainingPoint
+
+        [Test]
+        public void GetHopContainingPoint_ReturnsValidHop_WithValidPoint()
+        {
+            _hopRepository = new HopRepository(_technikumDirektContext, _logger);
+            var entity = _hopRepository.GetHopContainingPoint(_validPoint);
+            Assert.NotNull(entity);
+            Assert.AreSame(_entities.FirstOrDefault(), entity);
+        }
+
+        [Test]
+        public void GetHopContainingPoint_Throws_WithInValidPoint()
+        {
+            _hopRepository = new HopRepository(_technikumDirektContext, _logger);
+            Assert.Throws<DataAccessNotFoundException>(() => _hopRepository.GetHopContainingPoint(_inValidPoint));
+        }
+
+        [Test]
+        public void GetHopContainingPoint_Throws_WithNullPoint()
+        {
+            _hopRepository = new HopRepository(_technikumDirektContext, _logger);
+            Assert.Throws<DataAccessArgumentNullException>(() => _hopRepository.GetHopContainingPoint(null));
         }
 
         #endregion

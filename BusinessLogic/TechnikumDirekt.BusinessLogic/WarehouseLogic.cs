@@ -117,12 +117,13 @@ namespace TechnikumDirekt.BusinessLogic
                     {
                         ValidateWarehouseTree(child.Hop);
                     }
-
                     break;
                 case HopType.Truck:
                 case HopType.TransferWarehouse:
                     _hopValidator.ValidateAndThrow(node);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

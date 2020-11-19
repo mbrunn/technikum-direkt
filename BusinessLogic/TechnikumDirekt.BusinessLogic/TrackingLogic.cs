@@ -123,6 +123,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
 
             DalModels.Parcel parcel = null;
+            
             try
             {
                 parcel = _parcelRepository.GetByTrackingId(trackingId);
@@ -152,6 +153,7 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new BusinessLogicBadArgumentException($"Hop with code {code} is not part of this parcel's route.");
             }
             
+            /*
             if (hopToEdit.HopCode == "WTTA014")
             {
                 var hop = (DalModels.Truck) hopToEdit.Hop;
@@ -166,15 +168,15 @@ namespace TechnikumDirekt.BusinessLogic
                     LogisticsPartner = "Yeetmann Gruppe",
                     LogisticsPartnerUrl = "https://technikumdirektapi.azurewebsites.net/"
                 };
-            }
-            
+            }*/
+
             if (hopToEdit.Hop.HopType == DalModels.HopType.TransferWarehouse)
             {
-                Parcel blParcel = _mapper.Map<Parcel>(parcel);
-                Services.Models.Parcel svcParcel = _mapper.Map<Services.Models.Parcel>(blParcel);
+                var blParcel = _mapper.Map<Parcel>(parcel);
+                var svcParcel = _mapper.Map<Services.Models.Parcel>(blParcel);
             
-                Transferwarehouse blHop = _mapper.Map<Transferwarehouse>(hopToEdit.Hop);
-                Services.Models.Transferwarehouse svcHop = _mapper.Map<Services.Models.Transferwarehouse>(blHop);
+                var blHop = _mapper.Map<Transferwarehouse>(hopToEdit.Hop);
+                var svcHop = _mapper.Map<Services.Models.Transferwarehouse>(blHop);
 
                 try
                 {
@@ -210,12 +212,10 @@ namespace TechnikumDirekt.BusinessLogic
             }
             
             parcel.HopArrivals.Remove(hopToEdit);
-
-            hopToEdit.HopArrivalTime = DateTime.Now;
-
             parcel.HopArrivals.Add(hopToEdit);
 
             _parcelRepository.Update(parcel);
+            
             _logger.LogDebug($"Parcel with trackingId {trackingId} updated.");
         }
 

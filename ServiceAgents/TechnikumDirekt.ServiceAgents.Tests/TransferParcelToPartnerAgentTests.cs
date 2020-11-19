@@ -104,8 +104,7 @@ namespace TechnikumDirekt.ServiceAgents.Tests
         {
             var inValidTransferWarehouse = _validTransferWarehouse;
             inValidTransferWarehouse.LogisticsPartnerUrl = "http://invalidUrl.ru/";
-
-            //liefert immer 200 zurück. sollte aber bad request sein.
+            
             Assert.Throws<ServiceAgentsNotFoundException>(() => _parcelToPartnerAgent.TransitionParcelToPartner(ValidTrackingId, _validParcel, inValidTransferWarehouse));
         }
 

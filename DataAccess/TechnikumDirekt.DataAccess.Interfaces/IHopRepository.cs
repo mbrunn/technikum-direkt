@@ -10,7 +10,5 @@ namespace TechnikumDirekt.DataAccess.Interfaces
 
         //TODO: maybe move to a separate ITruckRepository ?
         Hop GetHopContainingPoint(Point point);
-
-        string GetHopDescriptionByCode(string hopCode);
     }
 }

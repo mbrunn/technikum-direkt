@@ -36,12 +36,12 @@ namespace TechnikumDirekt.ServiceAgents
         public bool TransitionParcelToPartner(string trackingId, Parcel parcel, Transferwarehouse transferWarehouse)
         {
             //Call API here:
-            if(parcel == null || transferWarehouse == null) throw new ArgumentNullException();
+            if(trackingId == null || parcel == null || transferWarehouse == null) throw new ArgumentNullException();
             
-            var jsonContent = new StringContent(JsonSerializer.Serialize(parcel));
+            var jsonContent = new StringContent(JsonSerializer.Serialize(parcel),Encoding.UTF8, "application/json");
             var client = _clientFactory.CreateClient("logisticsPartner");
 
-            var response =  client.PutAsync($"{transferWarehouse.LogisticsPartnerUrl}/parcel/{trackingId}", jsonContent).Result;
+            var response =  client.PostAsync($"{transferWarehouse.LogisticsPartnerUrl}/parcel/{trackingId}", jsonContent).Result;
             
             if (!response.IsSuccessStatusCode)
                 throw new ServiceAgentsBadResponseException($"Unsuccessful response: {response.StatusCode}");
