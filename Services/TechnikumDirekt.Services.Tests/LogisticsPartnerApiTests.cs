@@ -1,14 +1,16 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
+using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.Services.Controllers;
 using TechnikumDirekt.Services.Mapper;
+using TechnikumDirekt.Services.Models;
 using BlParcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
 using BlRecipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
-using TechnikumDirekt.Services.Models;
 
 namespace TechnikumDirekt.Services.Tests
 {
@@ -17,7 +19,8 @@ namespace TechnikumDirekt.Services.Tests
     {
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
-        
+        private NullLogger<LogisticsPartnerApiController> _logger;
+
         private readonly Recipient _recipient1 = new Recipient
         {
             Name = "Michi Mango",
@@ -26,7 +29,7 @@ namespace TechnikumDirekt.Services.Tests
             City = "Mistelbach Weltstadt",
             Country = "AT"
         };
-        
+
         private readonly Recipient _recipient2 = new Recipient
         {
             Name = "Benji Bananas",
@@ -35,11 +38,11 @@ namespace TechnikumDirekt.Services.Tests
             City = "Banana City",
             Country = "AT"
         };
-        
+
         private const string ValidTrackingNumber = "A123BCD23";
         private const string InvalidTrackingNumber = "A123BaD23";
         private const string NotfoundTrackingNumber = "000000000";
-        
+
         [OneTimeSetUp]
         public void Setup()
         {
@@ -51,20 +54,23 @@ namespace TechnikumDirekt.Services.Tests
                 Sender = _mapper.Map<BlRecipient>(_recipient1),
                 Recipient = _mapper.Map<BlRecipient>(_recipient2)
             };
-            
+
             var mockTrackingLogic = new Mock<ITrackingLogic>();
             // Setup - TransitionParcelFromPartner
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(validParcel, ValidTrackingNumber));
-            mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(It.IsAny<BlParcel>(), InvalidTrackingNumber)).Throws(new ValidationException(""));
-            mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(null, It.IsAny<string>())).Throws(new ValidationException(""));
-            
+            mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(It.IsAny<BlParcel>(), InvalidTrackingNumber))
+                .Throws<BusinessLogicValidationException>();
+            mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(null, It.IsAny<string>()))
+                .Throws<BusinessLogicValidationException>();
+
             _trackingLogic = mockTrackingLogic.Object;
+            _logger = NullLogger<LogisticsPartnerApiController>.Instance;
         }
-        
+
         [Test]
         public void TransitionParcel_ValidTrackingID_OkRequest()
         {
-            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper);
+            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
             {
                 Weight = 2.0f,
@@ -73,7 +79,7 @@ namespace TechnikumDirekt.Services.Tests
             };
 
             var response = controller.TransitionParcel(parcel, ValidTrackingNumber);
-            
+
             Assert.IsInstanceOf<OkObjectResult>(response);
 
             var typedResponse = (OkObjectResult) response;
@@ -85,10 +91,10 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void TransitionParcel_nullParcel_BadRequest()
         {
-            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper);
+            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
 
             var response = controller.TransitionParcel(null, ValidTrackingNumber);
-            
+
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
 
             var typedResponse = (BadRequestObjectResult) response;
@@ -100,7 +106,7 @@ namespace TechnikumDirekt.Services.Tests
         [Test]
         public void TransitionParcel_invalidTrackingID_BadRequest()
         {
-            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper);
+            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
             {
                 Weight = 2.0f,
@@ -109,7 +115,7 @@ namespace TechnikumDirekt.Services.Tests
             };
 
             var response = controller.TransitionParcel(parcel, InvalidTrackingNumber);
-            
+
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
 
             var typedResponse = (BadRequestObjectResult) response;

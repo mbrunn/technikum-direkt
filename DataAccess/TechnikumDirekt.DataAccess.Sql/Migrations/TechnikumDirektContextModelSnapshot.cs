@@ -70,6 +70,9 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                     b.Property<DateTime?>("HopArrivalTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
                     b.HasKey("ParcelTrackingId", "HopCode");
 
                     b.HasIndex("HopCode");

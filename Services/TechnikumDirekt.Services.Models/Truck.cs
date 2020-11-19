@@ -23,7 +23,7 @@ namespace TechnikumDirekt.Services.Models
         /// </summary>
         /// <value>GeoJSON of the area covered by the truck.</value>
         [Required]
-        [DataMember(Name="regionGeoJson")]
+        [DataMember(Name = "regionGeoJson")]
         public string RegionGeoJson { get; set; }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace TechnikumDirekt.Services.Models
         /// </summary>
         /// <value>The truck's number plate.</value>
         [Required]
-        [DataMember(Name="numberPlate")]
+        [DataMember(Name = "numberPlate")]
         public string NumberPlate { get; set; }
     }
 }

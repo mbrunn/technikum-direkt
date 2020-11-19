@@ -1,22 +1,27 @@
 using System;
+using System.Net.Http.Headers;
+using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using AutoMapper;
-using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using TechnikumDirekt.BusinessLogic;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql;
+using TechnikumDirekt.ServiceAgents;
+using TechnikumDirekt.ServiceAgents.Interfaces;
+using TechnikumDirekt.Services.Controllers;
 
 namespace TechnikumDirekt.Services
 {
@@ -49,8 +54,8 @@ namespace TechnikumDirekt.Services
             services
                 .AddMvc(options =>
                 {
-                    options.InputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter>();
-                    options.OutputFormatters.RemoveType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter>();
+                    options.InputFormatters.RemoveType<SystemTextJsonInputFormatter>();
+                    options.OutputFormatters.RemoveType<SystemTextJsonOutputFormatter>();
                 })
                 .AddNewtonsoftJson(opts =>
                 {
@@ -61,7 +66,7 @@ namespace TechnikumDirekt.Services
                 .AddXmlSerializerFormatters();
 
             services.AddAutoMapper(typeof(Startup));
-            
+
             services
                 .AddSwaggerGen(c =>
                 {
@@ -72,9 +77,9 @@ namespace TechnikumDirekt.Services
                         Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
                         Contact = new OpenApiContact
                         {
-                           Name = "SKS",
-                           Url = new Uri("http://www.technikum-wien.at/"),
-                           Email = ""
+                            Name = "SKS",
+                            Url = new Uri("http://www.technikum-wien.at/"),
+                            Email = ""
                         }
                     });
                     c.CustomSchemaIds(type => type.FullName);
@@ -86,17 +91,37 @@ namespace TechnikumDirekt.Services
 
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();
+            
+            services.AddTransient<IGeoEncodingAgent, OsmGeoEncodingAgent>();
+            services.AddTransient<ILogisticsPartnerAgent, TransferParcelToPartnerAgent>();
 
-            services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options => 
+            services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
+            {
                 options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
                     x =>
                     {
                         x.UseNetTopologySuite();
                         x.MigrationsAssembly("TechnikumDirekt.DataAccess.Sql");
-                    }));
-            
+                    });
+                options.EnableSensitiveDataLogging();
+            });
+
             //other validators are also added with this command.
-            services.AddControllers().AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
+            services.AddControllers().AddFluentValidation(config =>
+                config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
+
+            services.AddLogging();
+
+            services.AddHttpClient("osm", c =>
+            {
+                c.BaseAddress = new Uri(Configuration.GetSection("ApiUrls").GetValue<string>("OsmApiUrl"));
+                c.DefaultRequestHeaders.Add("User-Agent", "TechnikumDirektApi");
+            });
+            
+            services.AddHttpClient("logisticsPartner", c =>
+            {
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
         }
 
         /// <summary>
@@ -127,10 +152,7 @@ namespace TechnikumDirekt.Services
             //TODO: Use Https Redirection
             // app.UseHttpsRedirection();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             if (env.IsDevelopment())
             {

@@ -52,10 +52,7 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                     City = table.Column<string>(nullable: true),
                     Country = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Recipients", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Recipients", x => x.Id); });
 
             migrationBuilder.CreateTable(
                 name: "Parcels",
@@ -94,7 +91,7 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HopArrivals", x => new { x.ParcelTrackingId, x.HopCode });
+                    table.PrimaryKey("PK_HopArrivals", x => new {x.ParcelTrackingId, x.HopCode});
                     table.ForeignKey(
                         name: "FK_HopArrivals_Hops_HopCode",
                         column: x => x.HopCode,

@@ -1,4 +1,3 @@
-
 using NetTopologySuite.Geometries;
 
 namespace TechnikumDirekt.BusinessLogic.Models

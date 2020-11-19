@@ -6,7 +6,6 @@ namespace TechnikumDirekt.DataAccess.Models
 {
     /// <summary>
     /// </summary>
-    
     public class Hop
     {
         /// <summary>
@@ -43,7 +42,7 @@ namespace TechnikumDirekt.DataAccess.Models
         /// Gets or Sets LocationCoordinates
         /// </summary>
         public Point LocationCoordinates { get; set; }
-        
+
         /// <summary>
         /// Represents HopArrivals for n:m to parcel.
         /// </summary>
@@ -53,8 +52,9 @@ namespace TechnikumDirekt.DataAccess.Models
         /// Code of the parent hop.
         /// </summary>
         public string ParentWarehouseCode { get; set; }
+
         public Warehouse ParentWarehouse { get; set; }
-        
+
         /// <summary>
         /// Travel time from parent hop to this hop.
         /// </summary>

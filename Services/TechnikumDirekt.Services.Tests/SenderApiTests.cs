@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
@@ -18,7 +19,8 @@ namespace TechnikumDirekt.Services.Tests
     {
         private ITrackingLogic _trackingLogic;
         private IMapper _mapper;
-        
+        private NullLogger<SenderApiController> _logger;
+
         private readonly Recipient _recipient1 = new Recipient
         {
             Name = "Michi Mango",
@@ -27,7 +29,7 @@ namespace TechnikumDirekt.Services.Tests
             City = "Mistelbach Weltstadt",
             Country = "AT"
         };
-        
+
         private readonly Recipient _recipient2 = new Recipient
         {
             Name = "Benji Bananas",
@@ -48,19 +50,20 @@ namespace TechnikumDirekt.Services.Tests
                 Sender = _mapper.Map<BlRecipient>(_recipient1),
                 Recipient = _mapper.Map<BlRecipient>(_recipient2)
             };
-            
+
             var mockTrackingLogic = new Mock<ITrackingLogic>();
             // Setup - SubmitParcel
             mockTrackingLogic.Setup(m => m.SubmitParcel(validParcel)).Returns(validParcel.TrackingId);
-            mockTrackingLogic.Setup(m => m.SubmitParcel(null)).Throws(new ValidationException(""));
+            mockTrackingLogic.Setup(m => m.SubmitParcel(null)).Throws<BusinessLogicValidationException>();
 
             _trackingLogic = mockTrackingLogic.Object;
+            _logger = NullLogger<SenderApiController>.Instance;
         }
-        
+
         [Test]
         public void SubmitParcel_ValidParcel_Ok()
         {
-            var controller = new SenderApiController(_trackingLogic, _mapper);
+            var controller = new SenderApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
             {
                 Weight = 2.0f,
@@ -77,11 +80,11 @@ namespace TechnikumDirekt.Services.Tests
 
             Assert.AreEqual(200, statusCode);
         }
-        
+
         [Test]
         public void SubmitParcel_NullParcel_BadRequest()
         {
-            var controller = new SenderApiController(_trackingLogic, _mapper);
+            var controller = new SenderApiController(_trackingLogic, _mapper, _logger);
 
             var response = controller.SubmitParcel(null);
 
@@ -91,7 +94,6 @@ namespace TechnikumDirekt.Services.Tests
             var statusCode = typedResponse.StatusCode;
 
             Assert.AreEqual(400, statusCode);
-            
         }
     }
 }
