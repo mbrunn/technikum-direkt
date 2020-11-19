@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
@@ -55,6 +57,7 @@ namespace TechnikumDirekt.DataAccess.Tests
 
             var dbMock = new Mock<ITechnikumDirektContext>();
             dbMock.Setup(p => p.Hops).Returns(DbContextMock.GetQueryableMockDbSet<Hop>(_entities));
+
             dbMock.Setup(p => p.SaveChanges()).Returns(1);
 
             dbMock.Setup(p => p.Warehouses.Find(It.IsAny<object[]>()))

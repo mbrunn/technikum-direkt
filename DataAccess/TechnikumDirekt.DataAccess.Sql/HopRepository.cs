@@ -51,6 +51,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             }
 
             var transferwarehouse = _dbContext.Transferwarehouses.FirstOrDefault(t => t.RegionGeometry.Contains(point));
+            
             if (transferwarehouse != null)
             {
                 _logger.LogTrace($"Transferwarehouse containing Point {point.Coordinate} has been found.");

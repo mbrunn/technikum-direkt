@@ -47,7 +47,7 @@ namespace TechnikumDirekt.ServiceAgents.Tests
                 
                 response.StatusCode = HttpStatusCode.OK;
 
-                if (request.RequestUri.AbsoluteUri.Contains("invalidUrl"))
+                if (request.RequestUri.AbsoluteUri.Contains("invalidurl"))
                 {
                     response.StatusCode = HttpStatusCode.BadRequest;
                     response.Content = new StringContent("[]");
@@ -105,7 +105,7 @@ namespace TechnikumDirekt.ServiceAgents.Tests
             var inValidTransferWarehouse = _validTransferWarehouse;
             inValidTransferWarehouse.LogisticsPartnerUrl = "http://invalidUrl.ru/";
             
-            Assert.Throws<ServiceAgentsNotFoundException>(() => _parcelToPartnerAgent.TransitionParcelToPartner(ValidTrackingId, _validParcel, inValidTransferWarehouse));
+            Assert.Throws<ServiceAgentsBadResponseException>(() => _parcelToPartnerAgent.TransitionParcelToPartner(ValidTrackingId, _validParcel, inValidTransferWarehouse));
         }
 
         #endregion
