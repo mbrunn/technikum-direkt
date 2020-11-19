@@ -119,6 +119,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogTrace($"Parcel validation failed.");
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
@@ -353,11 +354,13 @@ namespace TechnikumDirekt.BusinessLogic
             //1. get Coordinates of Sender and Recipient:
             if (parcel.Sender == null)
             {
+                _logger.LogTrace($"Sender cant be null.");
                 throw new BusinessLogicBadArgumentException($"Sender can not be null.");
             }
             
             if (parcel.Recipient == null)
             {
+                _logger.LogTrace($"Recipient cant be null.");
                 throw new BusinessLogicBadArgumentException($"Recipient can not be null.");
             }
             
@@ -385,6 +388,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ServiceAgentsNotFoundException e)
             {
+                _logger.LogTrace($"Address of Sender {parcel.Sender.Name} could not be decoded into GPS Coordinates.");
                 throw new BusinessLogicFutureHopsPrediction($"Address of Sender {parcel.Sender.Name} could not be decoded into GPS Coordinates.");
             }
             
@@ -396,6 +400,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ServiceAgentsNotFoundException e)
             {
+                _logger.LogTrace($"Address of Sender {parcel.Recipient.Name} could not be decoded into GPS Coordinates.");
                 throw new BusinessLogicFutureHopsPrediction($"Address of Sender {parcel.Recipient.Name} could not be decoded into GPS Coordinates.");
             }
 
@@ -410,6 +415,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (DataAccessArgumentNullException e)
             {
+                _logger.LogTrace($"No Hop contains the given Point {senderPoint.AsText()} could not be decoded into GPS Coordinates.");
                 throw new BusinessLogicFutureHopsPrediction($"No Hop contains the given Point {senderPoint.AsText()} could not be decoded into GPS Coordinates.");
             }
 
@@ -421,6 +427,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (DataAccessArgumentNullException e)
             {
+                _logger.LogTrace($"No Hop contains the given Point {recipientPoint.AsText()} could not be decoded into GPS Coordinates.");
                 throw new BusinessLogicFutureHopsPrediction($"No Hop contains the given Point {recipientPoint.AsText()} could not be decoded into GPS Coordinates.");
             }
             
@@ -456,6 +463,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (DataAccessNotFoundException)
             {
+                _logger.LogTrace($"Nearest Hop to Sender with code {senderHop.Code} does not exist. FutureHops Prediction failed.");
                 throw new BusinessLogicFutureHopsPrediction($"Nearest Hop to Sender with code {senderHop.Code} does not exist. FutureHops Prediction failed.");
             }
             
@@ -465,6 +473,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (DataAccessNotFoundException)
             {
+                _logger.LogTrace($"Nearest Hop to Recipient with code {recipientHop.Code} does not exist. FutureHops Prediction failed.");
                 throw new BusinessLogicFutureHopsPrediction($"Nearest Hop to Recipient with code {recipientHop.Code} does not exist. FutureHops Prediction failed.");
             }
             
@@ -482,6 +491,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (DataAccessNotFoundException)
             {
+                _logger.LogTrace($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
                 throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
             }
             
@@ -491,6 +501,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (DataAccessNotFoundException)
             {
+                _logger.LogTrace($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
                 throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
             }
             
@@ -508,6 +519,7 @@ namespace TechnikumDirekt.BusinessLogic
                         }
                         catch (DataAccessNotFoundException)
                         {
+                            _logger.LogTrace($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
                             throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
                         }
                         recipientWhCode = AddToListAndFindParent(currentRecipientHop, recipientHopArrivals);
@@ -523,6 +535,7 @@ namespace TechnikumDirekt.BusinessLogic
                         }
                         catch (DataAccessNotFoundException)
                         {
+                            _logger.LogTrace($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
                             throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
                         }
                         senderWhCode = AddToListAndFindParent(currentSenderHop, senderHopArrivals);
@@ -540,6 +553,7 @@ namespace TechnikumDirekt.BusinessLogic
                 }
                 catch (DataAccessNotFoundException)
                 {
+                    _logger.LogTrace($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
                     throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {senderWhCode} does not exist. FutureHops Prediction failed.");
                 }
                 
@@ -551,6 +565,7 @@ namespace TechnikumDirekt.BusinessLogic
                 }
                 catch (DataAccessNotFoundException)
                 {
+                    _logger.LogTrace($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
                     throw new BusinessLogicFutureHopsPrediction($"Warehouse with code {recipientWhCode} does not exist. FutureHops Prediction failed.");
                 }
 
@@ -594,6 +609,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (DataAccessNotFoundException)
             {
+                _logger.LogTrace($"Parrenthop with code {currentHop.ParentWarehouseCode} does not exist.");
                 throw new BusinessLogicFutureHopsPrediction($"Parrenthop with code {currentHop.ParentWarehouseCode} does not exist.");
             }
         }
