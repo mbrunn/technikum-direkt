@@ -43,12 +43,20 @@ steps:
     projects: '**/*Test*.csproj'
     publishTestResults: true
 
-- script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.6.7
-  displayName: 'Install ReportGenerator tool'
-  continueOnError: true
+- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
+  displayName: ReportGenerator
+  inputs:
+    reports: '$(Build.SourcesDirectory)/tests/\*\*/coverage.Cobertura.xml'
+    targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
+    reporttypes: 'HtmlInline\_AzurePipelines;Cobertura;Badges'
+    assemblyfilters: '-xunit\*'
 
-- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.ServiceAgents.*Agent*;+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic*;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
-  displayName: 'Run ReportGenerator tool'
+#- script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.6.7
+#  displayName: 'Install ReportGenerator tool'
+#  continueOnError: true
+
+#- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.ServiceAgents.*;+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic*;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
+#  displayName: 'Run ReportGenerator tool'
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage'
