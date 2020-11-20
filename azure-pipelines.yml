@@ -43,6 +43,14 @@ steps:
     projects: '**/*Test*.csproj'
     publishTestResults: true
 
+- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
+  displayName: ReportGenerator
+  inputs:
+    reports: '$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
+    targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
+    reporttypes: 'HtmlInline\_AzurePipelines;Cobertura;Badges'
+    assemblyfilters: '-xunit\*'
+
 - script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.6.7
   displayName: 'Install ReportGenerator tool'
   continueOnError: true
