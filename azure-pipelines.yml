@@ -47,15 +47,9 @@ steps:
   displayName: 'Install ReportGenerator tool'
   continueOnError: true
 
-- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.ServiceAgents.*Agent*;+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic*;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline"
+- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.ServiceAgents.*Agent*;+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic*;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/CodeCoverage" "-reporttypes:Cobertura;HtmlInline"
   displayName: 'Run ReportGenerator tool'
 
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage'
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(Build.SourcesDirectory)/**/*Cobertura.xml'
-    reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
 
 - task: PublishBuildArtifacts@1
   inputs:
