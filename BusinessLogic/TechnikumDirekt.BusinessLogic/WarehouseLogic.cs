@@ -70,6 +70,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Validation of Hop with Hopcode {code} failed.");
                 throw new BusinessLogicValidationException("Hop validation failed.", e);
             }
 
@@ -102,7 +103,7 @@ namespace TechnikumDirekt.BusinessLogic
             _warehouseRepository.ClearWarehouses();
             var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
             _warehouseRepository.ImportWarehouses(dalWh);
-            _logger.LogDebug($"Imporeted warehouse with hopcode {warehouse.Code}");
+            _logger.LogDebug($"Importet warehouse with hopcode {warehouse.Code}");
         }
         
         private void ValidateWarehouseTree(Hop node)
@@ -119,8 +120,10 @@ namespace TechnikumDirekt.BusinessLogic
                     }
                     break;
                 case HopType.Truck:
-                case HopType.TransferWarehouse:
                     _hopValidator.ValidateAndThrow(node);
+                    break;
+                case HopType.TransferWarehouse:
+                    //_hopValidator.ValidateAndThrow(node);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -7,7 +7,7 @@ namespace TechnikumDirekt.BusinessLogic.FluentValidation
     {
         public WarehouseNextHopsValidator()
         {
-            RuleFor(wnh => wnh.Hop).NotNull().SetValidator(new HopValidator());
+            RuleFor(wnh => wnh.Hop).NotNull();
         }
     }
 }

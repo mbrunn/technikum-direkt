@@ -88,19 +88,16 @@ namespace TechnikumDirekt.Services.Mapper
                     opt => opt.MapFrom(src => src.VisitedHops));
 
             CreateMap<DalModels.Parcel, BlModels.Parcel>()
-                .ForMember(dest => dest.FutureHops,
-                    opt => opt.MapFrom(src => src.HopArrivals.Where(ha => ha.HopArrivalTime == null)))
                 .ForMember(dest => dest.VisitedHops,
                     opt => opt.MapFrom(src =>
                         src.HopArrivals.Where(ha => ha.HopArrivalTime != null)
                             .OrderBy(ha => ha.HopArrivalTime)))
+                
                 .ForMember(dest => dest.FutureHops,
                     opt =>
-                    {
                         opt.MapFrom(src =>
-                            src.HopArrivals.Where(ha => ha.HopArrivalTime == null)
-                                .OrderBy(ha => ha.Order));
-                    })
+                                src.HopArrivals.Where(ha => ha.HopArrivalTime == null)
+                                .OrderBy(ha => ha.Order)))
                 .AfterMap((src, dest, context) =>
                 {
                     foreach (var destFutureHop in dest.FutureHops)
@@ -116,15 +113,6 @@ namespace TechnikumDirekt.Services.Mapper
                             .FirstOrDefault(ha => ha.HopCode == visitedHop.Code)
                             ?.Hop.Description;
                     }
-
-                    /*
-                    var allWh = src.HopArrivals.FindAll(ha => ha.Hop.HopType == DalModels.HopType.Warehouse)
-                        .Select(ha => ha.Hop).Cast<BlModels.Warehouse>().ToList();
-
-                    var topMostWhLevel = allWh.Min(wh => wh.Level);
-                    
-                    var topMostWh = allWh.FirstOrDefault(wh => wh.Level == topMostWhLevel);
-                    */
                 });
             
             CreateMap<BlModels.Recipient, DalModels.Recipient>().ReverseMap();

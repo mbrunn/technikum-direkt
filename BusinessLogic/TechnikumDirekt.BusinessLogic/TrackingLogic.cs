@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using AutoMapper;
 using FluentValidation;
@@ -72,24 +71,30 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Parcel has invalid trackingId: {trackingId}");
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
             try
             {
                 var parcel = _parcelRepository.GetByTrackingId(trackingId);
-                parcel.State = DalModels.Parcel.StateEnum.DeliveredEnum;
-                parcel.HopArrivals.OrderBy(ha => ha.Order).Last().HopArrivalTime = DateTime.Now;
-                _parcelRepository.Update(parcel);
+                if (parcel.State == DalModels.Parcel.StateEnum.DeliveredEnum)
+                {
+                    _logger.LogDebug($"Parcel with TrackingId {trackingId} has already been delivered.");
+                }
+                else
+                {
+                    parcel.State = DalModels.Parcel.StateEnum.DeliveredEnum;
+                    parcel.HopArrivals.OrderBy(ha => ha.Order).Last().HopArrivalTime = DateTime.Now;
+                    _parcelRepository.Update(parcel);
+                    _logger.LogDebug($"Parcel with TrackingId {trackingId} has been set to delivered.");
+                }
             }
             catch (DataAccessNotFoundException e)
             {
                 _logger.LogTrace($"Parcel for TrackingId {trackingId} not found");
                 throw new BusinessLogicNotFoundException($"Parcel for TrackingId {trackingId} not found", e);
             }
-
-            //TODO - Check if Parcel is already delivered ?
-            _logger.LogDebug($"Parcel with TrackingId {trackingId} has been set to delivered.");
         }
 
         public void ReportParcelHop(string trackingId, string code)
@@ -105,6 +110,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Hop has invalid hopCode: {code}");
                 throw new BusinessLogicValidationException("Hop code validation failed.", e);
             }
             
@@ -119,7 +125,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
-                _logger.LogTrace($"Parcel validation failed.");
+                _logger.LogDebug($"Parcel has invalid trackingId: {trackingId}");
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
@@ -154,6 +160,7 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new BusinessLogicBadArgumentException($"Hop with code {code} is not part of this parcel's route.");
             }
             
+            //Uncomment this for testing of Transferwarehouse (will throw Db Exception "untracked changes")
             /*
             if (hopToEdit.HopCode == "WTTA014")
             {
@@ -228,6 +235,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Parcel has invalid data.");
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
             
@@ -263,6 +271,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Parcel has invalid trackingId: {trackingId}");
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
@@ -298,6 +307,7 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Parcel has invalid data.");
                 throw new BusinessLogicValidationException("Parcel validation failed.", e);
             }
 
