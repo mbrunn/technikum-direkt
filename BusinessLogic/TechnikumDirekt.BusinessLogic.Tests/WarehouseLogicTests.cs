@@ -81,8 +81,15 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var emptyMockWarehouseRepository = new Mock<IWarehouseRepository>();
             // Setup - GetAll
             emptyMockWarehouseRepository.Setup(m => m.GetAll()).Returns(new List<DalModels.Hop>());
-
+            
+            /* --------------- Mock HopRepository Setup --------------- */
+            var mockHopRepository = new Mock<IHopRepository>();
+            
+            mockHopRepository.Setup(m => m.GetHopByCode(It.IsAny<string>())).Returns(_validDalWarehouse);
+            
             _emptyWarehouseRepository = emptyMockWarehouseRepository.Object;
+            _hopRepository = mockHopRepository.Object;
+            
             _logger = NullLogger<WarehouseLogic>.Instance;
         }
 
