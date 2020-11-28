@@ -103,7 +103,7 @@ namespace TechnikumDirekt.Services
                         x.UseNetTopologySuite();
                         x.MigrationsAssembly("TechnikumDirekt.DataAccess.Sql");
                     });
-                options.EnableSensitiveDataLogging();
+                //options.EnableSensitiveDataLogging();
             });
             
             //other validators are also added with this command.

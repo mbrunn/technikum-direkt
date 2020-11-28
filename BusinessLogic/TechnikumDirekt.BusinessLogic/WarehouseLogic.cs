@@ -53,11 +53,11 @@ namespace TechnikumDirekt.BusinessLogic
             }
 
             var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
-            _logger.LogDebug($"Imported new Warehousestructure");
+            _logger.LogDebug($"Exported new Warehousestructure");
             return blWarehouse;
         }
 
-        public Warehouse GetWarehouse(string code)
+        public Hop GetWarehouse(string code)
         {
             try
             {
@@ -74,10 +74,10 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new BusinessLogicValidationException("Hop validation failed.", e);
             }
 
-            DalModels.Warehouse dalWarehouse;
+            DalModels.Hop dalHop;
             try
             {
-                dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
+                dalHop = _hopRepository.GetHopByCode(code);
             }
             catch (DataAccessNotFoundException e)
             {
@@ -85,9 +85,9 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new BusinessLogicNotFoundException("Hüfe, i hob kan Code gfunden!", e); //DO NOT CHANGE
             }
 
-            var blWarehouse = _mapper.Map<Warehouse>(dalWarehouse);
+            var blHop = _mapper.Map<Hop>(dalHop);
             _logger.LogDebug($"Found warehouse with hopcode {code}.");
-            return blWarehouse;
+            return blHop;
         }
 
         public void ImportWarehouses(Warehouse warehouse)
@@ -102,7 +102,14 @@ namespace TechnikumDirekt.BusinessLogic
             }
             _warehouseRepository.ClearWarehouses();
             var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
-            _warehouseRepository.ImportWarehouses(dalWh);
+            try
+            {
+                _warehouseRepository.ImportWarehouses(dalWh);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
             _logger.LogDebug($"Importet warehouse with hopcode {warehouse.Code}");
         }
         

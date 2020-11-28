@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
@@ -14,6 +15,7 @@ namespace TechnikumDirekt.ServiceAgents.Tests
     public class OsmGeoEncodingAgentTests
     {
         private OsmGeoEncodingAgent _encodingAgent;
+        private NullLogger<OsmGeoEncodingAgent> _logger;
         
         [SetUp]
         public void Setup()
@@ -37,8 +39,10 @@ namespace TechnikumDirekt.ServiceAgents.Tests
             var client = new HttpClient(clientHandlerStub) { BaseAddress = new Uri("https://example.com") };
 
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            
+            _logger = new NullLogger<OsmGeoEncodingAgent>();
 
-            _encodingAgent = new OsmGeoEncodingAgent(mockFactory.Object);
+            _encodingAgent = new OsmGeoEncodingAgent(mockFactory.Object, _logger);
         }
 
         private class DelegatingHandlerStub : DelegatingHandler {
@@ -66,7 +70,8 @@ namespace TechnikumDirekt.ServiceAgents.Tests
             {
                 PostalCode = "1200",
                 City = "Wien",
-                Street = "Wienerstraße"
+                Street = "Wienerstraße",
+                Country = "Österreich"
             };
 
             var point = _encodingAgent.EncodeAddress(address);
@@ -87,7 +92,8 @@ namespace TechnikumDirekt.ServiceAgents.Tests
             {
                 PostalCode = "1200",
                 City = "Wien",
-                Street = "nonexistent"
+                Street = "nonexistent",
+                Country = "Austria"
             };
             
             Assert.Throws<ServiceAgentsNotFoundException>(() => _encodingAgent.EncodeAddress(address));

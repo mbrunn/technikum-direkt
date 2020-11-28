@@ -10,15 +10,14 @@ namespace TechnikumDirekt.Services.Mapper
     public class GeoJsonConverter : IValueConverter<string, Geometry>, IValueConverter<Geometry, string>
     {
         private ResolutionContext _context;
-
+        
         public Geometry Convert(string sourceMember, ResolutionContext context)
         {
             _context = context;
-
             var reader = new GeoJsonReader();
-            var featureCollection = reader.Read<Feature>(sourceMember);
-
-            return featureCollection.Geometry;
+            var feature =  reader.Read<Feature>(sourceMember);
+            var geo = feature.Geometry;
+            return geo.Normalized().Reverse();
         }
 
         public string Convert(Geometry sourceMember, ResolutionContext context)

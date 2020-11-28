@@ -413,8 +413,7 @@ namespace TechnikumDirekt.BusinessLogic
                 _logger.LogTrace($"Address of Sender {parcel.Recipient.Name} could not be decoded into GPS Coordinates.");
                 throw new BusinessLogicFutureHopsPrediction($"Address of Sender {parcel.Recipient.Name} could not be decoded into GPS Coordinates.");
             }
-
-
+            
             //2. get nearest Truck/Hop to Sender and Recipient:
             
             Hop nearestHoptoSender;
@@ -590,6 +589,9 @@ namespace TechnikumDirekt.BusinessLogic
                 Description = currentSenderHop.Description,
                 HopArrivalTime = null
             });
+
+            //turn around recipientHopArrivals
+            recipientHopArrivals.Reverse();
             
             //add the truck/transferWarehouse that delivers the parcel
             var futureHopArrivals = senderHopArrivals.Union(recipientHopArrivals).ToList();

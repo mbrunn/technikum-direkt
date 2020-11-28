@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using TechnikumDirekt.DataAccess.Interfaces;
@@ -22,7 +23,7 @@ namespace TechnikumDirekt.DataAccess.Sql
         {
             if (string.IsNullOrEmpty(hopCode)) throw new DataAccessArgumentNullException("HopCode is null.");
             
-            var hop = _dbContext.Hops.Find(hopCode);
+            var hop = _dbContext.Hops.FirstOrDefault(h => h.Code == hopCode);
             if (hop != null)
             {
                 _logger.LogTrace($"Hop with code {hopCode} has been found.");
@@ -48,7 +49,7 @@ namespace TechnikumDirekt.DataAccess.Sql
                 return truck;
             }
 
-            var transferwarehouse = _dbContext.Transferwarehouses.FirstOrDefault(t => t.RegionGeometry.Contains(point));
+            var transferwarehouse = _dbContext.Transferwarehouses.Include(t => t.ParentWarehouse).FirstOrDefault(t => t.RegionGeometry.Contains(point));
             
             if (transferwarehouse != null)
             {
