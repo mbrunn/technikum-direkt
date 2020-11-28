@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NetTopologySuite.Geometries;
 using SvcModels = TechnikumDirekt.Services.Models;
 
@@ -15,6 +16,11 @@ namespace TechnikumDirekt.Services.Mapper
         public PointConverter(ILogger<PointConverter> logger)
         {
             _logger = logger;
+        }
+        
+        public PointConverter()
+        {
+            _logger = NullLogger<PointConverter>.Instance;
         }
 
         /// <summary>
