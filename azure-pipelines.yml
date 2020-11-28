@@ -54,7 +54,7 @@ steps:
 - script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.ServiceAgents.*Agent;+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline_AzurePipelines"
   displayName: 'Run ReportGenerator tool'
 
-- task: PublishCodeCoverageResults@1.175.0
+- task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage'
   inputs:
     codeCoverageTool: 'cobertura'
