@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using SvcModels = TechnikumDirekt.Services.Models;
 
@@ -9,6 +10,12 @@ namespace TechnikumDirekt.Services.Mapper
         IValueConverter<Point, SvcModels.GeoCoordinate>
     {
         private ResolutionContext _context;
+        private readonly ILogger<PointConverter> _logger;
+
+        public PointConverter(ILogger<PointConverter> logger)
+        {
+            _logger = logger;
+        }
 
         /// <summary>
         /// Defines Converters for converting SvcModels.GeoCoordinate 
@@ -23,6 +30,7 @@ namespace TechnikumDirekt.Services.Mapper
             _context = context;
             if (sourceMember.Lat == null || sourceMember.Lon == null)
             {
+                _logger.LogDebug("");
                 throw new NoNullAllowedException();
             }
 

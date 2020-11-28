@@ -31,7 +31,7 @@ namespace TechnikumDirekt.DataAccess.Sql
                 .Include(p => p.HopArrivals)
                 .ThenInclude(p => p.Hop)
                 .FirstOrDefault(p => p.TrackingId == trackingId);
-
+            
             if (parcel != null)
             {
                 _logger.LogTrace($"Parcel with trackingId {trackingId} has been found.");

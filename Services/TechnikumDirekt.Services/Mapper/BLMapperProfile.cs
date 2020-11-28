@@ -74,8 +74,6 @@ namespace TechnikumDirekt.Services.Mapper
                 });
 
             CreateMap<BlModels.Parcel, SvcModels.Parcel>();
-
-            
             
             CreateMap<SvcModels.Recipient, BlModels.Recipient>().ReverseMap();
         }

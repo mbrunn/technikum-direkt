@@ -53,7 +53,7 @@ namespace TechnikumDirekt.Services.Controllers
                 var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
                 _trackingLogic.TransitionParcelFromPartner(blParcel, trackingId);
                 _logger.LogInformation("Successfully transitioned a parcel with trackingId: " + trackingId +
-                                       "from partner.");
+                                       " from partner.");
                 return Ok("Successfully transitioned the parcel");
             }
             catch (BusinessLogicValidationException e)

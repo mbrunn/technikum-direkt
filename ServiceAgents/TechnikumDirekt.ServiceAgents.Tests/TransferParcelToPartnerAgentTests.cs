@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using TechnikumDirekt.ServiceAgents.Exceptions;
@@ -13,6 +14,7 @@ namespace TechnikumDirekt.ServiceAgents.Tests
     public class TransferParcelToPartnerAgentTests
     {
         private TransferParcelToPartnerAgent _parcelToPartnerAgent;
+        private NullLogger<TransferParcelToPartnerAgent> _nullLogger;
 
         private const string ValidTrackingId = "ABCD1234";
         
@@ -63,8 +65,10 @@ namespace TechnikumDirekt.ServiceAgents.Tests
             var client = new HttpClient(clientHandlerStub) { BaseAddress = new Uri("https://example.com") };
 
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            
+            _nullLogger = new NullLogger<TransferParcelToPartnerAgent>();
 
-            _parcelToPartnerAgent = new TransferParcelToPartnerAgent(mockFactory.Object);
+            _parcelToPartnerAgent = new TransferParcelToPartnerAgent(mockFactory.Object, _nullLogger);
         }
 
         private class DelegatingHandlerStub : DelegatingHandler {

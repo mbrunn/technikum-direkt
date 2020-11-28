@@ -64,7 +64,7 @@ namespace TechnikumDirekt.Services.Controllers
                 var svcTrackingInformation = _mapper.Map<TrackingInformation>(tlParcel);
 
                 _logger.LogInformation("Parcel with trackingId: " + trackingId +
-                                       "exists. Trackinginformation is transmitted.");
+                                       " exists. Trackinginformation has been transmitted.");
                 return Ok(svcTrackingInformation); //TODO add Msg to response
             }
             catch (BusinessLogicNotFoundException e)

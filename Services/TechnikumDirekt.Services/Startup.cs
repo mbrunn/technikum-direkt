@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http.Headers;
 using AutoMapper;
 using FluentValidation.AspNetCore;
@@ -21,7 +22,6 @@ using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql;
 using TechnikumDirekt.ServiceAgents;
 using TechnikumDirekt.ServiceAgents.Interfaces;
-using TechnikumDirekt.Services.Controllers;
 
 namespace TechnikumDirekt.Services
 {
@@ -94,7 +94,7 @@ namespace TechnikumDirekt.Services
             
             services.AddTransient<IGeoEncodingAgent, OsmGeoEncodingAgent>();
             services.AddTransient<ILogisticsPartnerAgent, TransferParcelToPartnerAgent>();
-
+            
             services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
@@ -103,9 +103,9 @@ namespace TechnikumDirekt.Services
                         x.UseNetTopologySuite();
                         x.MigrationsAssembly("TechnikumDirekt.DataAccess.Sql");
                     });
-                options.EnableSensitiveDataLogging();
+                //options.EnableSensitiveDataLogging();
             });
-
+            
             //other validators are also added with this command.
             services.AddControllers().AddFluentValidation(config =>
                 config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
@@ -135,7 +135,7 @@ namespace TechnikumDirekt.Services
             app.UseRouting();
 
             //TODO: Uncomment this if you need wwwroot folder
-            // app.UseStaticFiles();
+            //app.UseStaticFiles();
 
             app.UseAuthorization();
 
