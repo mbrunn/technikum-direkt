@@ -60,7 +60,16 @@ namespace TechnikumDirekt.Services.Controllers
                 }
 
                 _logger.LogInformation("Successfully exported hierarchy.");
-                return Ok(_mapper.Map<Warehouse>(exportWarehouse));
+
+                try
+                {
+                    var svcWarehouse = _mapper.Map<Warehouse>(exportWarehouse);
+                    return Ok(svcWarehouse);
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
             }
             catch (BusinessLogicNotFoundException e)
             {
@@ -89,7 +98,7 @@ namespace TechnikumDirekt.Services.Controllers
         [Route("/warehouse/{code}")]
         [ValidateModelState]
         [SwaggerOperation("GetWarehouse")]
-        [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
+        [SwaggerResponse(statusCode: 200, type: typeof(Hop), description: "Successful response")]
         [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
         [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "Warehouse id not found")]
         public virtual IActionResult GetWarehouse([FromRoute] [Required] [RegularExpression("^[A-Z]{4}\\d{1,4}$")]
@@ -97,11 +106,11 @@ namespace TechnikumDirekt.Services.Controllers
         {
             try
             {
-                var blWh = _blWarehouseLogic.GetWarehouse(code);
-                var svcWarehouse = _mapper.Map<Warehouse>(blWh);
+                var blHop = _blWarehouseLogic.GetWarehouse(code);
+                var svcHop = _mapper.Map<Hop>(blHop);
                 _logger.LogInformation("Successfully fetched hop with hopcode: " + code + " - Name: " +
-                                       svcWarehouse.LocationName);
-                return Ok(svcWarehouse);
+                                       svcHop.LocationName);
+                return Ok(svcHop);
             }
             catch (BusinessLogicValidationException e)
             {

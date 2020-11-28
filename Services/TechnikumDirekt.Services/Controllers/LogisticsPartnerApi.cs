@@ -53,7 +53,7 @@ namespace TechnikumDirekt.Services.Controllers
                 var blParcel = _mapper.Map<BusinessLogic.Models.Parcel>(body);
                 _trackingLogic.TransitionParcelFromPartner(blParcel, trackingId);
                 _logger.LogInformation("Successfully transitioned a parcel with trackingId: " + trackingId +
-                                       "from partner.");
+                                       " from partner.");
                 return Ok("Successfully transitioned the parcel");
             }
             catch (BusinessLogicValidationException e)
@@ -62,6 +62,14 @@ namespace TechnikumDirekt.Services.Controllers
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The Parcel or the trackingId is not valid."
+                }));
+            }
+            catch (BusinessLogicBadArgumentException e)
+            {
+                _logger.LogInformation(e.Message);
+                return BadRequest(StatusCode(400, new Error
+                {
+                    ErrorMessage = "A parcel with tracking id has already been registered."
                 }));
             }
             catch (Exception e)

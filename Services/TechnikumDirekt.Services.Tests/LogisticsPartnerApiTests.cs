@@ -42,6 +42,7 @@ namespace TechnikumDirekt.Services.Tests
         private const string ValidTrackingNumber = "A123BCD23";
         private const string InvalidTrackingNumber = "A123BaD23";
         private const string NotfoundTrackingNumber = "000000000";
+        private const string TakenTrackingNumber = "Z127BaD23";
 
         [OneTimeSetUp]
         public void Setup()
@@ -62,13 +63,15 @@ namespace TechnikumDirekt.Services.Tests
                 .Throws<BusinessLogicValidationException>();
             mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(null, It.IsAny<string>()))
                 .Throws<BusinessLogicValidationException>();
+            mockTrackingLogic.Setup(m => m.TransitionParcelFromPartner(It.IsAny<BlParcel>(), TakenTrackingNumber))
+                .Throws<BusinessLogicBadArgumentException>();
 
             _trackingLogic = mockTrackingLogic.Object;
             _logger = NullLogger<LogisticsPartnerApiController>.Instance;
         }
 
         [Test]
-        public void TransitionParcel_ValidTrackingID_OkRequest()
+        public void TransitionParcel_ValidTrackingId_OkRequest()
         {
             var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
@@ -104,7 +107,7 @@ namespace TechnikumDirekt.Services.Tests
         }
 
         [Test]
-        public void TransitionParcel_invalidTrackingID_BadRequest()
+        public void TransitionParcel_invalidTrackingId_BadRequest()
         {
             var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
             var parcel = new Parcel
@@ -115,6 +118,27 @@ namespace TechnikumDirekt.Services.Tests
             };
 
             var response = controller.TransitionParcel(parcel, InvalidTrackingNumber);
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(response);
+
+            var typedResponse = (BadRequestObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
+
+            Assert.AreEqual(400, statusCode);
+        }
+        
+        [Test]
+        public void TransitionParcel_TrackingIdAlreadyExists_BadRequest()
+        {
+            var controller = new LogisticsPartnerApiController(_trackingLogic, _mapper, _logger);
+            var parcel = new Parcel
+            {
+                Weight = 2.0f,
+                Sender = _recipient1,
+                Recipient = _recipient2
+            };
+
+            var response = controller.TransitionParcel(parcel, TakenTrackingNumber);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
 

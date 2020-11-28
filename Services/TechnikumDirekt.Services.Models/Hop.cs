@@ -80,7 +80,7 @@ namespace TechnikumDirekt.Services.Models
                 {
                     return new Truck();
                 }
-                else if (hopTypeString == "Transferwarehouse")
+                else if (hopTypeString == "TransferWarehouse")
                 {
                     return new Transferwarehouse();
                 }

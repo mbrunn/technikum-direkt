@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using NetTopologySuite.Geometries;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 using TechnikumDirekt.DataAccess.Sql.Exceptions;
@@ -20,7 +23,7 @@ namespace TechnikumDirekt.DataAccess.Sql
         {
             if (string.IsNullOrEmpty(hopCode)) throw new DataAccessArgumentNullException("HopCode is null.");
             
-            var hop = _dbContext.Hops.Find(hopCode);
+            var hop = _dbContext.Hops.FirstOrDefault(h => h.Code == hopCode);
             if (hop != null)
             {
                 _logger.LogTrace($"Hop with code {hopCode} has been found.");
@@ -32,6 +35,30 @@ namespace TechnikumDirekt.DataAccess.Sql
             }
 
             return hop;
+        }
+
+        public Hop GetHopContainingPoint(Point point)
+        {
+            if(point == null) throw new DataAccessArgumentNullException("Point is null.");
+            
+            var truck = _dbContext.Trucks.FirstOrDefault(t => t.RegionGeometry.Contains(point));
+            
+            if (truck != null)
+            {
+                _logger.LogTrace($"Truck containing Point {point.Coordinate} has been found.");
+                return truck;
+            }
+
+            var transferwarehouse = _dbContext.Transferwarehouses.Include(t => t.ParentWarehouse).FirstOrDefault(t => t.RegionGeometry.Contains(point));
+            
+            if (transferwarehouse != null)
+            {
+                _logger.LogTrace($"Transferwarehouse containing Point {point.Coordinate} has been found.");
+                return transferwarehouse;
+            }
+
+            _logger.LogTrace($"Hop containing the point {point.Coordinate} couldn't be found.");
+            throw new DataAccessNotFoundException($"Hop containing the point {point.Coordinate} couldn't be found.");
         }
     }
 }

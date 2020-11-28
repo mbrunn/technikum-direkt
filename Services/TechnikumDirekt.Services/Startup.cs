@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Net.Http.Headers;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -91,15 +93,19 @@ namespace TechnikumDirekt.Services
             services.AddTransient<ITrackingLogic, TrackingLogic>();
             
             services.AddTransient<IGeoEncodingAgent, OsmGeoEncodingAgent>();
-
+            services.AddTransient<ILogisticsPartnerAgent, TransferParcelToPartnerAgent>();
+            
             services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
+            {
                 options.UseSqlServer(Configuration.GetConnectionString("TechnikumDirektDatabase"),
                     x =>
                     {
                         x.UseNetTopologySuite();
                         x.MigrationsAssembly("TechnikumDirekt.DataAccess.Sql");
-                    }));
-
+                    });
+                //options.EnableSensitiveDataLogging();
+            });
+            
             //other validators are also added with this command.
             services.AddControllers().AddFluentValidation(config =>
                 config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
@@ -110,6 +116,11 @@ namespace TechnikumDirekt.Services
             {
                 c.BaseAddress = new Uri(Configuration.GetSection("ApiUrls").GetValue<string>("OsmApiUrl"));
                 c.DefaultRequestHeaders.Add("User-Agent", "TechnikumDirektApi");
+            });
+            
+            services.AddHttpClient("logisticsPartner", c =>
+            {
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             });
         }
 
@@ -124,7 +135,7 @@ namespace TechnikumDirekt.Services
             app.UseRouting();
 
             //TODO: Uncomment this if you need wwwroot folder
-            // app.UseStaticFiles();
+            //app.UseStaticFiles();
 
             app.UseAuthorization();
 

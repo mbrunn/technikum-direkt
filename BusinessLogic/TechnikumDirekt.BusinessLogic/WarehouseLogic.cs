@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Utilities;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
@@ -16,16 +19,18 @@ namespace TechnikumDirekt.BusinessLogic
         private readonly IValidator<Warehouse> _warehouseValidator;
         private readonly IValidator<Hop> _hopValidator;
         private readonly IWarehouseRepository _warehouseRepository;
+        private readonly IHopRepository _hopRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<WarehouseLogic> _logger;
 
         public WarehouseLogic(IValidator<Warehouse> warehouseValidator, IValidator<Hop> hopValidator,
-            IWarehouseRepository warehouseRepository,
+            IWarehouseRepository warehouseRepository, IHopRepository hopRepository,
             IMapper mapper, ILogger<WarehouseLogic> logger)
         {
             _warehouseValidator = warehouseValidator;
             _hopValidator = hopValidator;
             _warehouseRepository = warehouseRepository;
+            _hopRepository = hopRepository;
             _mapper = mapper;
             _logger = logger;
         }
@@ -48,11 +53,11 @@ namespace TechnikumDirekt.BusinessLogic
             }
 
             var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
-            _logger.LogDebug($"Imported new Warehousestructure");
+            _logger.LogDebug($"Exported new Warehousestructure");
             return blWarehouse;
         }
 
-        public Warehouse GetWarehouse(string code)
+        public Hop GetWarehouse(string code)
         {
             try
             {
@@ -65,13 +70,14 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Validation of Hop with Hopcode {code} failed.");
                 throw new BusinessLogicValidationException("Hop validation failed.", e);
             }
 
-            DalModels.Warehouse dalWarehouse;
+            DalModels.Hop dalHop;
             try
             {
-                dalWarehouse = _warehouseRepository.GetWarehouseByCode(code);
+                dalHop = _hopRepository.GetHopByCode(code);
             }
             catch (DataAccessNotFoundException e)
             {
@@ -79,9 +85,9 @@ namespace TechnikumDirekt.BusinessLogic
                 throw new BusinessLogicNotFoundException("Hüfe, i hob kan Code gfunden!", e); //DO NOT CHANGE
             }
 
-            var blWarehouse = _mapper.Map<Warehouse>(dalWarehouse);
+            var blHop = _mapper.Map<Hop>(dalHop);
             _logger.LogDebug($"Found warehouse with hopcode {code}.");
-            return blWarehouse;
+            return blHop;
         }
 
         public void ImportWarehouses(Warehouse warehouse)
@@ -96,10 +102,17 @@ namespace TechnikumDirekt.BusinessLogic
             }
             _warehouseRepository.ClearWarehouses();
             var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
-            _warehouseRepository.ImportWarehouses(dalWh);
-            _logger.LogDebug($"Imporeted warehouse with hopcode {warehouse.Code}");
+            try
+            {
+                _warehouseRepository.ImportWarehouses(dalWh);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            _logger.LogDebug($"Importet warehouse with hopcode {warehouse.Code}");
         }
-
+        
         private void ValidateWarehouseTree(Hop node)
         {
             switch (node.HopType)
@@ -112,13 +125,27 @@ namespace TechnikumDirekt.BusinessLogic
                     {
                         ValidateWarehouseTree(child.Hop);
                     }
-
                     break;
                 case HopType.Truck:
-                case HopType.TransferWarehouse:
                     _hopValidator.ValidateAndThrow(node);
                     break;
+                case HopType.TransferWarehouse:
+                    //_hopValidator.ValidateAndThrow(node);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public Hop GetHopContainingPoint(Point point)
+        {
+            var hop = _hopRepository.GetHopContainingPoint(point);
+            if (hop == null)
+            {
+                throw new BusinessLogicNotFoundException($"Hop containing the point {point.Coordinate} couldn't be found.");
+            }
+
+            return _mapper.Map<Hop>(hop);
         }
     }
 }

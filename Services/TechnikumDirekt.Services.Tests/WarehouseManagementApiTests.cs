@@ -34,7 +34,8 @@ namespace TechnikumDirekt.Services.Tests
             LocationName = "Wien",
             Level = 4,
             LocationCoordinates = new Point(16.3725042, 48.2083537),
-            ProcessingDelayMins = 160
+            ProcessingDelayMins = 160,
+            NextHops = new List<BusinessLogic.Models.WarehouseNextHops>()
         };
 
         private readonly List<BlWarehouse> _warehouses = new List<BlWarehouse>();

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Routing.Constraints;
 using BlModels = TechnikumDirekt.BusinessLogic.Models;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -86,6 +87,34 @@ namespace TechnikumDirekt.Services.Mapper
                 .ForMember(dest => dest.HopArrivals,
                     opt => opt.MapFrom(src => src.VisitedHops));
 
+            CreateMap<DalModels.Parcel, BlModels.Parcel>()
+                .ForMember(dest => dest.VisitedHops,
+                    opt => opt.MapFrom(src =>
+                        src.HopArrivals.Where(ha => ha.HopArrivalTime != null)
+                            .OrderBy(ha => ha.HopArrivalTime)))
+                
+                .ForMember(dest => dest.FutureHops,
+                    opt =>
+                        opt.MapFrom(src =>
+                                src.HopArrivals.Where(ha => ha.HopArrivalTime == null)
+                                .OrderBy(ha => ha.Order)))
+                .AfterMap((src, dest, context) =>
+                {
+                    foreach (var destFutureHop in dest.FutureHops)
+                    {
+                        destFutureHop.Description = src.HopArrivals
+                            .FirstOrDefault(ha => ha.HopCode == destFutureHop.Code)
+                            ?.Hop.Description;
+                    }
+                    
+                    foreach (var visitedHop in dest.VisitedHops)
+                    {
+                        visitedHop.Description = src.HopArrivals
+                            .FirstOrDefault(ha => ha.HopCode == visitedHop.Code)
+                            ?.Hop.Description;
+                    }
+                });
+            
             CreateMap<BlModels.Recipient, DalModels.Recipient>().ReverseMap();
         }
     }
