@@ -60,8 +60,16 @@ namespace TechnikumDirekt.Services.Controllers
                 }
 
                 _logger.LogInformation("Successfully exported hierarchy.");
-                var svcWarehouse = _mapper.Map<Warehouse>(exportWarehouse);
-                return Ok(svcWarehouse);
+
+                try
+                {
+                    var svcWarehouse = _mapper.Map<Warehouse>(exportWarehouse);
+                    return Ok(svcWarehouse);
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
             }
             catch (BusinessLogicNotFoundException e)
             {
