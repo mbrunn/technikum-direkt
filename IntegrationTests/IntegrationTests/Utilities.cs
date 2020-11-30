@@ -40,9 +40,7 @@ namespace IntegrationTests
                 .With(x => x.NumberOfRoots = 1).Build();
 
             //var list = Builder<blWarehouse>.CreateListOfSize(1).BuildHierarchy(hierarchySpec);
-
             
-                
             return;
         }
     }

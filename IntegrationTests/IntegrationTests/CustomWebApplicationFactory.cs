@@ -47,12 +47,10 @@ namespace IntegrationTests
                     var db = scopedServices.GetRequiredService<ITechnikumDirektContext>();
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
-
-                    db.Database.EnsureCreated();
-
+                    
                     try
                     {
-                        //Utilities.InitializeDbForTests(db);
+                        Utilities.InitializeDbForTests(db);
                     }
                     catch (Exception ex)
                     {

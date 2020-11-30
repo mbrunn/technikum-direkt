@@ -30,27 +30,43 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         
         private NullLogger<TrackingLogic> _logger;
 
+        private const string ValidRecipientStreetName = "TestStreet 1";
+        private readonly Point _truck01Point = new Point(42.0, 42.0);
+        private readonly Point _truck02Point = new Point(24.0, 24.0);
+        private readonly Point _tran01Point = new Point(55.0, 55.0);
+        
+        private readonly Point _validPoint = new Point(42.5, 42.5);
+        private readonly Point _inValidPoint = new Point(66.6, 66.6);
+
+        private const string ValidTrackingNumber = "A123BCD23";
+        private const string ValidTrackingNumber2 = "B123BCD56";
+        private const string InvalidTrackingNumber = "A123BaD23";
+        private const string NotfoundTrackingNumber = "000000000";
+        private const string ValidHopCode = "ABCD1234";
+        private const string InvalidHopCode = "AbdA2a";
+        private const string NotfoundHopCode = "ABCD0000";
+
         private readonly Recipient _recipient1 = new Recipient
         {
-            Name = "Michi Mango", Street = "TestStreet 1", PostalCode = "1234", City = "Mistelbach Weltstadt",
+            Name = "Michi Mango", Street = ValidRecipientStreetName, PostalCode = "1234", City = "Mistelbach Weltstadt",
             Country = "AT"
         };
 
         private readonly Recipient _recipient2 = new Recipient
         {
-            Name = "Benji Bananas", Street = "Banana Street 2", PostalCode = "4242", City = "Banana City",
+            Name = "Benji Bananas", Street = ValidRecipientStreetName, PostalCode = "4242", City = "Banana City",
             Country = "AT"
         };
 
         private readonly DalModels.Recipient _dalRecipient1 = new DalModels.Recipient
         {
-            Name = "Michi Mango", Street = "TestStreet 1", PostalCode = "1234", City = "Mistelbach Weltstadt",
+            Name = "Michi Mango", Street = ValidRecipientStreetName, PostalCode = "1234", City = "Mistelbach Weltstadt",
             Country = "AT"
         };
 
         private readonly DalModels.Recipient _dalRecipient2 = new DalModels.Recipient
         {
-            Name = "Benji Bananas", Street = "Banana Street 2", PostalCode = "4242", City = "Banana City",
+            Name = "Benji Bananas", Street = ValidRecipientStreetName, PostalCode = "4242", City = "Banana City",
             Country = "AT"
         };
 
@@ -73,7 +89,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
 
         private readonly Hop _validHop = new Hop()
         {
-            Code = "ABC123",
+            Code = ValidHopCode,
             Description = "description",
             HopType = HopType.Truck,
             LocationCoordinates = new Point(123, 123),
@@ -141,23 +157,91 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 new WarehouseNextHops(){Hop = WarehouseWare03, TraveltimeMins = 20}
             }
         };
+
+        private static DalModels.Warehouse WarehouseWare01Dal = new DalModels.Warehouse()
+        {
+            Code = WarehouseWare01.Code,
+            Description = WarehouseWare01.Description,
+            HopType = (DalModels.HopType) WarehouseWare01.HopType,
+            Level = WarehouseWare01.Level,
+            ParentWarehouse = null,
+            ParentWarehouseCode = null
+        };
         
-        private readonly Point _truck01Point = new Point(42.0, 42.0);
-        private readonly Point _truck02Point = new Point(24.0, 24.0);
-        private readonly Point _tran01Point = new Point(55.0, 55.0);
+        private static DalModels.Warehouse WarehouseWare02Dal = new DalModels.Warehouse()
+        {
+            Code = WarehouseWare02.Code,
+            Description = WarehouseWare02.Description,
+            HopType = (DalModels.HopType) WarehouseWare02.HopType,
+            Level = WarehouseWare02.Level,
+            ParentWarehouse = WarehouseWare01Dal,
+            ParentWarehouseCode = WarehouseWare01Dal.Code
+        };
+        
+        private static DalModels.Warehouse WarehouseWare03Dal = new DalModels.Warehouse()
+        {
+            Code = WarehouseWare03.Code,
+            Description = WarehouseWare03.Description,
+            HopType = (DalModels.HopType) WarehouseWare03.HopType,
+            Level = WarehouseWare03.Level,
+            ParentWarehouse = WarehouseWare01Dal,
+            ParentWarehouseCode = WarehouseWare01Dal.Code
+        };
+        
+        private static DalModels.Truck TruckTruc01Dal = new DalModels.Truck()
+        {
+            Code = TruckTruc01.Code,
+            Description = TruckTruc01.Description,
+            HopType = (DalModels.HopType) TruckTruc01.HopType,
+            ParentWarehouse = WarehouseWare02Dal,
+            ParentWarehouseCode = WarehouseWare02Dal.Code
+        };
+        
+        private static DalModels.Truck TruckTruc02Dal = new DalModels.Truck()
+        {
+            Code = WarehouseWare03.Code,
+            Description = WarehouseWare03.Description,
+            HopType = (DalModels.HopType) WarehouseWare03.HopType,
+            ParentWarehouse = WarehouseWare03Dal,
+            ParentWarehouseCode = WarehouseWare03Dal.Code
+        };
+        
+        private static DalModels.Transferwarehouse TransferwarehouseTran01Dal = new DalModels.Transferwarehouse()
+        {
+            Code = TransferwarehouseTran01.Code,
+            Description = TransferwarehouseTran01.Description,
+            HopType = (DalModels.HopType) TransferwarehouseTran01.HopType,
+            ParentWarehouse = WarehouseWare02Dal,
+            ParentWarehouseCode = WarehouseWare02Dal.Code
+        };
+        
+        private readonly Recipient truck01Recipient = new Recipient()
+        {
+            City = "BananaCity",
+            Country = "Austria",
+            PostalCode = "A-1000",
+            Street = "TruckStreet 01"
+        };
+        
+        private readonly Recipient truck02Recipient = new Recipient()
+        {
+            City = "BananaCity",
+            Country = "Austria",
+            PostalCode = "A-1000",
+            Street = "TruckStreet 02"
+        };
+        
+        private readonly Recipient trans01Recipient = new Recipient()
+        {
+            City = "BananaCity",
+            Country = "Austria",
+            PostalCode = "A-1000",
+            Street = "TransferWarehouseStreet 01"
+        };
         
         #endregion
 
-        private readonly Point _validPoint = new Point(42.5, 42.5);
-        private readonly Point _inValidPoint = new Point(66.6, 66.6);
 
-        private const string ValidTrackingNumber = "A123BCD23";
-        private const string ValidTrackingNumber2 = "B123BCD56";
-        private const string InvalidTrackingNumber = "A123BaD23";
-        private const string NotfoundTrackingNumber = "000000000";
-        private const string ValidHopCode = "ABCD1234";
-        private const string InvalidHopCode = "AbdA2a";
-        private const string NotfoundHopCode = "ABCD0000";
 
         private ITrackingLogic _trackingLogic;
 
@@ -205,13 +289,24 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             /* ------------- Mock HopRepository Setup ------------- */
             var mockHopRepository = new Mock<IHopRepository>();
             // Setup - GetHopByCode
-            mockHopRepository.Setup(m => m.GetHopByCode(It.IsAny<string>())).Returns(validHop);
+            mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == TruckTruc01.Code))).Returns(TruckTruc01Dal);
+            mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == TruckTruc02.Code))).Returns(TruckTruc02Dal);
+            mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == TransferwarehouseTran01.Code))).Returns(TransferwarehouseTran01Dal);
+            mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == WarehouseWare01.Code))).Returns(WarehouseWare01Dal);
+            mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == WarehouseWare02.Code))).Returns(WarehouseWare02Dal);
+            mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == WarehouseWare03.Code))).Returns(WarehouseWare03Dal);
+            
+            mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == ValidHopCode))).Returns(validHop);
             mockHopRepository.Setup(m => m.GetHopByCode(NotfoundHopCode)).Throws<DataAccessNotFoundException>();
 
             /* ------------- Mock HopRepository Setup ------------- */
             var geoEncodingAgent = new Mock<IGeoEncodingAgent>();
             // Setup - EncodeAddress
-            geoEncodingAgent.Setup(m => m.EncodeAddress(It.IsAny<Address>())).Returns(_validPoint);
+            geoEncodingAgent.Setup(m => m.EncodeAddress(It.Is<Address>(address => address.Street == "TruckStreet 01"))).Returns(_truck01Point);
+            geoEncodingAgent.Setup(m => m.EncodeAddress(It.Is<Address>(address => address.Street == "TruckStreet 02"))).Returns(_truck02Point);
+            geoEncodingAgent.Setup(m => m.EncodeAddress(It.Is<Address>(address => address.Street == "TransferWarehouseStreet 01"))).Returns(_tran01Point);
+            
+            geoEncodingAgent.Setup(m => m.EncodeAddress(It.Is<Address>(address => address.Street == ValidRecipientStreetName))).Returns(_validPoint);
             geoEncodingAgent.Setup(m => m.EncodeAddress(_inValidAddress)).Throws<ServiceAgentsNotFoundException>();
 
             /* ------------- Mock HopRepository Setup ------------- */
@@ -249,8 +344,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var parcel = new Parcel
             {
                 Weight = 2.0f,
-                Sender = _recipient1,
-                Recipient = _recipient2,
+                Sender = truck01Recipient,
+                Recipient = truck02Recipient,
                 VisitedHops = new List<HopArrival>(),
                 FutureHops = new List<HopArrival>()
             };
@@ -284,8 +379,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var parcel = new Parcel
             {
                 Weight = 2.0f,
-                Sender = _recipient1,
-                Recipient = _recipient2,
+                Sender = truck01Recipient,
+                Recipient = truck02Recipient,
                 VisitedHops = new List<HopArrival>(),
                 FutureHops = new List<HopArrival>()
             };
@@ -308,8 +403,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var parcel = new Parcel
             {
                 Weight = 2.0f,
-                Sender = _recipient1,
-                Recipient = _recipient2,
+                Sender = truck01Recipient,
+                Recipient = truck02Recipient,
                 VisitedHops = new List<HopArrival>(),
                 FutureHops = new List<HopArrival>()
             };
@@ -339,13 +434,28 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         #region SubmitParcel Tests
         
         [Test]
-        public void SubmitParcel_DoesNotThrow_WithValidParcel()
+        public void SubmitParcel_DoesNotThrow_ValidParcelTruck01ToTruck02()
         {
             var parcel = new Parcel
             {
                 Weight = 2.0f,
-                Sender = _recipient1,
-                Recipient = _recipient2,
+                Sender = truck01Recipient,
+                Recipient = truck02Recipient,
+                VisitedHops = new List<HopArrival>(),
+                FutureHops = new List<HopArrival>()
+            };
+
+            Assert.DoesNotThrow(() => _trackingLogic.SubmitParcel(parcel));
+        }
+        
+        [Test]
+        public void SubmitParcel_DoesNotThrow_ValidParcelTruck02ToTransferWarehouse01()
+        {
+            var parcel = new Parcel
+            {
+                Weight = 2.0f,
+                Sender = truck02Recipient,
+                Recipient = trans01Recipient,
                 VisitedHops = new List<HopArrival>(),
                 FutureHops = new List<HopArrival>()
             };
@@ -378,8 +488,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var parcel = new Parcel
             {
                 Weight = 2.0f,
-                Sender = _recipient1,
-                Recipient = _recipient2,
+                Sender = truck01Recipient,
+                Recipient = truck02Recipient,
                 VisitedHops = new List<HopArrival>()
                 ,
                 FutureHops = new List<HopArrival>()

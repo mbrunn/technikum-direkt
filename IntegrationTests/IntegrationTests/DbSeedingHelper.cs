@@ -12,6 +12,7 @@ namespace IntegrationTests
         public static void InitializeDbForTests(ITechnikumDirektContext dbContext)
         {
             //dbContext.Warehouses.AddRange(GetSeedingMessages());
+            //TODO: add Warehouse Object here ??
             dbContext.SaveChanges();
         }
 

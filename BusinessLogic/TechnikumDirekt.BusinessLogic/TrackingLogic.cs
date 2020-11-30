@@ -359,8 +359,6 @@ namespace TechnikumDirekt.BusinessLogic
 
         private Parcel FindShortestPath(Parcel parcel)
         {
-            var futureHops = new List<HopArrival>();
-            
             //1. get Coordinates of Sender and Recipient:
             if (parcel.Sender == null)
             {
