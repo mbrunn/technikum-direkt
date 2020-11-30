@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using NUnit;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using TechnikumDirekt.DataAccess.Interfaces;
-using TechnikumDirekt.DataAccess.Sql;
-using TechnikumDirekt.Services;
 
 namespace IntegrationTests
 {
@@ -18,7 +7,7 @@ namespace IntegrationTests
     {
         protected readonly HttpClient Client;
         protected readonly CustomWebApplicationFactory<TechnikumDirekt.Services.Startup> Factory;
-
+        
         protected IntegrationTests()
         {
             Factory = new CustomWebApplicationFactory<TechnikumDirekt.Services.Startup>();
@@ -26,7 +15,7 @@ namespace IntegrationTests
         }
 
         /// <summary>
-        /// Dispose of Client and TestWebApp
+        /// Dispose of Client and TestApp
         /// </summary>
         public void Dispose()
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -26,7 +25,7 @@ namespace TechnikumDirekt.DataAccess.Sql
             _logger.LogTrace($"Read" + wh.Count + " out of the repository");
             return wh;
         }
-
+        
         public Warehouse GetWarehouseByCode(string code)
         {
             if (string.IsNullOrEmpty(code)) throw new DataAccessArgumentNullException("Code is null.");

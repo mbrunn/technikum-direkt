@@ -4,6 +4,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,20 +18,25 @@ namespace IntegrationTests
     public class CustomWebApplicationFactory<TStartup> 
         : WebApplicationFactory<TStartup> where TStartup: class
     {
+        
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            
-            builder.ConfigureServices(services =>
+           builder.ConfigureServices(services =>
             {
+                var serviceProvider = new ServiceCollection()
+                    .AddEntityFrameworkInMemoryDatabase()
+                    .BuildServiceProvider();
+                
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
                          typeof(DbContextOptions<TechnikumDirektContext>));
 
                 services.Remove(descriptor);
 
-                services.AddDbContext<TechnikumDirektContext>(options =>
+                services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
+                    options.UseInMemoryDatabase("InMemDb");
+                    options.ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
                 });
 
                 var sp = services.BuildServiceProvider();
@@ -37,7 +44,7 @@ namespace IntegrationTests
                 using (var scope = sp.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<TechnikumDirektContext>();
+                    var db = scopedServices.GetRequiredService<ITechnikumDirektContext>();
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 

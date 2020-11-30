@@ -80,6 +80,73 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             LocationName = "Truck in BananaCity",
             ProcessingDelayMins = 10
         };
+        
+        #region sampleWarehouseStructure
+        
+        private static Transferwarehouse TransferwarehouseTran01 = new Transferwarehouse()
+        {
+            Code = "Tran01",
+            Description = "TransferwarehouseTran01",
+            HopType = HopType.TransferWarehouse
+        };
+        
+        private static Truck TruckTruc01 = new Truck()
+        {
+            Code = "Truc01",
+            Description = "TruckTruc01",
+            HopType = HopType.Truck
+        };
+        
+        private static Truck TruckTruc02 = new Truck()
+        {
+            Code = "Truc02",
+            Description = "TruckTruc02",
+            HopType = HopType.Truck
+        };
+        
+        private static Warehouse WarehouseWare02 = new Warehouse()
+        {
+            Code = "Ware02",
+            Description = "WarehouseWare02",
+            HopType = HopType.Warehouse,
+            Level = 1,
+            NextHops = new List<WarehouseNextHops>()
+            {
+                new WarehouseNextHops(){Hop = TransferwarehouseTran01, TraveltimeMins = 10},
+                new WarehouseNextHops(){Hop = TruckTruc01, TraveltimeMins = 20}
+            }
+        };
+        
+        private static Warehouse WarehouseWare03 = new Warehouse()
+        {
+            Code = "Ware03",
+            Description = "WarehouseWare03",
+            HopType = HopType.Warehouse,
+            Level = 1,            
+            NextHops = new List<WarehouseNextHops>()
+            {
+                new WarehouseNextHops(){Hop = TruckTruc02, TraveltimeMins = 10}
+            }
+        };
+        
+        private static Warehouse WarehouseWare01 = new Warehouse()
+        {
+            Code = "Ware01",
+            Description = "WarehouseWare01",
+            HopType = HopType.Warehouse,
+            Level = 0,
+            NextHops = new List<WarehouseNextHops>()
+            {
+                new WarehouseNextHops(){Hop = WarehouseWare02, TraveltimeMins = 10},
+                new WarehouseNextHops(){Hop = WarehouseWare03, TraveltimeMins = 20}
+            }
+        };
+        
+        private readonly Point _truck01Point = new Point(42.0, 42.0);
+        private readonly Point _truck02Point = new Point(24.0, 24.0);
+        private readonly Point _tran01Point = new Point(55.0, 55.0);
+        
+        #endregion
 
         private readonly Point _validPoint = new Point(42.5, 42.5);
         private readonly Point _inValidPoint = new Point(66.6, 66.6);
@@ -143,16 +210,23 @@ namespace TechnikumDirekt.BusinessLogic.Tests
 
             /* ------------- Mock HopRepository Setup ------------- */
             var geoEncodingAgent = new Mock<IGeoEncodingAgent>();
-            // Setup - GetHopByCode
+            // Setup - EncodeAddress
             geoEncodingAgent.Setup(m => m.EncodeAddress(It.IsAny<Address>())).Returns(_validPoint);
             geoEncodingAgent.Setup(m => m.EncodeAddress(_inValidAddress)).Throws<ServiceAgentsNotFoundException>();
 
             /* ------------- Mock HopRepository Setup ------------- */
             var warehouseLogic = new Mock<IWarehouseLogic>();
-            // Setup - GetHopByCode
+            // Setup - GetHopContainingPoint
             warehouseLogic.Setup(m => m.GetHopContainingPoint(_validPoint)).Returns(_validHop);
             warehouseLogic.Setup(m => m.GetHopContainingPoint(_inValidPoint)).Returns(new Hop());
-
+            
+            warehouseLogic.Setup(m => m.GetHopContainingPoint(It.Is<Point>(point => point == _truck01Point)))
+                .Returns(TruckTruc01);
+            warehouseLogic.Setup(m => m.GetHopContainingPoint(It.Is<Point>(point => point == _truck02Point)))
+                .Returns(TruckTruc02);
+            warehouseLogic.Setup(m => m.GetHopContainingPoint(It.Is<Point>(point => point == _tran01Point)))
+                .Returns(TransferwarehouseTran01);
+            
             _warehouseLogic = warehouseLogic.Object;
             _geoEncodingAgent = geoEncodingAgent.Object;
             _hopRepository = mockHopRepository.Object;
@@ -263,7 +337,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         #endregion
 
         #region SubmitParcel Tests
-
+        
         [Test]
         public void SubmitParcel_DoesNotThrow_WithValidParcel()
         {

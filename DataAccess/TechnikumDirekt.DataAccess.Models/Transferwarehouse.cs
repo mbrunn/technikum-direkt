@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries;
 
 namespace TechnikumDirekt.DataAccess.Models
@@ -10,6 +11,7 @@ namespace TechnikumDirekt.DataAccess.Models
         /// GeoJSON of the area covered by the logistics partner.
         /// </summary>
         /// <value>GeoJSON of the area covered by the logistics partner.</value>
+        [Column(TypeName = "Geometry")]
         public Geometry RegionGeometry { get; set; }
 
         /// <summary>

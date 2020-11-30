@@ -60,16 +60,9 @@ namespace TechnikumDirekt.Services.Controllers
                 }
 
                 _logger.LogInformation("Successfully exported hierarchy.");
-
-                try
-                {
-                    var svcWarehouse = _mapper.Map<Warehouse>(exportWarehouse);
-                    return Ok(svcWarehouse);
-                }
-                catch (Exception e)
-                {
-                    throw;
-                }
+                
+                var svcWarehouse = _mapper.Map<Warehouse>(exportWarehouse);
+                return Ok(svcWarehouse);
             }
             catch (BusinessLogicNotFoundException e)
             {
@@ -162,7 +155,7 @@ namespace TechnikumDirekt.Services.Controllers
             {
                 _logger.LogError(e.Message);
                 return BadRequest(StatusCode(400,
-                    new Error {ErrorMessage = "The operation failed due to an error."}));
+                    new Error {ErrorMessage = $"The operation failed due to an error. {e.Message}"}));
             }
         }
     }

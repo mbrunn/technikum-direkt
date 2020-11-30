@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Index.HPRtree;
 using Newtonsoft.Json;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
@@ -20,13 +24,32 @@ using Warehouse = TechnikumDirekt.DataAccess.Models.Warehouse;
 namespace IntegrationTests
 {
     [TestFixture]
-    public class WarehouseManagementApiTests : IntegrationTests, IDisposable
-    {
+    public class WarehouseManagementApiTests : IntegrationTests
+    { 
         [OneTimeSetUp]
         public void Setup()
         {
+            
         }
 
+        [Test]
+        public async Task PostWarehouses_AddsNewWarehouseStructure()
+        {
+            
+        }
+        
+        [Test]
+        public async Task GetWarehouseWithCode_validHopCode_OkValidHop()
+        {
+            
+        }
+        
+        [Test]
+        public async Task GetWarehouseWithCode_invalidHopCode_NotFound()
+        {
+            
+        }
+        
         [Test]
         public async Task GetWarehouses_EmptyDatabase_NotFound()
         {
@@ -63,7 +86,7 @@ namespace IntegrationTests
                     using (var scope = serviceProvider.CreateScope())
                     {
                         var scopedServices = scope.ServiceProvider;
-                        var db = scopedServices.GetRequiredService<TechnikumDirektContext>();
+                        var db = scopedServices.GetRequiredService<ITechnikumDirektContext>();
                         var logger = scopedServices
                             .GetRequiredService<ILogger<WarehouseManagementApiTests>>();
 

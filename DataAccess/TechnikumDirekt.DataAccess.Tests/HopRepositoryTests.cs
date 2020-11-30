@@ -109,6 +109,7 @@ namespace TechnikumDirekt.DataAccess.Tests
             };
 
             var dbMock = new Mock<ITechnikumDirektContext>();
+            
             dbMock.Setup(p => p.Hops).Returns(DbContextMock.GetQueryableMockDbSet<Hop>(_entities));
             
             dbMock.Setup(p => p.Trucks).Returns(DbContextMock.GetQueryableMockDbSet<Truck>(_truckEntities));

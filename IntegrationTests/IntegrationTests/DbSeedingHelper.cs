@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
@@ -8,28 +9,26 @@ namespace IntegrationTests
 {
     public class DbSeedingHelper
     {
-        public static void InitializeDbForTests(ITechnikumDirektContext db)
+        public static void InitializeDbForTests(ITechnikumDirektContext dbContext)
         {
-            //db.Warehouses.AddRange(GetSeedingMessages());
-            db.SaveChanges();
+            //dbContext.Warehouses.AddRange(GetSeedingMessages());
+            dbContext.SaveChanges();
         }
 
-        public static void ReinitializeDbForTests(ITechnikumDirektContext db)
+        public static void ReinitializeDbForTests(ITechnikumDirektContext dbContext)
         {
-            //db.Messages.RemoveRange(db.Messages);
-            InitializeDbForTests(db);
+            DeleteAllDbEntries(dbContext);
+            InitializeDbForTests(dbContext);
         }
 
-        public static List<Warehouse> GetSeedingMessages()
+        public static void DeleteAllDbEntries(ITechnikumDirektContext dbContext)
         {
-           /* return new List<Warehouse>()
-            {
-                new Message(){ Text = "TEST RECORD: You're standing on my scarf." },
-                new Message(){ Text = "TEST RECORD: Would you like a jelly baby?" },
-                new Message(){ Text = "TEST RECORD: To the rational mind, " +
-                                      "nothing is inexplicable; only unexplained." }
-            };*/
-           return null;
+            dbContext.Database.ExecuteSqlRaw(
+                $"DELETE FROM {dbContext.Model.FindEntityType(typeof(Parcel)).GetTableName()}");
+            dbContext.Database.ExecuteSqlRaw(
+                $"DELETE FROM {dbContext.Model.FindEntityType(typeof(Recipient)).GetTableName()}");
+            dbContext.Database.ExecuteSqlRaw(
+                $"DELETE FROM {dbContext.Model.FindEntityType(typeof(Hop)).GetTableName()}");
         }
     }
 }
