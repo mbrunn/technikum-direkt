@@ -18,10 +18,15 @@ namespace IntegrationTests
     public class CustomWebApplicationFactory<TStartup> 
         : WebApplicationFactory<TStartup> where TStartup: class
     {
-        
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-           builder.ConfigureServices(services =>
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            builder.UseConfiguration(config);
+            
+            builder.ConfigureServices(services =>
             {
                 var serviceProvider = new ServiceCollection()
                     .AddEntityFrameworkInMemoryDatabase()
@@ -35,81 +40,32 @@ namespace IntegrationTests
 
                 services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemDb");
-                    options.ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+                    options.UseSqlServer(config.GetConnectionString("TechnikumDirektTestDatabase"),
+                        x =>
+                        {
+                            x.UseNetTopologySuite();
+                            x.MigrationsAssembly("TechnikumDirekt.DataAccess.Sql");
+                        });
                 });
 
                 var sp = services.BuildServiceProvider();
 
-                using (var scope = sp.CreateScope())
-                {
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<ITechnikumDirektContext>();
-                    var logger = scopedServices
-                        .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
+                using var scope = sp.CreateScope();
+                var scopedServices = scope.ServiceProvider;
+                var db = scopedServices.GetRequiredService<ITechnikumDirektContext>();
+                var logger = scopedServices
+                    .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
                     
-                    try
-                    {
-                        Utilities.InitializeDbForTests(db);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the " +
-                                            "database with test messages. Error: {Message}", ex.Message);
-                    }
+                try
+                {
+                    Utilities.InitializeDbForTests(db);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred seeding the " +
+                                        "database with test messages. Error: {Message}", ex.Message);
                 }
             });
-            
-            /*builder.ConfigureServices(services =>
-            {
-                // Create a new service provider.
-                var serviceProvider = new ServiceCollection()
-                    .AddEntityFrameworkInMemoryDatabase()
-                    .BuildServiceProvider();
-
-                // Add a database context (ApplicationDbContext) using an in-memory 
-                // database for testing.
-
-                //remove real Database first
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
-                         typeof(DbContextOptions<TechnikumDirektContext>));
-
-                services.Remove(descriptor);
-                
-                //add InMemoryDb
-                services.AddDbContext<TechnikumDirektContext>(options => 
-                {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
-                    options.UseInternalServiceProvider(serviceProvider);
-                });
-
-                // Build the service provider.
-                var sp = services.BuildServiceProvider();
-
-                // Create a scope to obtain a reference to the database
-                // context (ApplicationDbContext).
-                using (var scope = sp.CreateScope())
-                {
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<ITechnikumDirektContext>();
-                    var logger = scopedServices
-                        .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
-
-                    // Ensure the database is created.
-                    db.Database.EnsureCreated();
-                    
-                    try
-                    {
-                        DbSeedingHelper.InitializeDbForTests(db);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the " +
-                                            "database with test messages. Error: {Message}", ex.Message);
-                    }
-                }
-            });*/
         }
     }
 }

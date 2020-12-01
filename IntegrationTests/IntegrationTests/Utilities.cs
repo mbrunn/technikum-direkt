@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TechnikumDirekt.DataAccess.Interfaces;
@@ -42,6 +43,12 @@ namespace IntegrationTests
             //var list = Builder<blWarehouse>.CreateListOfSize(1).BuildHierarchy(hierarchySpec);
             
             return;
+        }
+
+        public static string LoadDatasetLight()
+        {
+            using var reader = new StreamReader("Datasets/dataset_light.json");
+            return reader.ReadToEnd();
         }
     }
 }

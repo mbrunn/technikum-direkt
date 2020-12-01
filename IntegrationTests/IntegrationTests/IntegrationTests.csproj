@@ -17,4 +17,17 @@
       <ProjectReference Include="..\..\Services\TechnikumDirekt.Services\TechnikumDirekt.Services.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="appsettings.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+        <Content Include="./Datasets/dataset_light.json">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>
