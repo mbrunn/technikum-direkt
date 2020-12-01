@@ -133,6 +133,29 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                     b.ToTable("Recipients");
                 });
 
+            modelBuilder.Entity("TechnikumDirekt.DataAccess.Models.Webhook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ParcelTrackingId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParcelTrackingId");
+
+                    b.ToTable("Webhooks");
+                });
+
             modelBuilder.Entity("TechnikumDirekt.DataAccess.Models.Transferwarehouse", b =>
                 {
                     b.HasBaseType("TechnikumDirekt.DataAccess.Models.Hop");
@@ -144,7 +167,7 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Geometry>("RegionGeometry")
-                        .HasColumnType("geography");
+                        .HasColumnType("Geometry");
 
                     b.HasDiscriminator().HasValue("Transferwarehouse");
                 });
@@ -158,7 +181,7 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
 
                     b.Property<Geometry>("RegionGeometry")
                         .HasColumnName("Truck_RegionGeometry")
-                        .HasColumnType("geography");
+                        .HasColumnType("Geometry");
 
                     b.HasDiscriminator().HasValue("Truck");
                 });
@@ -204,6 +227,13 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                     b.HasOne("TechnikumDirekt.DataAccess.Models.Recipient", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId");
+                });
+
+            modelBuilder.Entity("TechnikumDirekt.DataAccess.Models.Webhook", b =>
+                {
+                    b.HasOne("TechnikumDirekt.DataAccess.Models.Parcel", "Parcel")
+                        .WithMany()
+                        .HasForeignKey("ParcelTrackingId");
                 });
 #pragma warning restore 612, 618
         }

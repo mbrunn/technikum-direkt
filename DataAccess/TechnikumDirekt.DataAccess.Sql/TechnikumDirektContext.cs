@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -19,6 +20,7 @@ namespace TechnikumDirekt.DataAccess.Sql
         public DbSet<Transferwarehouse> Transferwarehouses { get; set; }
         public DbSet<Truck> Trucks { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Webhook> Webhooks { get; set; }
 
         public new DatabaseFacade Database
         {
@@ -47,7 +49,7 @@ namespace TechnikumDirekt.DataAccess.Sql
                 .HasOne(ha => ha.Hop)
                 .WithMany(h => h.HopArrivals)
                 .HasForeignKey(ha => ha.HopCode);
-
+            
             /*modelBuilder.Entity<Hop>()
                 .HasOne(h => h.ParentWarehouse)
                 .WithMany(pw => pw.NextHops)

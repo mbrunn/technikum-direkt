@@ -12,7 +12,7 @@ namespace TechnikumDirekt.DataAccess.Models
         /// </summary>
         /// <value>GeoJSON of the area covered by the logistics partner.</value>
         [Column(TypeName = "Geometry")]
-        public Geometry RegionGeometry { get; set; }
+        public Geometry? RegionGeometry { get; set; }
 
         /// <summary>
         /// Name of the logistics partner.

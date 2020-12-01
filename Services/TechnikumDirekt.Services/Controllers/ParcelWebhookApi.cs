@@ -24,7 +24,7 @@ namespace TechnikumDirekt.Services.Controllers
     public class ParcelWebhookApiController : ControllerBase
     {
         /// <summary>
-        /// Get all registered subscriptions for the parcel webhook.
+        /// Get all registered subscriptions for the parcel trackingId.
         /// </summary>
         /// <param name="trackingId"></param>
         /// <response code="200">List of webooks for the &#x60;trackingId&#x60;</response>
@@ -78,8 +78,17 @@ namespace TechnikumDirekt.Services.Controllers
         public virtual IActionResult SubscribeParcelWebhook([FromRoute] [Required] [RegularExpression("^[A-Z0-9]{9}$")]
             string trackingId, [FromQuery] [Required()] string url)
         {
-            //TODO: Is this reasonable ?
-            if (trackingId == null || url == null || trackingId == "NonExistingParcel" || url == "NonExistingUrl")
+            try
+            {
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
+            if (trackingId == null || url == null)
             {
                 return NotFound(StatusCode(404));
             }
