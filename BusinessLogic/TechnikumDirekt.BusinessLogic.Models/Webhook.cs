@@ -1,15 +1,12 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TechnikumDirekt.DataAccess.Models
+namespace TechnikumDirekt.BusinessLogic.Models
 {
     public class Webhook
     {
         /// <summary>
         /// Id of the subscription
         /// </summary>
-        [Key]
         public long Id { get; set; }
         
         /// <summary>

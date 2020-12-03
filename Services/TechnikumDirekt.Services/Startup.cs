@@ -88,12 +88,14 @@ namespace TechnikumDirekt.Services
             services.AddTransient<IHopRepository, HopRepository>();
             services.AddTransient<IWarehouseRepository, WarehouseRepository>();
             services.AddTransient<IParcelRepository, ParcelRepository>();
+            services.AddTransient<IWebhookRepository, WebhookRepository>();
 
             services.AddTransient<IWarehouseLogic, WarehouseLogic>();
             services.AddTransient<ITrackingLogic, TrackingLogic>();
             
             services.AddTransient<IGeoEncodingAgent, OsmGeoEncodingAgent>();
             services.AddTransient<ILogisticsPartnerAgent, TransferParcelToPartnerAgent>();
+            services.AddTransient<IWebhookServiceAgent, WebhookServiceAgent>();
             
             services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
             {
@@ -119,6 +121,11 @@ namespace TechnikumDirekt.Services
             });
             
             services.AddHttpClient("logisticsPartner", c =>
+            {
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+            
+            services.AddHttpClient("webhookNotifier", c =>
             {
                 c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             });

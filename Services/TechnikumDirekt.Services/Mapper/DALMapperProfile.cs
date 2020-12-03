@@ -83,7 +83,7 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<BlModels.Parcel, DalModels.Parcel>().ReverseMap();
 
             CreateMap<BlModels.Parcel, DalModels.Parcel>()
-                .BeforeMap((src, dest) => { src.VisitedHops.AddRange(src.FutureHops); })
+                .BeforeMap((src, dest) => { src.VisitedHops?.AddRange(src.FutureHops); })
                 .ForMember(dest => dest.HopArrivals,
                     opt => opt.MapFrom(src => src.VisitedHops));
 
@@ -116,6 +116,8 @@ namespace TechnikumDirekt.Services.Mapper
                 });
             
             CreateMap<BlModels.Recipient, DalModels.Recipient>().ReverseMap();
+
+            CreateMap<BlModels.Webhook, DalModels.Webhook>().ReverseMap();
         }
     }
 }

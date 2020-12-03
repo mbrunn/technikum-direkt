@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Utilities;
 using NUnit.Framework;
 using TechnikumDirekt.BusinessLogic.Exceptions;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
@@ -15,6 +18,7 @@ using TechnikumDirekt.ServiceAgents.Exceptions;
 using TechnikumDirekt.ServiceAgents.Interfaces;
 using TechnikumDirekt.ServiceAgents.Models;
 using TechnikumDirekt.Services.Mapper;
+using Assert = NUnit.Framework.Assert;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
 namespace TechnikumDirekt.BusinessLogic.Tests
@@ -25,8 +29,11 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private IParcelRepository _parcelRepository;
         private IWarehouseLogic _warehouseLogic;
         private IHopRepository _hopRepository;
+        private IWebhookRepository _webhookRepository;
         private IGeoEncodingAgent _geoEncodingAgent;
         private ILogisticsPartnerAgent _logisticsPartnerAgent;
+        private ITrackingLogic _trackingLogic;
+        private IWebhookServiceAgent _webhookServiceAgent;
         
         private NullLogger<TrackingLogic> _logger;
 
@@ -38,13 +45,18 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         private readonly Point _validPoint = new Point(42.5, 42.5);
         private readonly Point _inValidPoint = new Point(66.6, 66.6);
 
-        private const string ValidTrackingNumber = "A123BCD23";
+        private const string ValidTrackingId = "A123BCD23";
         private const string ValidTrackingNumber2 = "B123BCD56";
-        private const string InvalidTrackingNumber = "A123BaD23";
-        private const string NotfoundTrackingNumber = "000000000";
+        private const string InValidTrackingId = "A123BaD23";
+        private const string NotfoundTrackingId = "000000000";
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
         private const string NotfoundHopCode = "ABCD0000";
+
+        private const long ExistingWebhookId = 1;
+        private const long ExistingWebhookId2 = 2;
+        private const long NonExistingWebhookId = 99;
+        private const string ValidUrl = "http://www.yeetmann-gruppe.at";
 
         private readonly Recipient _recipient1 = new Recipient
         {
@@ -96,8 +108,6 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             LocationName = "Truck in BananaCity",
             ProcessingDelayMins = 10
         };
-        
-        #region sampleWarehouseStructure
         
         private static Transferwarehouse TransferwarehouseTran01 = new Transferwarehouse()
         {
@@ -239,12 +249,6 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             Street = "TransferWarehouseStreet 01"
         };
         
-        #endregion
-
-
-
-        private ITrackingLogic _trackingLogic;
-
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -265,24 +269,46 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             
             var validParcel = new DalModels.Parcel
             {
-                TrackingId = ValidTrackingNumber,
+                TrackingId = ValidTrackingId,
                 Weight = 2.0f,
                 Sender = _dalRecipient1,
                 Recipient = _dalRecipient2,
                 HopArrivals = new List<DalModels.HopArrival>
-                    {new DalModels.HopArrival {HopCode = ValidHopCode, ParcelTrackingId = ValidTrackingNumber, Hop = validHop}}
+                    {new DalModels.HopArrival {HopCode = ValidHopCode, ParcelTrackingId = ValidTrackingId, Hop = validHop}}
             };
 
+            var validWebhook1 = new DalModels.Webhook()
+            {
+                CreationDate = DateTime.Now,
+                Id = ExistingWebhookId,
+                Parcel = validParcel,
+                Url = ValidUrl
+            };
+            
+            var validWebhook2 = new DalModels.Webhook()
+            {
+                CreationDate = DateTime.Now,
+                Id = ExistingWebhookId2,
+                Parcel = validParcel,
+                Url = ValidUrl
+            };
+            
+            var dalWebhooks = new List<DalModels.Webhook>()
+            {
+                validWebhook1,
+                validWebhook2
+            };
+            
             /* ------------- Mock ParcelRepository Setup ------------- */
             var mockParcelRepository = new Mock<IParcelRepository>();
             // Setup - GetByTrackingId
             mockParcelRepository.Setup(m => m.GetByTrackingId(It.IsAny<string>())).Returns(validParcel);
-            mockParcelRepository.Setup(m => m.GetByTrackingId(NotfoundTrackingNumber))
+            mockParcelRepository.Setup(m => m.GetByTrackingId(NotfoundTrackingId))
                 .Throws<DataAccessNotFoundException>();
             // Setup - Update
             mockParcelRepository.Setup(m => m.Update(validParcel));
             // Setup - Add
-            mockParcelRepository.Setup(m => m.Add(validParcel)).Returns(ValidTrackingNumber);
+            mockParcelRepository.Setup(m => m.Add(validParcel)).Returns(ValidTrackingId);
 
             _parcelRepository = mockParcelRepository.Object;
 
@@ -299,7 +325,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             mockHopRepository.Setup(m => m.GetHopByCode(It.Is<string>(hopCode => hopCode == ValidHopCode))).Returns(validHop);
             mockHopRepository.Setup(m => m.GetHopByCode(NotfoundHopCode)).Throws<DataAccessNotFoundException>();
 
-            /* ------------- Mock HopRepository Setup ------------- */
+            /* ------------- Mock GeoEncodingAgent Setup ------------- */
             var geoEncodingAgent = new Mock<IGeoEncodingAgent>();
             // Setup - EncodeAddress
             geoEncodingAgent.Setup(m => m.EncodeAddress(It.Is<Address>(address => address.Street == "TruckStreet 01"))).Returns(_truck01Point);
@@ -309,7 +335,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             geoEncodingAgent.Setup(m => m.EncodeAddress(It.Is<Address>(address => address.Street == ValidRecipientStreetName))).Returns(_validPoint);
             geoEncodingAgent.Setup(m => m.EncodeAddress(_inValidAddress)).Throws<ServiceAgentsNotFoundException>();
 
-            /* ------------- Mock HopRepository Setup ------------- */
+            /* ------------- Mock WarehouseLogc Setup ------------- */
             var warehouseLogic = new Mock<IWarehouseLogic>();
             // Setup - GetHopContainingPoint
             warehouseLogic.Setup(m => m.GetHopContainingPoint(_validPoint)).Returns(_validHop);
@@ -322,9 +348,39 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             warehouseLogic.Setup(m => m.GetHopContainingPoint(It.Is<Point>(point => point == _tran01Point)))
                 .Returns(TransferwarehouseTran01);
             
+            /* ------------- Mock WebhookRepository Setup ------------- */
+            var webhookRepository = new Mock<IWebhookRepository>();
+            // Setup - GetAllSubscribersByTrackingId
+            webhookRepository.Setup(wr => wr.GetAllSubscribersByTrackingId(ValidTrackingId))
+                .Returns(dalWebhooks);
+            webhookRepository.Setup(wr => wr.GetAllSubscribersByTrackingId(NotfoundTrackingId))
+                .Throws<DataAccessNotFoundException>();
+
+            // Setup - AddSubscription
+            webhookRepository.Setup(wr =>
+                wr.AddSubscription(It.Is<DalModels.Webhook>(wh => wh.Parcel.TrackingId == ValidTrackingId)));
+            webhookRepository.Setup(wr => 
+                wr.AddSubscription(It.Is<DalModels.Webhook>(wh => wh.Parcel.TrackingId == InValidTrackingId)))
+                .Throws<DataAccessNotFoundException>();
+            
+            // Setup - RemoveSubscription
+            webhookRepository.Setup(wr => wr.RemoveSubscription(ExistingWebhookId));
+            webhookRepository.Setup(wr => wr.RemoveSubscription(NonExistingWebhookId))
+                .Throws<DataAccessNotFoundException>();
+            
+            /* ------------- Mock WebhookServiceAgent Setup ------------- */
+            var webhookServiceAgent = new Mock<IWebhookServiceAgent>();
+            // Setup - NotifySubscriber
+            webhookServiceAgent.Setup(agent => agent.NotifySubscriber(It.Is<Webhook>(webhook => 
+                webhook.Id == ExistingWebhookId)));
+            webhookServiceAgent.Setup(agent => agent.NotifySubscriber(It.Is<Webhook>(webhook => 
+                webhook.Id == NonExistingWebhookId))).Throws<ServiceAgentsBadResponseException>();
+            
             _warehouseLogic = warehouseLogic.Object;
             _geoEncodingAgent = geoEncodingAgent.Object;
             _hopRepository = mockHopRepository.Object;
+            _webhookRepository = webhookRepository.Object;
+            _webhookServiceAgent = webhookServiceAgent.Object;
             _logger = NullLogger<TrackingLogic>.Instance;
         }
 
@@ -333,7 +389,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         {
             _trackingLogic = new TrackingLogic(new ParcelValidator(), new RecipientValidator(),
                 new HopArrivalValidator(), new HopValidator(),
-                _hopRepository, _parcelRepository, _geoEncodingAgent,_logisticsPartnerAgent, _warehouseLogic, _mapper, _logger);
+                _hopRepository, _parcelRepository, _webhookRepository, _geoEncodingAgent,_logisticsPartnerAgent, _webhookServiceAgent, _warehouseLogic, _mapper, _logger);
         }
 
         #region ReportParcelDelivery Tests
@@ -359,14 +415,14 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         public void ReportParcelDelivery_Throws_WithNotfoundTrackingId()
         {
             Assert.Throws<BusinessLogicNotFoundException>(() =>
-                _trackingLogic.ReportParcelDelivery(NotfoundTrackingNumber));
+                _trackingLogic.ReportParcelDelivery(NotfoundTrackingId));
         }
 
         [Test]
         public void ReportParcelDelivery_Throws_WithInvalidTrackingId()
         {
             Assert.Throws<BusinessLogicValidationException>(() =>
-                _trackingLogic.ReportParcelDelivery(InvalidTrackingNumber));
+                _trackingLogic.ReportParcelDelivery(InValidTrackingId));
         }
 
         #endregion
@@ -394,7 +450,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         public void ReportParcelHop_Throws_WithNotfoundTrackingId()
         {
             Assert.Throws<BusinessLogicNotFoundException>(() =>
-                _trackingLogic.ReportParcelHop(NotfoundTrackingNumber, ValidHopCode));
+                _trackingLogic.ReportParcelHop(NotfoundTrackingId, ValidHopCode));
         }
 
         [Test]
@@ -419,14 +475,14 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         public void ReportParcelHop_Throws_WithInvalidTrackingId()
         {
             Assert.Throws<BusinessLogicValidationException>(
-                () => _trackingLogic.ReportParcelHop(InvalidTrackingNumber, ValidHopCode));
+                () => _trackingLogic.ReportParcelHop(InValidTrackingId, ValidHopCode));
         }
 
         [Test]
         public void ReportParcelHop_Throws_WithInvalidHopCode()
         {
             Assert.Throws<BusinessLogicValidationException>(
-                () => _trackingLogic.ReportParcelHop(ValidTrackingNumber, InvalidHopCode));
+                () => _trackingLogic.ReportParcelHop(ValidTrackingId, InvalidHopCode));
         }
 
         #endregion
@@ -509,13 +565,13 @@ namespace TechnikumDirekt.BusinessLogic.Tests
         [Test]
         public void TrackParcel_Throws_WithNonexistentTrackingId()
         {
-            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.TrackParcel(NotfoundTrackingNumber));
+            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.TrackParcel(NotfoundTrackingId));
         }
 
         [Test]
         public void TrackParcel_Throws_WithInvalidTrackingId()
         {
-            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.TrackParcel(InvalidTrackingNumber));
+            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.TrackParcel(InValidTrackingId));
         }
 
         #endregion
@@ -534,7 +590,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
                 FutureHops = new List<HopArrival>()
             };
 
-            Assert.DoesNotThrow(() => _trackingLogic.TransitionParcelFromPartner(parcel, NotfoundTrackingNumber));
+            Assert.DoesNotThrow(() => _trackingLogic.TransitionParcelFromPartner(parcel, NotfoundTrackingId));
         }
 
         [Test]
@@ -550,9 +606,9 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             };
 
             // Repo is mocked -> parcel is not actually persisted
-            // Assert.DoesNotThrow(() => _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingNumber));
+            // Assert.DoesNotThrow(() => _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingId));
             Assert.Throws<BusinessLogicBadArgumentException>(() =>
-                _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingNumber));
+                _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingId));
         }
 
         [Test]
@@ -568,7 +624,7 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             };
 
             Assert.Throws<BusinessLogicValidationException>(() =>
-                _trackingLogic.TransitionParcelFromPartner(parcel, InvalidTrackingNumber));
+                _trackingLogic.TransitionParcelFromPartner(parcel, InValidTrackingId));
         }
 
         [Test]
@@ -584,8 +640,101 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             };
 
             Assert.Throws<BusinessLogicValidationException>(() =>
-                _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingNumber));
+                _trackingLogic.TransitionParcelFromPartner(parcel, ValidTrackingId));
         }
+
+        #endregion
+        
+        #region Webhooks
+
+        #region GetAllSubscribersByTrackingId Tests
+
+        [Test]
+        public void GetAllSubscribersByTrackingId_DoesNotThrow_WithValidTrackingId()
+        {
+            //Arrange
+
+            //Act
+            var blWebhooks = _trackingLogic.GetAllSubscribersByTrackingId(ValidTrackingId).ToList();
+            
+            //Assert
+            Assert.Greater(blWebhooks.Count(), 1);
+            Assert.NotNull(blWebhooks.FirstOrDefault(wh => wh.Id == ExistingWebhookId));
+            Assert.NotNull(blWebhooks.FirstOrDefault(wh => wh.Id == ExistingWebhookId2));
+        }
+        
+        [Test]
+        public void GetAllSubscribersByTrackingId_ThrowsBLNotFoundException_NotfoundTrackingId()
+        {
+            //Arrange
+
+            //Act / Assert
+            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.GetAllSubscribersByTrackingId(NotfoundTrackingId));
+        }
+        
+        [Test]
+        public void GetAllSubscribersByTrackingId_BLValidationException_InValidTrackingId()
+        {
+            //Arrange
+
+            //Act / Assert
+            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.GetAllSubscribersByTrackingId(InValidTrackingId));
+        }
+        
+        #endregion
+        
+        #region RemoveParcelWebhook Tests
+
+        [Test]
+        public void RemoveParcelWebhook_DoesNotThrow_ExistingWebhookId()
+        {
+            //Arrange
+
+            //Act / Assert
+            Assert.DoesNotThrow(() => _trackingLogic.RemoveParcelWebhook(ExistingWebhookId));
+        }
+        
+        [Test]
+        public void RemoveParcelWebhook_BLValidationException_InValidTrackingId()
+        {
+            //Arrange
+
+            //Act / Assert
+            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.RemoveParcelWebhook(NonExistingWebhookId));
+        }
+        
+        #endregion
+        
+        #region SubscribeParcelWebhook Tests
+        
+        [Test]
+        public void SubscribeParcelWebhook_DoesNotThrow_ValidTrackingId()
+        {
+            //Arrange
+
+            //Act / Assert
+            Assert.DoesNotThrow(() => _trackingLogic.SubscribeParcelWebhook(ValidTrackingId, ValidUrl));
+        }
+        
+        [Test]
+        public void SubscribeParcelWebhook_BLNotFoundException_InValidTrackingId()
+        {
+            //Arrange
+
+            //Act / Assert
+            Assert.Throws<BusinessLogicNotFoundException>(() => _trackingLogic.SubscribeParcelWebhook(NotfoundTrackingId, ValidUrl));
+        }
+        
+        [Test]
+        public void SubscribeParcelWebhook_BLValidationException_InValidTrackingId()
+        {
+            //Arrange
+
+            //Act / Assert
+            Assert.Throws<BusinessLogicValidationException>(() => _trackingLogic.SubscribeParcelWebhook(InValidTrackingId, ValidUrl));
+        }
+        
+        #endregion
 
         #endregion
     }

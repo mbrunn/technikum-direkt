@@ -15,7 +15,13 @@ using TechnikumDirekt.DataAccess.Sql.Exceptions;
 using TechnikumDirekt.ServiceAgents.Exceptions;
 using TechnikumDirekt.ServiceAgents.Interfaces;
 using TechnikumDirekt.ServiceAgents.Models;
+using TechnikumDirekt.Services.Models;
 using DalModels = TechnikumDirekt.DataAccess.Models;
+using Hop = TechnikumDirekt.BusinessLogic.Models.Hop;
+using HopArrival = TechnikumDirekt.BusinessLogic.Models.HopArrival;
+using Parcel = TechnikumDirekt.BusinessLogic.Models.Parcel;
+using Recipient = TechnikumDirekt.BusinessLogic.Models.Recipient;
+using Transferwarehouse = TechnikumDirekt.BusinessLogic.Models.Transferwarehouse;
 
 namespace TechnikumDirekt.BusinessLogic
 {
@@ -29,9 +35,11 @@ namespace TechnikumDirekt.BusinessLogic
         private readonly IHopRepository _hopRepository;
         private readonly IParcelRepository _parcelRepository;
         private readonly IWarehouseLogic _warehouseLogic;
+        private readonly IWebhookRepository _webhookRepository;
 
         private readonly IGeoEncodingAgent _geoEncodingAgent;
         private readonly ILogisticsPartnerAgent _logisticsPartnerAgent;
+        private readonly IWebhookServiceAgent _webhookServiceAgent;
         
         private readonly IMapper _mapper;
 
@@ -39,8 +47,8 @@ namespace TechnikumDirekt.BusinessLogic
 
         public TrackingLogic(IValidator<Parcel> parcelValidator, IValidator<Recipient> recipientValidator,
             IValidator<HopArrival> hopArrivalValidator,
-            IValidator<Hop> hopCodeValidator, IHopRepository hopRepository, IParcelRepository parcelRepository,
-            IGeoEncodingAgent geoEncodingAgent, ILogisticsPartnerAgent logisticsPartnerAgent, IWarehouseLogic warehouseLogic, IMapper mapper, 
+            IValidator<Hop> hopCodeValidator, IHopRepository hopRepository, IParcelRepository parcelRepository, IWebhookRepository webhookRepository,
+            IGeoEncodingAgent geoEncodingAgent, ILogisticsPartnerAgent logisticsPartnerAgent, IWebhookServiceAgent webhookServiceAgent, IWarehouseLogic warehouseLogic, IMapper mapper, 
             ILogger<TrackingLogic> logger)
         {
             _parcelValidator = parcelValidator;
@@ -49,8 +57,10 @@ namespace TechnikumDirekt.BusinessLogic
             _hopCodeValidator = hopCodeValidator;
             _hopRepository = hopRepository;
             _parcelRepository = parcelRepository;
+            _webhookRepository = webhookRepository;
             _geoEncodingAgent = geoEncodingAgent;
             _logisticsPartnerAgent = logisticsPartnerAgent;
+            _webhookServiceAgent = webhookServiceAgent;
             _warehouseLogic = warehouseLogic;
             _mapper = mapper;
             _logger = logger;
@@ -86,13 +96,17 @@ namespace TechnikumDirekt.BusinessLogic
                 {
                     parcel.State = DalModels.Parcel.StateEnum.DeliveredEnum;
                     parcel.HopArrivals.OrderBy(ha => ha.Order).Last().HopArrivalTime = DateTime.Now;
+                    
+                    //call all webhookSubscribers
+                    NotifyWebhookSubscribers(parcel.TrackingId);
+                    
                     _parcelRepository.Update(parcel);
                     _logger.LogDebug($"Parcel with TrackingId {trackingId} has been set to delivered.");
                 }
             }
             catch (DataAccessNotFoundException e)
             {
-                _logger.LogTrace($"Parcel for TrackingId {trackingId} not found");
+                _logger.LogDebug($"Parcel for TrackingId {trackingId} not found");
                 throw new BusinessLogicNotFoundException($"Parcel for TrackingId {trackingId} not found", e);
             }
         }
@@ -159,24 +173,6 @@ namespace TechnikumDirekt.BusinessLogic
                 _logger.LogTrace($"Parcel with TrackingId {trackingId} has been set to delivered.");
                 throw new BusinessLogicBadArgumentException($"Hop with code {code} is not part of this parcel's route.");
             }
-            
-            //Uncomment this for testing of Transferwarehouse (will throw Db Exception "untracked changes")
-            /*
-            if (hopToEdit.HopCode == "WTTA014")
-            {
-                var hop = (DalModels.Truck) hopToEdit.Hop;
-                hopToEdit.Hop = new DalModels.Transferwarehouse()
-                {
-                    Code = hopToEdit.HopCode,
-                    Description = "Transferwarehouse in Testcity",
-                    HopArrivals = new List<DalModels.HopArrival>(),
-                    HopType = DalModels.HopType.TransferWarehouse,
-                    LocationCoordinates = hop.LocationCoordinates,
-                    LocationName = "AUSLAND",
-                    LogisticsPartner = "Yeetmann Gruppe",
-                    LogisticsPartnerUrl = "https://technikumdirektapi.azurewebsites.net/"
-                };
-            }*/
 
             if (hopToEdit.Hop.HopType == DalModels.HopType.TransferWarehouse)
             {
@@ -221,6 +217,9 @@ namespace TechnikumDirekt.BusinessLogic
             
             parcel.HopArrivals.Remove(hopToEdit);
             parcel.HopArrivals.Add(hopToEdit);
+            
+            //call all webhookSubscribers
+            NotifyWebhookSubscribers(parcel.TrackingId);
 
             _parcelRepository.Update(parcel);
             
@@ -621,6 +620,124 @@ namespace TechnikumDirekt.BusinessLogic
             {
                 _logger.LogTrace($"Parrenthop with code {currentHop.ParentWarehouseCode} does not exist.");
                 throw new BusinessLogicFutureHopsPrediction($"Parrenthop with code {currentHop.ParentWarehouseCode} does not exist.");
+            }
+        }
+
+        /// <summary>
+        /// Calls all webhookSubscribers that are subscribed to the given trackingId
+        /// </summary>
+        /// <param name="trackingId">trackingId of tracked parcel</param>
+        private void NotifyWebhookSubscribers(string trackingId)
+        {
+            var webhooks =
+                _mapper.Map<List<Webhook>>(_webhookRepository.GetAllSubscribersByTrackingId(trackingId));
+            
+            foreach (var webhook in webhooks)
+            {
+                try
+                {
+                    _webhookServiceAgent.NotifySubscriber(webhook);
+                }
+                catch (ServiceAgentsBadResponseException e)
+                {
+                    //TODO: What shall we do with the broken URLs ?
+                    _logger.LogDebug($"Webhook with URL: {webhook.Url} didn't return a valid response.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// retrieves all webhookSubscriptions from the database
+        /// </summary>
+        /// <param name="trackingId"></param>
+        /// <returns></returns>
+        /// <exception cref="BusinessLogicValidationException">Is thrown if trackingId is in an invalid format.</exception>
+        /// <exception cref="BusinessLogicBadArgumentException">Is thrown if no webhooks for given trackingId exist.</exception>
+        public IEnumerable<Webhook> GetAllSubscribersByTrackingId(string trackingId)
+        {
+            try
+            {
+                _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                    options =>
+                    {
+                        options.IncludeRuleSets("trackingId");
+                        options.ThrowOnFailures();
+                    });
+            }
+            catch (ValidationException e)
+            {
+                _logger.LogDebug($"Parcel has invalid trackingId: {trackingId}");
+                throw new BusinessLogicValidationException("Parcel validation failed.", e);
+            }
+            
+            try
+            {
+                _parcelRepository.GetByTrackingId(trackingId);
+                var webhooks = _mapper.Map<List<Webhook>>(_webhookRepository.GetAllSubscribersByTrackingId(trackingId));
+                _logger.LogDebug($"Found {webhooks.Count()} webhookSubscriptions for parcel with trackingId: {trackingId}");
+                
+                return webhooks;
+            }
+            catch (DataAccessNotFoundException e)
+            {
+                _logger.LogTrace($"Webhooks for trackingId {trackingId} do not exist.");
+                throw new BusinessLogicNotFoundException($"Webhooks for trackingId {trackingId} do not exist.");
+            }
+        }
+
+        public Webhook SubscribeParcelWebhook(string trackingId, string url)
+        {
+            try
+            {
+                _parcelValidator.Validate(new Parcel {TrackingId = trackingId},
+                    options =>
+                    {
+                        options.IncludeRuleSets("trackingId");
+                        options.ThrowOnFailures();
+                    });
+            }
+            catch (ValidationException e)
+            {
+                _logger.LogDebug($"Invalid trackingId: {trackingId}");
+                throw new BusinessLogicValidationException("TrackingId validation failed.", e);
+            }
+            
+            var parcel = TrackParcel(trackingId);
+            
+            try
+            {
+                var dalWebhook = new DalModels.Webhook()
+                {
+                    CreationDate = DateTime.Now,
+                    Parcel = _parcelRepository.GetByTrackingId(trackingId),
+                    Url = url
+                };
+                
+                _webhookRepository.AddSubscription(dalWebhook);
+                
+                _logger.LogDebug($"Added subscription for parcel with trackingId: {trackingId} and URL: {dalWebhook.Url}");
+
+                return _mapper.Map<Webhook>(dalWebhook);
+            }
+            catch (DataAccessNotFoundException e)
+            {
+                _logger.LogTrace($"Parcel with trackingId {trackingId} does not exist.  WebhookSubscription failed.");
+                throw new BusinessLogicBadArgumentException($"Parcel with trackingId {trackingId} does not exist. WebhookSubscription failed.");
+            }
+        }
+
+        public void RemoveParcelWebhook(long id)
+        {
+            try
+            {
+                _webhookRepository.RemoveSubscription(id);
+                
+                _logger.LogDebug($"Removed webhook with Id: {id}");
+            }
+            catch (DataAccessNotFoundException e)
+            {
+                _logger.LogTrace($"Webhook with Id {id} does not exist.  WebhookRemoval failed.");
+                throw new BusinessLogicNotFoundException($"Webhook with Id {id} does not exist.  WebhookRemoval failed.");
             }
         }
     }

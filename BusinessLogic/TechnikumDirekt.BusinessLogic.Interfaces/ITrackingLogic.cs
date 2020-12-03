@@ -1,4 +1,5 @@
-﻿using TechnikumDirekt.BusinessLogic.Models;
+﻿using System.Collections.Generic;
+using TechnikumDirekt.BusinessLogic.Models;
 
 namespace TechnikumDirekt.BusinessLogic.Interfaces
 {
@@ -25,5 +26,28 @@ namespace TechnikumDirekt.BusinessLogic.Interfaces
         /// <param name="parcel">Parcel to register</param>
         /// <param name="trackingId">Tracking id of parcel to register</param>
         public void TransitionParcelFromPartner(Parcel parcel, string trackingId);
+
+        
+        //-------------------------- WEBHOOKS --------------------------------
+        /// <summary>
+        /// retrieve all subscribers by trackingId
+        /// </summary>
+        /// <param name="trackingId"></param>
+        /// <returns></returns>
+        public IEnumerable<Webhook> GetAllSubscribersByTrackingId(string trackingId);
+
+        /// <summary>
+        /// subscribe to a parcel with given url
+        /// </summary>
+        /// <param name="trackingId">trackingId of the parcel that should be tracked.</param>
+        /// <param name="url">URl that will be informed of future changes.</param>
+        /// <returns></returns>
+        public Webhook SubscribeParcelWebhook(string trackingId, string url);
+
+        /// <summary>
+        /// remove a webhook with given id.
+        /// </summary>
+        /// <param name="id">Id of webhook that should be removed.</param>
+        public void RemoveParcelWebhook(long id);
     }
 }

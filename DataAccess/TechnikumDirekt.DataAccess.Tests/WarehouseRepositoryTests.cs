@@ -57,9 +57,10 @@ namespace TechnikumDirekt.DataAccess.Tests
 
             var dbMock = new Mock<ITechnikumDirektContext>();
             dbMock.Setup(p => p.Hops).Returns(DbContextMock.GetQueryableMockDbSet<Hop>(_entities));
-
+            
+            
             dbMock.Setup(p => p.SaveChanges()).Returns(1);
-
+            
             dbMock.Setup(p => p.Warehouses.Find(It.IsAny<object[]>()))
                 .Returns<object[]>((keyValues) =>
                     (Warehouse) _entities.FirstOrDefault(y => y.Code == (string) keyValues.GetValue(0)));

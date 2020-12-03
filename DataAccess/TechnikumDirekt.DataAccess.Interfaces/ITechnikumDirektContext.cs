@@ -15,10 +15,12 @@ namespace TechnikumDirekt.DataAccess.Interfaces
         public DbSet<Transferwarehouse> Transferwarehouses { get; set; }
         public DbSet<Truck> Trucks { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Webhook> Webhooks { get; set; }
 
         public DatabaseFacade Database { get; set; }
 
         public IModel Model { get; set; }
+        
         public int SaveChanges();
         public EntityEntry<T> Remove<T>(T entity) where T : class;
     }

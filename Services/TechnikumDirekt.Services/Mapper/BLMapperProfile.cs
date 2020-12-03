@@ -76,6 +76,12 @@ namespace TechnikumDirekt.Services.Mapper
             CreateMap<BlModels.Parcel, SvcModels.Parcel>();
             
             CreateMap<SvcModels.Recipient, BlModels.Recipient>().ReverseMap();
+
+            CreateMap<BlModels.Webhook, SvcModels.WebhookResponse>()
+                .ForMember(destinationMember => destinationMember.CreatedAt,
+                    membOption => membOption.MapFrom(src => src.CreationDate))
+                .ForMember(destinationMember => destinationMember.TrackingId,
+                    membOption => membOption.MapFrom(src => src.Parcel.TrackingId));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -22,13 +23,13 @@ namespace TechnikumDirekt.DataAccess.Sql
         public IEnumerable<Hop> GetAll()
         {
             var wh = _dbContext.Hops.ToList();
-            _logger.LogTrace($"Read" + wh.Count + " out of the repository");
+            _logger.LogTrace($"Read" + wh.Count + " Warehouses out of the repository");
             return wh;
         }
         
         public Warehouse GetWarehouseByCode(string code)
         {
-            if (string.IsNullOrEmpty(code)) throw new DataAccessArgumentNullException("Code is null.");
+            if (string.IsNullOrEmpty(code)) throw new DataAccessArgumentNullException("Code can't be null for GetWarehouseByCode");
             
             var wh = _dbContext.Warehouses.Find(code);
 
@@ -47,13 +48,22 @@ namespace TechnikumDirekt.DataAccess.Sql
 
         public void ImportWarehouses(Warehouse warehouse)
         {
-            _dbContext.Warehouses.Add(warehouse);
-            _dbContext.SaveChanges();
-            _logger.LogTrace($"Imported warehouse with hopCode {warehouse.Code}.");
+            try
+            {
+                _dbContext.Warehouses.Add(warehouse);
+                _dbContext.SaveChanges();
+                _logger.LogTrace($"Imported warehouse with hopCode {warehouse.Code}.");
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         public void ClearWarehouses()
         {
+            _dbContext.Database.ExecuteSqlRaw(
+                $"DELETE FROM {_dbContext.Model.FindEntityType(typeof(Webhook)).GetTableName()}");
             _dbContext.Database.ExecuteSqlRaw(
                 $"DELETE FROM {_dbContext.Model.FindEntityType(typeof(Parcel)).GetTableName()}");
             _dbContext.Database.ExecuteSqlRaw(

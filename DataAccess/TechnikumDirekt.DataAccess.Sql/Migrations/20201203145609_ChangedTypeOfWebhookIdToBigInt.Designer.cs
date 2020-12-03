@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using TechnikumDirekt.DataAccess.Sql;
@@ -10,9 +11,10 @@ using TechnikumDirekt.DataAccess.Sql;
 namespace TechnikumDirekt.DataAccess.Sql.Migrations
 {
     [DbContext(typeof(TechnikumDirektContext))]
-    partial class TechnikumDirektContextModelSnapshot : ModelSnapshot
+    [Migration("20201203145609_ChangedTypeOfWebhookIdToBigInt")]
+    partial class ChangedTypeOfWebhookIdToBigInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
