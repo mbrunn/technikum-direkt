@@ -56,7 +56,7 @@ steps:
   displayName: 'Install ReportGenerator tool'
   continueOnError: true
 
-- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.ServiceAgents.*Agent;+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Agent.TempDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline_AzurePipelines"
+- script: ./tools/reportgenerator "-classfilters:+TechnikumDirekt.ServiceAgents.*Agent;+TechnikumDirekt.Services.Controllers.*;+TechnikumDirekt.BusinessLogic.*Logic;+TechnikumDirekt.DataAccess.Sql.*Repo*" "-reports:$(Build.SourcesDirectory)/**/*Cobertura.xml" "-targetdir:$(Build.SourcesDirectory)/coverlet/reports" "-reporttypes:Cobertura;HtmlInline_AzurePipelines"
   displayName: 'Run ReportGenerator tool'
 
 - task: PublishCodeCoverageResults@1.175.0
