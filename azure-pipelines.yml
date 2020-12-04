@@ -9,9 +9,9 @@ trigger:
 pool:
   vmImage: 'ubuntu-18.04'
 
-#variables:
-#  - name: disable.coverage.autogenerate
-#    value: 'true'
+variables:
+  - name: disable.coverage.autogenerate
+    value: 'true'
 
 steps:
 
