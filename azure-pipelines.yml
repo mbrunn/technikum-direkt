@@ -15,6 +15,9 @@ variables:
 
 steps:
 
+- script: cp $(Build.SourcesDirectory)/IntegrationTests/TechnikumDirekt.IntegrationTests/appsettings_default.json $(Build.SourcesDirectory)/IntegrationTests/TechnikumDirekt.IntegrationTests/appsettings.json
+  displayName: Copy appsettings file for IntegrationTestsProject (needs to be present at build phase)
+
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
@@ -44,7 +47,9 @@ steps:
   inputs:
     command: test
     arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
-    projects: '**/*Test*.csproj'
+    projects: |
+     '**/*Test*.csproj'
+      '**/*IntegrationTest*.csproj'
     publishTestResults: true
 
 - script: dotnet tool install --tool-path tools dotnet-reportgenerator-globaltool --version 4.6.7
