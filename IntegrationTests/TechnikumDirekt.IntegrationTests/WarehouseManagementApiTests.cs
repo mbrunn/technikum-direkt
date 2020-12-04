@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TechnikumDirekt.Services.Models;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     [TestFixture]
     public class WarehouseManagementApiTests : IntegrationTests

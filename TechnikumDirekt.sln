@@ -40,7 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.ServiceAgen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.ServiceAgents.Tests", "ServiceAgents\TechnikumDirekt.ServiceAgents.Tests\TechnikumDirekt.ServiceAgents.Tests.csproj", "{2639D1D2-F45D-47E0-B11C-0ECB1D67D55F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests\IntegrationTests.csproj", "{2FDF792E-8409-4947-A1D0-13D828FB97DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnikumDirekt.IntegrationTests", "IntegrationTests\TechnikumDirekt.IntegrationTests\TechnikumDirekt.IntegrationTests.csproj", "{2FDF792E-8409-4947-A1D0-13D828FB97DE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{BE4C14F7-108A-49B8-A3A3-B5B5F80877FD}"
 EndProject

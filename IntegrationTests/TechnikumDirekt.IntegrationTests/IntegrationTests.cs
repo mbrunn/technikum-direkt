@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     public class IntegrationTests : IClassFixture<TechnikumDirekt.Services.Startup>, IDisposable
     {

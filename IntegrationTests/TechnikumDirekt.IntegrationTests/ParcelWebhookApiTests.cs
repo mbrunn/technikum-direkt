@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using TechnikumDirekt.Services.Models;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     [TestFixture]
     public class ParcelWebhookApiTests : IntegrationTests
@@ -54,6 +54,51 @@ namespace IntegrationTests
             
             
         }
+        
+        #region /parcel/{trackingId}/webhooks post tests
+
+        [Test]
+        public async Task PostWebhook_validTrackingId_OkWebhookResponse()
+        {
+            // Arrange
+            var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
+            var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
+
+            // Act
+            await Client.PostAsync("/warehouse", content);
+            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
+            var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
+            var parcelTrackingId = parcelInfo.TrackingId;
+            
+            var parameters = new Dictionary<string, string>
+            {
+                { "url", ValidUrl }
+            };
+            var encodedContent = new FormUrlEncodedContent (parameters);
+            
+            var response = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
+            
+            Assert.NotNull(response);
+            
+            var webhookResponseString = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.AreEqual("application/json; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+
+            var responseJson = JsonConvert.DeserializeObject<JObject>(webhookResponseString);
+
+            var webhookResponseJson = responseJson.GetValue("value").ToString();
+            
+            var webhookResponse = JsonConvert.DeserializeObject<WebhookResponse>(webhookResponseJson);
+            
+            Assert.NotNull(webhookResponse);
+            Assert.AreEqual(parcelTrackingId, webhookResponse.TrackingId);
+        }
+        
+        #endregion
 
         #region /parcel/{trackingId}/webhooks get tests
 
@@ -100,51 +145,6 @@ namespace IntegrationTests
             Assert.AreEqual(parcelTrackingId, webhookResponses.FirstOrDefault(wh => wh.TrackingId == parcelTrackingId)?.TrackingId);
         }
 
-        #endregion
-        
-        #region /parcel/{trackingId}/webhooks post tests
-
-        [Test]
-        public async Task PostWebhook_validTrackingId_OkWebhookResponse()
-        {
-            // Arrange
-            var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
-            var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
-
-            // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
-            var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
-            var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
-            var parcelTrackingId = parcelInfo.TrackingId;
-            
-            var parameters = new Dictionary<string, string>
-            {
-                { "url", ValidUrl }
-            };
-            var encodedContent = new FormUrlEncodedContent (parameters);
-            
-            var response = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
-            
-            Assert.NotNull(response);
-            
-            var webhookResponseString = await response.Content.ReadAsStringAsync();
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-            Assert.AreEqual("application/json; charset=utf-8",
-                response.Content.Headers.ContentType.ToString());
-
-            var responseJson = JsonConvert.DeserializeObject<JObject>(webhookResponseString);
-
-            var webhookResponseJson = responseJson.GetValue("value").ToString();
-            
-            var webhookResponse = JsonConvert.DeserializeObject<WebhookResponse>(webhookResponseJson);
-            
-            Assert.NotNull(webhookResponse);
-            Assert.AreEqual(parcelTrackingId, webhookResponse.TrackingId);
-        }
-        
         #endregion
         
         #region /parcel/webhooks/{id} delete tests

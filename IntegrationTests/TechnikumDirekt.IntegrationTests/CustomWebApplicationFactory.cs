@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     public class CustomWebApplicationFactory<TStartup> 
         : WebApplicationFactory<TStartup> where TStartup: class

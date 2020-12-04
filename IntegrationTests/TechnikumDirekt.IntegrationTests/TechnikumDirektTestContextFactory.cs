@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using TechnikumDirekt.DataAccess.Sql;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     public class TechnikumDirektTestContextFactory : IDesignTimeDbContextFactory<TechnikumDirektContext>
     {

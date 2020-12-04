@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using TechnikumDirekt.Services.Models;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     [TestFixture]
     public class SenderApiTests : IntegrationTests, IDisposable

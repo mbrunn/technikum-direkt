@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Models;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     public class DbSeedingHelper
     {

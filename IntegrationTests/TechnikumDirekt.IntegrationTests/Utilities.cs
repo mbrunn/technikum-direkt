@@ -7,7 +7,7 @@ using FizzWare.NBuilder;
 using TechnikumDirekt.BusinessLogic.Models;
 using blWarehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
 
-namespace IntegrationTests
+namespace TechnikumDirekt.IntegrationTests
 {
     public static class Utilities
     {
