@@ -42,8 +42,8 @@ steps:
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
     projects: |
-     **/*Services*.csproj
-     **/*IntegrationTests*.csporj
+     **/*Services.csproj
+     **/*IntegrationTests.csproj
 
 - task: DotNetCoreCLI@2
   displayName: Run Tests
