@@ -41,7 +41,9 @@ steps:
     publishWebProjects: False
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
-    projects: '**/*.csproj'
+    projects: |
+     **/*Services*.csproj
+     **/*IntegrationTests*.csporj
 
 - task: DotNetCoreCLI@2
   displayName: Run Tests
