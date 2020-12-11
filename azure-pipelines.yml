@@ -38,9 +38,10 @@ steps:
   displayName: Publish (create)
   inputs:
     command: publish
-    publishWebProjects: false
+    publishWebProjects: False
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
+    projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: Run Tests
