@@ -77,9 +77,3 @@ steps:
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'TechnikumDirektApi'
-
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: '$(System.DefaultWorkingDirectory)'
-    artifactName: 'TechnikumDirektApi'
