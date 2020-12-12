@@ -1,0 +1,79 @@
+@import "../../styles/variables";
+
+.td-submit-addresses {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.td-submit-address {
+  flex-grow: 1;
+  margin: 0 16px;
+}
+
+.td-submit-address-option {
+  display: flex;
+  align-items: center;
+}
+
+.td-submit-address-icon {
+  height: 16px;
+  margin-right: 8px;
+}
+
+.td-submit-submit-card {
+  margin: 32px 16px 0 16px;
+  display: flex;
+  align-items: center;
+}
+
+.td-submit-submit-card form {
+  flex-grow: 1;
+}
+
+.td-submit-submit-button {
+  width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 32px;
+}
+
+.td-submit-loading {
+  padding: 64px;
+  display: flex;
+  justify-content: center;
+}
+
+.td-submit-confirmation-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 16p;
+}
+
+.td-submit-confirmation-wrapper h2 {
+  margin-bottom: 16px;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.td-submit-confirmation-icon {
+  color: map-get($mat-primary, 500);
+  font-size: 128px;
+  line-height: 128px;
+}
+
+.td-submit-confirmation {
+  padding: 0 32px;
+  flex-grow: 1;
+}
+
+.td-submit-new-parcel-button {
+  width: 300px;
+  height: 56px;
+}
+
+.td-submit-confirmation-card {
+  margin-top: 32px;
+}
