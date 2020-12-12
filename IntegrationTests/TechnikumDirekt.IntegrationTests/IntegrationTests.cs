@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TechnikumDirekt.IntegrationTests
 {
@@ -11,7 +14,10 @@ namespace TechnikumDirekt.IntegrationTests
         protected IntegrationTests()
         {
             Factory = new CustomWebApplicationFactory<TechnikumDirekt.Services.Startup>();
-            Client = Factory.CreateClient();
+            
+            var clientOptions = new WebApplicationFactoryClientOptions();
+            clientOptions.BaseAddress = Factory.ClientOptions.BaseAddress;
+            Client = Factory.CreateClient(clientOptions);
         }
 
         /// <summary>

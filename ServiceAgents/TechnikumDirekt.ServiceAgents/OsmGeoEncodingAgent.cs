@@ -33,8 +33,7 @@ namespace TechnikumDirekt.ServiceAgents
         {
             if (address == null) throw new ArgumentNullException(nameof(address));
             var client = _clientFactory.CreateClient("osm");
-
-            //TODO: is this clean ? I don't think so, but it works.
+            
             #region data cleaning
             
             address.PostalCode = address.PostalCode.Substring(address.PostalCode.LastIndexOf('-')+1);

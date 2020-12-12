@@ -21,6 +21,7 @@ namespace TechnikumDirekt.IntegrationTests
         public void Setup()
         {
             _datasetLight = Utilities.LoadDatasetLight();
+            
         }
 
         #region /warehouse post tests
