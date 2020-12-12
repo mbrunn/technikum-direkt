@@ -50,6 +50,7 @@ export class TrackParcelComponent implements OnInit {
   search(trackingId: string): void {
     this.isLoading = true;
     this.tdApiService.trackParcel(trackingId).subscribe(info => {
+      this.hops = [];
       this.trackingInfo = info;
       info.visitedHops.forEach(hop => {
         this.hops.push(hop);
@@ -57,7 +58,6 @@ export class TrackParcelComponent implements OnInit {
       info.futureHops.forEach(hop => {
         this.hops.push(hop);
       });
-      console.log(this.hops);
       this.responseStatus = 200;
     }, error => {
       this.responseStatus = error.status;
