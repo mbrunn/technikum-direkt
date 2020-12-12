@@ -1,1 +1,82 @@
-<p>track-parcel works!</p>
+<div class="td-track td-component">
+  <h1 class="td-header">
+    <span class="material-icons">search</span>
+    Track Parcel
+  </h1>
+
+  <!-- TRACKING ID SEARCH -->
+  <mat-card class="td-track-search-card">
+    <mat-form-field appearance="outline" class="td-track-search">
+      <mat-label>Enter a tracking id</mat-label>
+      <input matInput type="text" [formControl]="searchInput">
+    </mat-form-field>
+  </mat-card>
+
+  <!-- LOADING SPINNER -->
+  <div *ngIf="isLoading" class="td-track-loading">
+    <mat-spinner color="primary"></mat-spinner>
+  </div>
+
+  <!-- PARCEL NOT FOUND -->
+  <mat-card *ngIf="!isLoading && responseStatus === 404" class="td-track-error-card">
+    <span class="material-icons td-track-notfound-icon">help</span>
+    <div class="td-track-message">
+      No parcel found for <b>{{this.searchInput.value}}</b>
+    </div>
+  </mat-card>
+
+  <!-- TRACKING ID INVALID -->
+  <mat-card *ngIf="!isLoading && responseStatus === 400" class="td-track-error-card">
+    <span class="material-icons td-track-badrequest-icon">warning</span>
+    <div class="td-track-message">
+      Tracking id <b>{{this.searchInput.value}}</b> is invalid
+    </div>
+  </mat-card>
+
+  <!-- DISPLAY TRACKING INFO -->
+  <div *ngIf="!isLoading && responseStatus === 200" class="td-track-info-wrapper">
+    <div class="td-track-info-col">
+      <mat-card>
+        <mat-card-subtitle>Status</mat-card-subtitle>
+        <div class="td-track-info-icon-circle">
+          <span class="material-icons td-track-info-icon"
+                *ngIf="trackingInfo.state === parcelStates.Pickup || trackingInfo.state === parcelStates.InTransport || trackingInfo.state === parcelStates.InTruckDelivery">
+          local_shipping</span>
+          <span class="material-icons td-track-delivered-icon"
+                *ngIf="trackingInfo.state === parcelStates.Delivered || trackingInfo.state === parcelStates.Transferred">
+          done_all</span>
+
+          <div *ngIf="trackingInfo.state === parcelStates.Pickup">Picked up</div>
+          <div *ngIf="trackingInfo.state === parcelStates.Delivered">Delivered</div>
+          <div *ngIf="trackingInfo.state === parcelStates.InTransport">In Transport</div>
+          <div *ngIf="trackingInfo.state === parcelStates.InTruckDelivery">In delivery truck</div>
+          <div *ngIf="trackingInfo.state === parcelStates.Transferred">Transferred</div>
+        </div>
+      </mat-card>
+    </div>
+    <div class="td-track-info-col">
+      <mat-card>
+        <mat-card-subtitle>Hops</mat-card-subtitle>
+        <div>
+          <div class="td-track-info-hop-wrapper" *ngFor="let hop of hops; let i = index">
+            <div class="td-track-info-hop-node">
+              <div class="td-track-info-hop-node-lineprev" [ngClass]="{
+              'td-track-info-hop-invisline': i === 0,
+              'td-track-info-hop-line-visited': hops[i - 1] && hops[i - 1].dateTime && hop.dateTime
+              }"></div>
+              <div class="td-track-info-hop-node-circle" [ngClass]="{'td-track-info-hop-node-circle-visited': hop.dateTime}"></div>
+              <div class="td-track-info-hop-node-linenext" [ngClass]="{
+              'td-track-info-hop-invisline': i >= hops.length - 1,
+              'td-track-info-hop-line-visited': hops[i + 1] && hops[i + 1].dateTime && hop.dateTime
+              }"></div>
+            </div>
+            <div class="td-track-info-hop-info">
+              <div>{{hop.description}}</div>
+              <div class="td-track-info-hop-info-ts">{{hop.dateTime | date:'short'}}</div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
