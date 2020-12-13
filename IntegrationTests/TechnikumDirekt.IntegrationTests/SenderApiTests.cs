@@ -67,8 +67,8 @@ namespace TechnikumDirekt.IntegrationTests
             //Client.BaseAddress.AbsoluteUri +
             
             // Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
-            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var response = await Client.PostAsync("parcel", parcelContent);
             
             // Assert
             response.EnsureSuccessStatusCode();
@@ -90,8 +90,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_invalidParcel), Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
-            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var response = await Client.PostAsync("parcel", parcelContent);
             
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);

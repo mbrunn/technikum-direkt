@@ -33,7 +33,7 @@ namespace TechnikumDirekt.IntegrationTests
             var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
             
             // Act
-            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
+            var response = await Client.PostAsync("warehouse", content);
             
             // Assert
             response.EnsureSuccessStatusCode();
@@ -52,9 +52,11 @@ namespace TechnikumDirekt.IntegrationTests
             var postContent = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
 
             //Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", postContent);
-            var response = await Client.GetAsync(Client.BaseAddress.AbsoluteUri + "/warehouse");
+            var test2 = await Client.PostAsync("warehouse", postContent);
+            var response = await Client.GetAsync("warehouse");
 
+            var test3 = test2.Content.ReadAsStringAsync();
+            var test = response.Content.ReadAsStringAsync();
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
@@ -80,8 +82,8 @@ namespace TechnikumDirekt.IntegrationTests
             var postContent = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
 
             //Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", postContent);
-            var response = await Client.GetAsync(Client.BaseAddress.AbsoluteUri + $"/warehouse/{ValidHopCode}");
+            await Client.PostAsync("warehouse", postContent);
+            var response = await Client.GetAsync($"warehouse/{ValidHopCode}");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -103,8 +105,8 @@ namespace TechnikumDirekt.IntegrationTests
             var postContent = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
 
             //Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", postContent);
-            var response = await Client.GetAsync(Client.BaseAddress.AbsoluteUri + $"/warehouse/{NotfoundHopCode}");
+            await Client.PostAsync("warehouse", postContent);
+            var response = await Client.GetAsync($"warehouse/{NotfoundHopCode}");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);

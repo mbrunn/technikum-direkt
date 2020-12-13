@@ -62,13 +62,13 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
-            var parcelResponse = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var parcelResponse = await Client.PostAsync("parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
 
-            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{parcelInfo.TrackingId}/reportDelivery", null);
-            var infoResponse = await Client.GetAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{parcelInfo.TrackingId}");
+            var response = await Client.PostAsync($"parcel/{parcelInfo.TrackingId}/reportDelivery", null);
+            var infoResponse = await Client.GetAsync($"parcel/{parcelInfo.TrackingId}");
             
             var responseString = await infoResponse.Content.ReadAsStringAsync();
             var trackingInformation = JsonConvert.DeserializeObject<TrackingInformation>(responseString);
@@ -85,8 +85,8 @@ namespace TechnikumDirekt.IntegrationTests
             var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
-            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{InvalidTrackingId}/reportDelivery", null);
+            await Client.PostAsync("warehouse", content);
+            var response = await Client.PostAsync($"parcel/{InvalidTrackingId}/reportDelivery", null);
             
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
@@ -99,8 +99,8 @@ namespace TechnikumDirekt.IntegrationTests
             var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
-            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{NotFoundTrackingId}/reportDelivery", null);
+            await Client.PostAsync("warehouse", content);
+            var response = await Client.PostAsync($"parcel/{NotFoundTrackingId}/reportDelivery", null);
             
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -118,21 +118,21 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
-            var parcelResponse = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var parcelResponse = await Client.PostAsync("parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
             
-            var infoResponse = await Client.GetAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{parcelInfo.TrackingId}");
+            var infoResponse = await Client.GetAsync($"parcel/{parcelInfo.TrackingId}");
             
             var responseString = await infoResponse.Content.ReadAsStringAsync();
             var trackingInformation = JsonConvert.DeserializeObject<TrackingInformation>(responseString);
-            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{parcelInfo.TrackingId}/reportHop/{trackingInformation.FutureHops.First().Code}", null);
+            var response = await Client.PostAsync($"parcel/{parcelInfo.TrackingId}/reportHop/{trackingInformation.FutureHops.First().Code}", null);
             
             // Assert
             response.EnsureSuccessStatusCode();
             
-            infoResponse = await Client.GetAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{parcelInfo.TrackingId}");
+            infoResponse = await Client.GetAsync($"parcel/{parcelInfo.TrackingId}");
             
             responseString = await infoResponse.Content.ReadAsStringAsync();
             trackingInformation = JsonConvert.DeserializeObject<TrackingInformation>(responseString);

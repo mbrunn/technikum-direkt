@@ -18,7 +18,7 @@ namespace TechnikumDirekt.IntegrationTests
             
             var clientOptions = new WebApplicationFactoryClientOptions();
             clientOptions.BaseAddress = Factory.ClientOptions.BaseAddress;
-            Client = Factory.CreateClient(clientOptions);
+            Client = new HttpClient {BaseAddress = clientOptions.BaseAddress};
             //Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             //Client.DefaultRequestHeaders.Add("Content-Type", "application/json");
         }
