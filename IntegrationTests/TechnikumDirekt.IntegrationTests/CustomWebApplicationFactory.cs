@@ -35,6 +35,8 @@ namespace TechnikumDirekt.IntegrationTests
         
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseSolutionRelativeContentRoot(".");
+            
             builder.UseConfiguration(_configurationRoot);
             
             builder.ConfigureServices(services =>
