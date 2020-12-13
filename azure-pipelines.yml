@@ -38,9 +38,18 @@ steps:
   displayName: Publish (create)
   inputs:
     command: publish
-    publishWebProjects: false
+    publishWebProjects: true
     arguments: '--output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: True
+    zipAfterPublish: true
+
+- script: touch $(Build.ArtifactStagingDirectory)/TechnikumDirekt.sln
+  displayName: Create Solution File
+
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: '**/TechnikumDirekt.IntegrationTests/bin/**/?(*.json|*.dll|*.pdb)'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
   displayName: Run Tests
@@ -68,5 +77,5 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'TechnikumDirektApi'

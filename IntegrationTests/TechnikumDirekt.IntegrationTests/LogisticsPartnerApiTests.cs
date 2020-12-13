@@ -65,8 +65,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var response = await Client.PostAsync($"/parcel/{ValidTrackingId}", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var response = await Client.PostAsync($"parcel/{ValidTrackingId}", parcelContent);
             
             // Assert
             response.EnsureSuccessStatusCode();
@@ -80,9 +80,9 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync("/warehouse", content);
-            await Client.PostAsync($"/parcel/{ValidTrackingId}", parcelContent);
-            var response = await Client.PostAsync($"/parcel/{ValidTrackingId}", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            await Client.PostAsync($"parcel/{ValidTrackingId}", parcelContent);
+            var response = await Client.PostAsync($"parcel/{ValidTrackingId}", parcelContent);
             
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);

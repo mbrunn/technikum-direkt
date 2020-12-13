@@ -65,8 +65,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
 
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var parcelResponse = await Client.PostAsync("parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
             var parcelTrackingId = parcelInfo.TrackingId;
@@ -77,7 +77,7 @@ namespace TechnikumDirekt.IntegrationTests
             };
             var encodedContent = new FormUrlEncodedContent (parameters);
             
-            var response = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
+            var response = await Client.PostAsync($"parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
             
             Assert.NotNull(response);
             
@@ -87,12 +87,8 @@ namespace TechnikumDirekt.IntegrationTests
             response.EnsureSuccessStatusCode();
             Assert.AreEqual("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
-
-            var responseJson = JsonConvert.DeserializeObject<JObject>(webhookResponseString);
-
-            var webhookResponseJson = responseJson.GetValue("value").ToString();
             
-            var webhookResponse = JsonConvert.DeserializeObject<WebhookResponse>(webhookResponseJson);
+            var webhookResponse = JsonConvert.DeserializeObject<WebhookResponse>(webhookResponseString);
             
             Assert.NotNull(webhookResponse);
             Assert.AreEqual(parcelTrackingId, webhookResponse.TrackingId);
@@ -110,8 +106,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
 
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var parcelResponse = await Client.PostAsync("parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
             var parcelTrackingId = parcelInfo.TrackingId;
@@ -122,11 +118,11 @@ namespace TechnikumDirekt.IntegrationTests
             };
             var encodedContent = new FormUrlEncodedContent (parameters);
             
-            var webhookResponse = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
+            var webhookResponse = await Client.PostAsync($"parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
             
             Assert.NotNull(webhookResponse);
             
-            var response = await Client.GetAsync($"/parcel/{parcelTrackingId}/webhooks");
+            var response = await Client.GetAsync($"parcel/{parcelTrackingId}/webhooks");
             
             // Assert
             response.EnsureSuccessStatusCode();
@@ -134,12 +130,8 @@ namespace TechnikumDirekt.IntegrationTests
                 response.Content.Headers.ContentType.ToString());
             
             var responseString = await response.Content.ReadAsStringAsync();
-            
-            var responseJson = JsonConvert.DeserializeObject<JObject>(responseString);
 
-            var webhookResponsesJson = responseJson.GetValue("value").ToString();
-
-            var webhookResponses = JsonConvert.DeserializeObject<IEnumerable<WebhookResponse>>(webhookResponsesJson);
+            var webhookResponses = JsonConvert.DeserializeObject<IEnumerable<WebhookResponse>>(responseString);
             
             Assert.NotNull(webhookResponses);
             Assert.AreEqual(parcelTrackingId, webhookResponses.FirstOrDefault(wh => wh.TrackingId == parcelTrackingId)?.TrackingId);
@@ -157,8 +149,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
 
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var parcelResponse = await Client.PostAsync("parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
             var parcelTrackingId = parcelInfo.TrackingId;
@@ -169,7 +161,7 @@ namespace TechnikumDirekt.IntegrationTests
             };
             var encodedContent = new FormUrlEncodedContent (parameters);
             
-            var response = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
+            var response = await Client.PostAsync($"parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
             
             Assert.NotNull(response);
             
@@ -179,18 +171,14 @@ namespace TechnikumDirekt.IntegrationTests
             response.EnsureSuccessStatusCode();
             Assert.AreEqual("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
-
-            var responseJson = JsonConvert.DeserializeObject<JObject>(webhookResponseString);
-
-            var webhookResponseJson = responseJson.GetValue("value").ToString();
             
-            var webhookResponse = JsonConvert.DeserializeObject<WebhookResponse>(webhookResponseJson);
+            var webhookResponse = JsonConvert.DeserializeObject<WebhookResponse>(webhookResponseString);
             
             Assert.NotNull(webhookResponse);
 
             var webhookId = webhookResponse.Id;
 
-            response = await Client.DeleteAsync($"/parcel/webhooks/{webhookId}");
+            response = await Client.DeleteAsync($"parcel/webhooks/{webhookId}");
             
             // Assert
             response.EnsureSuccessStatusCode();

@@ -60,11 +60,11 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync("warehouse", content);
+            var parcelResponse = await Client.PostAsync("parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
-            var response = await Client.GetAsync($"/parcel/{parcelInfo.TrackingId}");
+            var response = await Client.GetAsync($"parcel/{parcelInfo.TrackingId}");
             
             // Assert
             response.EnsureSuccessStatusCode();
@@ -85,8 +85,8 @@ namespace TechnikumDirekt.IntegrationTests
             var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var response = await Client.GetAsync($"/parcel/{InvalidTrackingId}");
+            await Client.PostAsync("warehouse", content);
+            var response = await Client.GetAsync($"parcel/{InvalidTrackingId}");
             
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
@@ -99,8 +99,8 @@ namespace TechnikumDirekt.IntegrationTests
             var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var response = await Client.GetAsync($"/parcel/{NotFoundTrackingId}");
+            await Client.PostAsync("warehouse", content);
+            var response = await Client.GetAsync($"parcel/{NotFoundTrackingId}");
             
             // Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);

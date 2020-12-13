@@ -70,18 +70,18 @@ namespace TechnikumDirekt.Services.Controllers
             catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
-                return NotFound(StatusCode(404, new Error
+                return NotFound(new Error
                 {
                     ErrorMessage = "No hierarchy loaded yet."
-                }));
+                });
             }
             catch (BusinessLogicValidationException e)
             {
                 _logger.LogWarning(e?.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));
+                });
             }
             catch (Exception e)
             {

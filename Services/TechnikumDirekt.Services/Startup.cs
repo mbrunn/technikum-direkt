@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -112,6 +113,8 @@ namespace TechnikumDirekt.Services
             services.AddControllers().AddFluentValidation(config =>
                 config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
 
+            services.AddControllers().AddNewtonsoftJson().AddXmlSerializerFormatters();
+            
             services.AddLogging();
 
             services.AddHttpClient("osm", c =>
@@ -128,6 +131,11 @@ namespace TechnikumDirekt.Services
             services.AddHttpClient("webhookNotifier", c =>
             {
                 c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+            
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
             });
         }
 
@@ -158,6 +166,11 @@ namespace TechnikumDirekt.Services
 
             //TODO: Use Https Redirection
             // app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
@@ -172,6 +185,19 @@ namespace TechnikumDirekt.Services
 
                 app.UseHsts();
             }
+            
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
+            });
         }
     }
 }
