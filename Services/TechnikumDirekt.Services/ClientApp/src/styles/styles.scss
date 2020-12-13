@@ -1,0 +1,64 @@
+@import '../../node_modules/@angular/material/theming';
+@import "variables";
+
+@include mat-core();
+
+$TechnikumDirektSpa-primary: mat-palette($mat-primary);
+$TechnikumDirektSpa-accent: mat-palette($mat-accent);
+
+$TechnikumDirektSpa-warn: mat-palette($mat-red);
+
+$TechnikumDirektSpa-theme: mat-dark-theme((
+  color: (
+    primary: $TechnikumDirektSpa-primary,
+    accent: $TechnikumDirektSpa-accent,
+    warn: $TechnikumDirektSpa-warn,
+  )
+));
+
+@include angular-material-theme($TechnikumDirektSpa-theme);
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+h1 {
+  display: flex;
+  align-items: center;
+}
+
+h1 .material-icons {
+  margin-right: 6px;
+}
+
+.td-header {
+  margin: 32px 16px 0 16px !important;
+  font-weight: bold !important;
+}
+
+.td-header .material-icons {
+  font-weight: bold;
+  color: map-get($mat-primary, 500);
+}
+
+.td-component {
+  width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.td-w-100 {
+  width: 100%;
+}
+
+.td-submit-address-group {
+  display: flex;
+}
+
+.td-submit-address-grouped-input:not(:first-child) {
+  flex-grow: 1;
+  margin-left: 16px;
+}
+
+.td-track-search .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}

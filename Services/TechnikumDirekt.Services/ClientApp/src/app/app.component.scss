@@ -1,0 +1,38 @@
+@import "../styles/variables";
+
+.td-app {
+  min-height: 100vh;
+}
+
+.td-toolbar-logo {
+  height: 75%;
+  margin-right: 16px;
+}
+
+.td-nav-items {
+  display: flex;
+  align-items: center;
+  margin-left: 32px;
+}
+
+.td-nav-item {
+  margin-right: 2px;
+}
+
+.td-nav-items .material-icons {
+  margin-right: 4px;
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.td-nav-active {
+  border-bottom: solid map-get($mat-primary, 500 ) 3px;
+  background-color: rgba(white, 0.05);
+}
+
+.td-nav-divider {
+  height: 32px;
+  width: 2px;
+  background-color: rgba(white, 0.05);
+  margin: 0 16px;
+}
