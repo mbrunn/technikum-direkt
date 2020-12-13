@@ -2,12 +2,14 @@
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TechnikumDirekt.DataAccess.Interfaces;
 using TechnikumDirekt.DataAccess.Sql;
+using TechnikumDirekt.Services;
 
 namespace TechnikumDirekt.IntegrationTests
 {
@@ -33,6 +35,13 @@ namespace TechnikumDirekt.IntegrationTests
         
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseSolutionRelativeContentRoot(".");
+
+            /*builder.ConfigureTestServices(services =>
+            {
+                services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
+            });*/
+            
             builder.UseConfiguration(_configurationRoot);
             
             builder.ConfigureServices(services =>
