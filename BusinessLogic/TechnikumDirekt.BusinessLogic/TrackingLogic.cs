@@ -99,6 +99,7 @@ namespace TechnikumDirekt.BusinessLogic
                     
                     //call all webhookSubscribers
                     NotifyWebhookSubscribers(parcel.TrackingId);
+                    RemoveWebhookSubscribers(parcel.TrackingId);
                     
                     _parcelRepository.Update(parcel);
                     _logger.LogDebug($"Parcel with TrackingId {trackingId} has been set to delivered.");
@@ -642,6 +643,29 @@ namespace TechnikumDirekt.BusinessLogic
                 {
                     //TODO: What shall we do with the broken URLs ?
                     _logger.LogDebug($"Webhook with URL: {webhook.Url} didn't return a valid response.");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Removes all webhookSubscribers that are subscribed to the given trackingId
+        /// </summary>
+        /// <param name="trackingId">trackingId of tracked parcel</param>
+        private void RemoveWebhookSubscribers(string trackingId)
+        {
+            var webhooks =
+                _mapper.Map<List<Webhook>>(_webhookRepository.GetAllSubscribersByTrackingId(trackingId));
+            
+            foreach (var webhook in webhooks)
+            {
+                try
+                {
+                    _webhookRepository.RemoveSubscription(webhook.Id);
+                }
+                catch (ServiceAgentsBadResponseException e)
+                {
+                    //TODO: What shall we do with the broken URLs ?
+                    _logger.LogDebug($"Webhook with Id: {webhook.Id} couldn't be deleted");
                 }
             }
         }
