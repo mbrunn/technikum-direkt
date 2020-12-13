@@ -113,6 +113,8 @@ namespace TechnikumDirekt.Services
             services.AddControllers().AddFluentValidation(config =>
                 config.RegisterValidatorsFromAssemblyContaining<WarehouseValidator>());
 
+            services.AddControllers().AddNewtonsoftJson().AddXmlSerializerFormatters();
+            
             services.AddLogging();
 
             services.AddHttpClient("osm", c =>

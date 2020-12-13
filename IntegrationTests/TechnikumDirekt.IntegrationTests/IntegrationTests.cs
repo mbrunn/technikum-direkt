@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,8 @@ namespace TechnikumDirekt.IntegrationTests
             var clientOptions = new WebApplicationFactoryClientOptions();
             clientOptions.BaseAddress = Factory.ClientOptions.BaseAddress;
             Client = Factory.CreateClient(clientOptions);
+            //Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //Client.DefaultRequestHeaders.Add("Content-Type", "application/json");
         }
 
         /// <summary>

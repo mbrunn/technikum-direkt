@@ -25,23 +25,16 @@ namespace TechnikumDirekt.IntegrationTests
                 .AddJsonFile("appsettings.json")
                 .Build();
             
-            this.ClientOptions.AllowAutoRedirect = true;
+            ClientOptions.AllowAutoRedirect = true;
             var uriString = _configurationRoot.GetSection("TestingUrls").GetValue<string>("TestingEnvUrl");
             if (uriString != string.Empty)
             {
-                this.ClientOptions.BaseAddress = new Uri(uriString);
+                ClientOptions.BaseAddress = new Uri(uriString);
             }
         }
         
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.UseSolutionRelativeContentRoot(".");
-
-            /*builder.ConfigureTestServices(services =>
-            {
-                services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
-            });*/
-            
             builder.UseConfiguration(_configurationRoot);
             
             builder.ConfigureServices(services =>

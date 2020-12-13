@@ -64,9 +64,11 @@ namespace TechnikumDirekt.IntegrationTests
             var content = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
             
+            //Client.BaseAddress.AbsoluteUri +
+            
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var response = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
+            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
             
             // Assert
             response.EnsureSuccessStatusCode();
@@ -88,8 +90,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_invalidParcel), Encoding.UTF8, "application/json");
             
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var response = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
+            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
             
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
