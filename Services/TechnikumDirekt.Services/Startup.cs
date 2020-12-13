@@ -164,6 +164,11 @@ namespace TechnikumDirekt.Services
 
             //TODO: Use Https Redirection
             // app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
