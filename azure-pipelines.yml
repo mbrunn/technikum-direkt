@@ -42,6 +42,9 @@ steps:
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: true
 
+- script: touch $(Build.ArtifactStagingDirectory)/TechnikumDirekt.sln
+  displayName: Create Solution File
+
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)'
