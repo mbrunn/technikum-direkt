@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <RootNamespace>technikumDirekt.Services</RootNamespace>
+        <RootNamespace>TechnikumDirekt.Services</RootNamespace>
 
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
@@ -38,7 +38,7 @@
       <ProjectReference Include="..\..\DataAccess\TechnikumDirekt.DataAccess.Sql\TechnikumDirekt.DataAccess.Sql.csproj" />
       <ProjectReference Include="..\..\ServiceAgents\TechnikumDirekt.ServiceAgents.Interfaces\TechnikumDirekt.ServiceAgents.Interfaces.csproj" />
       <ProjectReference Include="..\..\ServiceAgents\TechnikumDirekt.ServiceAgents\TechnikumDirekt.ServiceAgents.csproj" />
-      <ProjectReference Include="..\TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj" />
+      <ProjectReference Include="..\..\Services\TechnikumDirekt.Services.Models\TechnikumDirekt.Services.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>

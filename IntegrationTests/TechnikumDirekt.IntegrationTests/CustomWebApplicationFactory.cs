@@ -14,13 +14,26 @@ namespace TechnikumDirekt.IntegrationTests
     public class CustomWebApplicationFactory<TStartup> 
         : WebApplicationFactory<TStartup> where TStartup: class
     {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+
+        private readonly IConfigurationRoot _configurationRoot;
+        
+        public CustomWebApplicationFactory()
         {
-            var config = new ConfigurationBuilder()
+            _configurationRoot = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
-
-            builder.UseConfiguration(config);
+            
+            this.ClientOptions.AllowAutoRedirect = true;
+            var uriString = _configurationRoot.GetSection("TestingUrls").GetValue<string>("TestingEnvUrl");
+            if (uriString != string.Empty)
+            {
+                this.ClientOptions.BaseAddress = new Uri(uriString);
+            }
+        }
+        
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        {
+            builder.UseConfiguration(_configurationRoot);
             
             builder.ConfigureServices(services =>
             {
@@ -29,10 +42,10 @@ namespace TechnikumDirekt.IntegrationTests
                          typeof(DbContextOptions<TechnikumDirektContext>));
 
                 services.Remove(descriptor);
-
+                
                 services.AddDbContext<ITechnikumDirektContext, TechnikumDirektContext>(options =>
                 {
-                    options.UseSqlServer(config.GetConnectionString("TechnikumDirektTestDatabase"),
+                    options.UseSqlServer(_configurationRoot.GetConnectionString("TechnikumDirektTestDatabase"),
                         x =>
                         {
                             x.UseNetTopologySuite();

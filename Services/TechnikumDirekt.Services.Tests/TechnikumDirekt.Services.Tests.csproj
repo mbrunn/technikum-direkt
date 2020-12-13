@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TechnikumDirekt.Services\TechnikumDirekt.Services.csproj" />
+      <ProjectReference Include="..\..\Services\TechnikumDirekt.Services\TechnikumDirekt.Services.csproj"/>
     </ItemGroup>
 
 </Project>
