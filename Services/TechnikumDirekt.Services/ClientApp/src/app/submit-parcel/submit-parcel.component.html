@@ -1,0 +1,124 @@
+<div class="td-submit td-component">
+  <h1 class="td-header">
+    <span class="material-icons">add</span>
+    Submit Parcel
+  </h1>
+
+  <!-- SUBMIT PARCEL FORMS -->
+  <div *ngIf="!isLoading && !trackingId">
+    <div class="td-submit-addresses">
+      <mat-card class="td-submit-address">
+        <mat-card-subtitle>Sender address</mat-card-subtitle>
+        <mat-card-content class="td-submit-address-content">
+          <form [formGroup]="submitParcelForm">
+            <mat-form-field class="td-w-100">
+              <mat-label>Name</mat-label>
+              <input type="text" matInput formControlName="senderName">
+            </mat-form-field>
+            <mat-form-field class="td-w-100">
+              <mat-label>Street</mat-label>
+              <input type="text" matInput formControlName="senderStreet">
+            </mat-form-field>
+            <div class="td-submit-address-group">
+              <mat-form-field class="td-submit-address-grouped-input">
+                <mat-label>Zip</mat-label>
+                <input type="text" matInput formControlName="senderZip">
+              </mat-form-field>
+              <mat-form-field class="td-submit-address-grouped-input">
+                <mat-label>City</mat-label>
+                <input type="text" matInput formControlName="senderCity">
+              </mat-form-field>
+              <mat-form-field class="td-submit-address-grouped-input">
+                <mat-label>Country</mat-label>
+                <mat-select formControlName="senderCountry">
+                  <mat-option value="AT">
+                  <span class="td-submit-address-option">
+                    <img class="td-submit-address-icon" src="/assets/flags/at.svg" />
+                    Austria
+                  </span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="td-submit-address">
+        <mat-card-subtitle>Recipient address</mat-card-subtitle>
+        <mat-card-content class="td-submit-address-content">
+          <form [formGroup]="submitParcelForm">
+            <mat-form-field class="td-w-100">
+              <mat-label>Name</mat-label>
+              <input type="text" matInput formControlName="recipientName">
+            </mat-form-field>
+            <mat-form-field class="td-w-100">
+              <mat-label>Street</mat-label>
+              <input type="text" matInput formControlName="recipientStreet">
+            </mat-form-field>
+            <div class="td-submit-address-group">
+              <mat-form-field class="td-submit-address-grouped-input">
+                <mat-label>Zip</mat-label>
+                <input type="text" matInput formControlName="recipientZip">
+              </mat-form-field>
+              <mat-form-field class="td-submit-address-grouped-input">
+                <mat-label>City</mat-label>
+                <input type="text" matInput formControlName="recipientCity">
+              </mat-form-field>
+              <mat-form-field class="td-submit-address-grouped-input">
+                <mat-label>Country</mat-label>
+                <mat-select formControlName="recipientCountry">
+                  <mat-option value="AT">
+                  <span class="td-submit-address-option">
+                    <img class="td-submit-address-icon" src="/assets/flags/at.svg" />
+                    Austria
+                  </span>
+                  </mat-option>
+                  <mat-option value="DE">
+                  <span class="td-submit-address-option">
+                    <img class="td-submit-address-icon" src="/assets/flags/de.svg" />
+                    Germany
+                  </span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <mat-card class="td-submit-submit-card">
+      <form [formGroup]="submitParcelForm">
+        <mat-form-field class="td-w-100">
+          <mat-label>Weight (in kgs)</mat-label>
+          <input type="number" min="0" matInput formControlName="weight">
+        </mat-form-field>
+      </form>
+      <button mat-raised-button color="accent" class="td-submit-submit-button" (click)="submitParcel()">
+        <span class="material-icons">add</span>
+        Sumbit
+      </button>
+    </mat-card>
+  </div>
+
+  <!-- LOADING SPINNER -->
+  <div *ngIf="isLoading" class="td-submit-loading">
+    <mat-spinner color="primary"></mat-spinner>
+  </div>
+
+  <!-- SUBMIT CONFIRMATION -->
+  <div *ngIf="!isLoading && trackingId">
+    <mat-card class="td-submit-confirmation-card">
+      <div class="td-submit-confirmation-wrapper">
+        <span class="material-icons td-submit-confirmation-icon">check_circle</span>
+        <div class="td-submit-confirmation">
+          <h2>Parcel submitted</h2>
+          <div>Tracking Id: <b>{{trackingId}}</b></div>
+        </div>
+        <button class="td-submit-new-parcel-button" mat-raised-button color="accent" (click)="resetForm()">
+          <span class="material-icons">add</span>
+          New Parcel
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>
