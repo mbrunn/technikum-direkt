@@ -38,10 +38,9 @@ steps:
   displayName: Publish (create)
   inputs:
     command: publish
-    publishWebProjects: False
+    publishWebProjects: true
     arguments: '--output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: True
-    projects: '**/*Services.csproj'
+    zipAfterPublish: true
 
 - task: CopyFiles@2
   inputs:
