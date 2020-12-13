@@ -48,7 +48,7 @@ namespace TechnikumDirekt.Services.Controllers
             {
                 var blWebhooks = _trackingLogic.GetAllSubscribersByTrackingId(trackingId);
                 var webhooks = _mapper.Map<List<WebhookResponse>>(blWebhooks);
-                return Ok(StatusCode(200, webhooks));
+                return Ok( webhooks);
             }
             catch (BusinessLogicNotFoundException)
             {
@@ -95,7 +95,7 @@ namespace TechnikumDirekt.Services.Controllers
             {
                 var blWebhook = _trackingLogic.SubscribeParcelWebhook(trackingId, url);
                 var webhookResponse = _mapper.Map<WebhookResponse>(blWebhook);
-                return Ok(StatusCode(200, webhookResponse));
+                return Ok( webhookResponse);
             }
             catch (BusinessLogicNotFoundException)
             {

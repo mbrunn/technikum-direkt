@@ -65,8 +65,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
 
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
+            var parcelResponse = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
             var parcelTrackingId = parcelInfo.TrackingId;
@@ -77,7 +77,7 @@ namespace TechnikumDirekt.IntegrationTests
             };
             var encodedContent = new FormUrlEncodedContent (parameters);
             
-            var response = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
+            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
             
             Assert.NotNull(response);
             
@@ -110,8 +110,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
 
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
+            var parcelResponse = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
             var parcelTrackingId = parcelInfo.TrackingId;
@@ -122,11 +122,11 @@ namespace TechnikumDirekt.IntegrationTests
             };
             var encodedContent = new FormUrlEncodedContent (parameters);
             
-            var webhookResponse = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
+            var webhookResponse = await Client.PostAsync(Client.BaseAddress.AbsoluteUri +$"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
             
             Assert.NotNull(webhookResponse);
             
-            var response = await Client.GetAsync($"/parcel/{parcelTrackingId}/webhooks");
+            var response = await Client.GetAsync(Client.BaseAddress.AbsoluteUri + $"/parcel/{parcelTrackingId}/webhooks");
             
             // Assert
             response.EnsureSuccessStatusCode();
@@ -157,8 +157,8 @@ namespace TechnikumDirekt.IntegrationTests
             var parcelContent = new StringContent(JsonConvert.SerializeObject(_validParcel), Encoding.UTF8, "application/json");
 
             // Act
-            await Client.PostAsync("/warehouse", content);
-            var parcelResponse = await Client.PostAsync("/parcel", parcelContent);
+            await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/warehouse", content);
+            var parcelResponse = await Client.PostAsync(Client.BaseAddress.AbsoluteUri + "/parcel", parcelContent);
             var parcelResponseString = await parcelResponse.Content.ReadAsStringAsync();
             var parcelInfo = JsonConvert.DeserializeObject<NewParcelInfo>(parcelResponseString);
             var parcelTrackingId = parcelInfo.TrackingId;
@@ -169,7 +169,7 @@ namespace TechnikumDirekt.IntegrationTests
             };
             var encodedContent = new FormUrlEncodedContent (parameters);
             
-            var response = await Client.PostAsync($"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
+            var response = await Client.PostAsync(Client.BaseAddress.AbsoluteUri +$"/parcel/{parcelTrackingId}/webhooks?url={ValidUrl}", encodedContent);
             
             Assert.NotNull(response);
             
