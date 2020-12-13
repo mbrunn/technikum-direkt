@@ -1,15 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-report-hop',
   templateUrl: './report-hop.component.html',
   styleUrls: ['./report-hop.component.scss']
 })
-export class ReportHopComponent implements OnInit {
+export class ReportHopComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

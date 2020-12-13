@@ -29,3 +29,10 @@
   border-bottom: solid map-get($mat-primary, 500 ) 3px;
   background-color: rgba(white, 0.05);
 }
+
+.td-nav-divider {
+  height: 32px;
+  width: 2px;
+  background-color: rgba(white, 0.05);
+  margin: 0 16px;
+}

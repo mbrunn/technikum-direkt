@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { HttpClientModule } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ParcelInfoComponent } from './parcel-info/parcel-info.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     SubmitParcelComponent,
     TrackParcelComponent,
     ReportHopComponent,
-    HomeComponent
+    HomeComponent,
+    ParcelInfoComponent
   ],
   imports: [
     BrowserModule,

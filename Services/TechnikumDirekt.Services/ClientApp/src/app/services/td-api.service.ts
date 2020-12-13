@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Parcel} from '../../models/parcel';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {SubmitParcelResponse} from '../../models/submitParcelResponse';
 import {TrackingInfo} from '../../models/trackingInfo';
 
@@ -18,5 +18,13 @@ export class TdApiService {
 
   public trackParcel(trackingId: string): Observable<TrackingInfo> {
     return this.http.get<TrackingInfo>(`/parcel/${trackingId}`);
+  }
+
+  public reportDelivery(trackingId: string): Observable<any> {
+    return this.http.post<any>(`/parcel/${trackingId}/reportDelivery`, {}, { responseType: 'text' as 'json' });
+  }
+
+  public reportHop(trackingId: string, code: string): Observable<any> {
+    return this.http.post<any>(`/parcel/${trackingId}/reportHop/${code}`, {}, { responseType: 'text' as 'json' });
   }
 }
