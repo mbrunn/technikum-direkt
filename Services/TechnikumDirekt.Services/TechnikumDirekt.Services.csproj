@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <RootNamespace>technikumDirekt.Services</RootNamespace>
+        <RootNamespace>TechnikumDirekt.Services</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
