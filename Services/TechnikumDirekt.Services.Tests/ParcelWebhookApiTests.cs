@@ -204,7 +204,7 @@ namespace TechnikumDirekt.Services.Tests
             var response = controller.UnsubscribeParcelWebhook(ExistingWebhookId);
             
             //Assert
-            Assert.IsInstanceOf<OkObjectResult>(response);
+            Assert.IsInstanceOf<OkResult>(response);
         }
 
         [Test]

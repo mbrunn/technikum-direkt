@@ -53,26 +53,26 @@ namespace TechnikumDirekt.Services.Controllers
             catch (BusinessLogicNotFoundException)
             {
                 _logger.LogDebug($"No parcel found with trackingID: {trackingId}");
-                return NotFound(StatusCode(404, new Error
+                return NotFound(new Error
                 {
                     ErrorMessage = $"No parcel found with that tracking ID."
-                }));
+                });
             }
             catch (BusinessLogicValidationException)
             {
                 _logger.LogWarning($"trackingId: {trackingId} is invalid.");
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = $"trackingId: {trackingId} is invalid."
-                }));
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));
+                });
             } 
         }
         
@@ -100,26 +100,26 @@ namespace TechnikumDirekt.Services.Controllers
             catch (BusinessLogicNotFoundException)
             {
                 _logger.LogDebug($"Parcel with trackingId: {trackingId} does not exist. WebhookSubscription failed.");
-                return NotFound(StatusCode(404, new Error
+                return NotFound(new Error
                 {
                     ErrorMessage = $"No parcel found with that tracking ID."
-                }));
+                });
             }
             catch (BusinessLogicValidationException)
             {
                 _logger.LogWarning($"trackingId: {trackingId} is invalid.");
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = $"trackingId: {trackingId} is invalid."
-                }));
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));
+                });
             }
         }
 
@@ -138,23 +138,23 @@ namespace TechnikumDirekt.Services.Controllers
             try
             {
                 _trackingLogic.RemoveParcelWebhook(id);
-                return Ok(StatusCode(200));
+                return Ok();
             }
             catch (BusinessLogicNotFoundException)
             {
                 _logger.LogDebug($"webhook with Id {id} does not exist.  WebhookRemoval failed.");
-                return NotFound(StatusCode(404, new Error
+                return NotFound(new Error
                 {
                     ErrorMessage = $"No webhook found with that ID."
-                }));
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));
+                });
             }
         }
     }

@@ -86,7 +86,7 @@ namespace TechnikumDirekt.Services.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error {ErrorMessage = "The operation failed due to an error."}));
+                return BadRequest(new Error {ErrorMessage = "The operation failed due to an error."});
             }
         }
     }

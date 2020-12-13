@@ -53,10 +53,10 @@ namespace TechnikumDirekt.Services.Controllers
                 if (exportWarehouse == null)
                 {
                     _logger.LogWarning("No hierarchy loaded yet.");
-                    return NotFound(StatusCode(404, new Error
+                    return NotFound(new Error
                     {
                         ErrorMessage = "No hierarchy loaded yet."
-                    }));
+                    });
                 }
 
                 _logger.LogInformation("Successfully exported hierarchy.");
@@ -67,16 +67,15 @@ namespace TechnikumDirekt.Services.Controllers
             catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
-                return NotFound(StatusCode(404, new Error
+                return NotFound(new Error
                 {
                     ErrorMessage = "No hierarchy loaded yet."
-                }));
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400,
-                    new Error {ErrorMessage = "An error occured loading."}));
+                return BadRequest(new Error {ErrorMessage = "An error occured loading."});
             }
         }
 
@@ -108,20 +107,20 @@ namespace TechnikumDirekt.Services.Controllers
             catch (BusinessLogicValidationException e)
             {
                 _logger.LogError(e?.Message);
-                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
+                return BadRequest(new Error {ErrorMessage = "An error occured loading."});
             }
             catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
-                return NotFound(StatusCode(404, new Error
+                return NotFound(new Error
                 {
                     ErrorMessage = "Warehouse id not found"
-                }));
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
+                return BadRequest(new Error {ErrorMessage = "An error occured loading."});
             }
         }
 
@@ -149,13 +148,12 @@ namespace TechnikumDirekt.Services.Controllers
             catch (BusinessLogicValidationException e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
+                return BadRequest(new Error {ErrorMessage = "An error occured loading."});
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400,
-                    new Error {ErrorMessage = $"The operation failed due to an error. {e.Message}"}));
+                return BadRequest(new Error {ErrorMessage = $"The operation failed due to an error. {e.Message}"});
             }
         }
     }

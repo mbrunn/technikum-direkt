@@ -59,26 +59,26 @@ namespace TechnikumDirekt.Services.Controllers
             catch (BusinessLogicValidationException e)
             {
                 _logger.LogInformation(e.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The Parcel or the trackingId is not valid."
-                }));
+                });
             }
             catch (BusinessLogicBadArgumentException e)
             {
                 _logger.LogInformation(e.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "A parcel with tracking id has already been registered."
-                }));
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));
+                });
             }
         }
     }

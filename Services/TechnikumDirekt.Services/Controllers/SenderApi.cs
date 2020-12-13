@@ -61,18 +61,18 @@ namespace TechnikumDirekt.Services.Controllers
                 }*/
 
                 _logger.LogWarning(errorMessage.Trim());
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The parcel has invalid data."
-                }));
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error
+                return BadRequest(new Error
                 {
                     ErrorMessage = "The operation failed due to an error."
-                }));
+                });
             }
         }
     }
