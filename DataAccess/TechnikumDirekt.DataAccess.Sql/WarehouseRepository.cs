@@ -48,16 +48,9 @@ namespace TechnikumDirekt.DataAccess.Sql
 
         public void ImportWarehouses(Warehouse warehouse)
         {
-            try
-            {
-                _dbContext.Warehouses.Add(warehouse);
+            _dbContext.Warehouses.Add(warehouse);
                 _dbContext.SaveChanges();
                 _logger.LogTrace($"Imported warehouse with hopCode {warehouse.Code}.");
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
         }
 
         public void ClearWarehouses()
@@ -71,6 +64,13 @@ namespace TechnikumDirekt.DataAccess.Sql
             _dbContext.Database.ExecuteSqlRaw(
                 $"DELETE FROM {_dbContext.Model.FindEntityType(typeof(Hop)).GetTableName()}");
             _logger.LogTrace($"Cleared Warehousestructure and all other data.");
+        }
+
+        public IEnumerable<Hop> GetTransferWarehouses()
+        {
+            var transferWarehouses = _dbContext.Hops.Where(hop => hop.HopType == HopType.TransferWarehouse).ToList();
+            _logger.LogTrace($"Read" + transferWarehouses.Count + " TransferWarehouses out of the repository");
+            return transferWarehouses;
         }
     }
 }

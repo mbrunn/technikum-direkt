@@ -18,5 +18,6 @@ namespace TechnikumDirekt.BusinessLogic.Interfaces
         public void ImportWarehouses(Warehouse warehouse);
 
         public Hop GetHopContainingPoint(Point point);
+        public IEnumerable<Transferwarehouse> GetTransferWarehouses();
     }
 }

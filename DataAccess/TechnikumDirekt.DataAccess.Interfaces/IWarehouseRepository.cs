@@ -9,5 +9,6 @@ namespace TechnikumDirekt.DataAccess.Interfaces
         Warehouse GetWarehouseByCode(string code);
         void ImportWarehouses(Warehouse warehouse);
         void ClearWarehouses();
+        IEnumerable<Hop> GetTransferWarehouses();
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AutoMapper;
@@ -156,6 +157,60 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogError(e.Message);
                 return BadRequest(StatusCode(400,
                     new Error {ErrorMessage = $"The operation failed due to an error. {e.Message}"}));
+            }
+        }
+        
+        /// <summary>
+        /// Get a certain warehouse or truck by code
+        /// </summary>
+        /// <param name="code"></param>
+        /// <response code="200">Successful response</response>
+        /// <response code="400">An error occurred loading.</response>
+        /// <response code="404">Warehouse id not found</response>
+        [HttpGet]
+        [Route("/warehouse/getTransferWarehouses")]
+        [ValidateModelState]
+        [SwaggerOperation("GetTransferWarehouses")]
+        [SwaggerResponse(statusCode: 200, type: typeof(Warehouse), description: "Successful response")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Error), description: "An error occurred loading.")]
+        [SwaggerResponse(statusCode: 404, type: typeof(Error), description: "No hierarchy loaded yet.")]
+        public virtual IActionResult GetTransferWarehouses()
+        {
+            try
+            {
+                var blTransferwarehouses = _blWarehouseLogic.GetTransferWarehouses();
+                
+                if (blTransferwarehouses == null)
+                {
+                    _logger.LogWarning("No hierarchy loaded yet.");
+                    return NotFound(StatusCode(404, new Error
+                    {
+                        ErrorMessage = "No hierarchy loaded yet."
+                    }));
+                }
+                
+                var svcTransferWarehouses = _mapper.Map <List<Transferwarehouse>>(blTransferwarehouses);
+                
+                _logger.LogInformation($"Successfully fetched list with {svcTransferWarehouses.Count()} partner countries.");
+                return Ok(svcTransferWarehouses);
+            }
+            catch (BusinessLogicValidationException e)
+            {
+                _logger.LogError(e?.Message);
+                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
+            }
+            catch (BusinessLogicNotFoundException e)
+            {
+                _logger.LogWarning(e.Message);
+                return NotFound(StatusCode(404, new Error
+                {
+                    ErrorMessage = "Warehouse id not found"
+                }));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
             }
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -146,6 +147,21 @@ namespace TechnikumDirekt.BusinessLogic
             }
 
             return _mapper.Map<Hop>(hop);
+        }
+
+        public IEnumerable<Transferwarehouse> GetTransferWarehouses()
+        {
+            var dalHops = _warehouseRepository.GetTransferWarehouses();
+
+            if (dalHops == null)
+            {
+                _logger.LogTrace($"No warehouses imported.");
+                throw new BusinessLogicNotFoundException("No warehouses imported.");
+            }
+
+            var blTransferWarehouses = _mapper.Map<List<Transferwarehouse>>(dalHops);
+            _logger.LogDebug($"Exported {blTransferWarehouses.Count()} TransferWarehouses");
+            return blTransferWarehouses;
         }
     }
 }
