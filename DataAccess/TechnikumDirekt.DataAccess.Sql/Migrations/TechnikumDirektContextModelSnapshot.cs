@@ -67,13 +67,13 @@ namespace TechnikumDirekt.DataAccess.Sql.Migrations
                     b.Property<string>("HopCode")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("HopArrivalTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.HasKey("ParcelTrackingId", "HopCode");
+                    b.Property<DateTime?>("HopArrivalTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ParcelTrackingId", "HopCode", "Order");
 
                     b.HasIndex("HopCode");
 

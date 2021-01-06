@@ -246,7 +246,17 @@ namespace TechnikumDirekt.BusinessLogic
                 try
                 {
                     parcel.TrackingId = GenerateUniqueId(IdLength);
-                    _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
+                    
+                    var dalParcel = _mapper.Map<DalModels.Parcel>(parcel);
+                    //add ordering to all HopArrivals
+                    var i = 0;
+                    foreach (var ha in dalParcel.HopArrivals)
+                    {
+                        ha.Order = i;
+                        i++;
+                    }
+                    
+                    _parcelRepository.Add(dalParcel);
                     _logger.LogDebug($"Parcel with TrackingId {parcel.TrackingId} has been added.");
                     return parcel.TrackingId;
                 }

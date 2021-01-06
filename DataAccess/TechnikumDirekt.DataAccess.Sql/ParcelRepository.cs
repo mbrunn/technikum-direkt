@@ -24,8 +24,7 @@ namespace TechnikumDirekt.DataAccess.Sql
         {
             if (string.IsNullOrEmpty(trackingId)) throw new DataAccessArgumentNullException("TrackingId is null.");
             
-            //TODO: REMOVE Sender and Recipient.
-            var parcel = _dbContext.Parcels
+           var parcel = _dbContext.Parcels
                 .Include(p => p.Recipient)
                 .Include(p => p.Sender)
                 .Include(p => p.HopArrivals)
@@ -55,15 +54,6 @@ namespace TechnikumDirekt.DataAccess.Sql
         public string Add(Parcel parcel)
         {
             _dbContext.Parcels.Add(parcel);
-
-            //add ordering to all HopArrivals
-            var i = 0;
-            foreach (var ha in parcel.HopArrivals)
-            {
-                ha.Order = i;
-                i++;
-            }
-            
             _dbContext.HopArrivals.AddRange(parcel.HopArrivals);
 
             _dbContext.SaveChanges();
@@ -72,6 +62,12 @@ namespace TechnikumDirekt.DataAccess.Sql
             return parcel.TrackingId;
         }
 
+        /// <summary>
+        /// Deletes the given parcel in the database
+        /// </summary>
+        /// <param name="parcel">
+        /// Parcel that should be deleted
+        /// </param>
         public void Delete(Parcel parcel)
         {
             _dbContext.Parcels.Remove(parcel);
@@ -79,6 +75,12 @@ namespace TechnikumDirekt.DataAccess.Sql
             _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been deleted by parcel object.");
         }
 
+        /// <summary>
+        /// Deletes the parcel with the given TrackingId in the database
+        /// </summary>
+        /// <param name="parcel">
+        /// TrackingId of the Parcel that should be deleted
+        /// </param>
         public void Delete(string trackingId)
         {
             var parcel = GetByTrackingId(trackingId);

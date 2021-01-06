@@ -38,7 +38,7 @@ namespace TechnikumDirekt.DataAccess.Sql
         {
             // HopArrival pk config
             modelBuilder.Entity<HopArrival>()
-                .HasKey(ha => new {ha.ParcelTrackingId, ha.HopCode});
+                .HasKey(ha => new {ha.ParcelTrackingId, ha.HopCode, ha.Order});
 
             modelBuilder.Entity<HopArrival>()
                 .HasOne(ha => ha.Parcel)
@@ -49,7 +49,7 @@ namespace TechnikumDirekt.DataAccess.Sql
                 .HasOne(ha => ha.Hop)
                 .WithMany(h => h.HopArrivals)
                 .HasForeignKey(ha => ha.HopCode);
-            
+
             /*modelBuilder.Entity<Hop>()
                 .HasOne(h => h.ParentWarehouse)
                 .WithMany(pw => pw.NextHops)
