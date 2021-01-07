@@ -25,6 +25,8 @@ export class ParcelInfoComponent implements OnInit {
   public parcelStates = ParcelState;
   public hops: Hop[] = [];
 
+  public hasFutureHops = false;
+
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private tdApiService: TdApiService) { }
 
   ngOnInit(): void {
@@ -61,6 +63,7 @@ export class ParcelInfoComponent implements OnInit {
       info.futureHops.forEach(hop => {
         this.hops.push(hop);
       });
+      this.hasFutureHops = !!info.futureHops.length;
       this.responseStatus = 200;
     }, error => {
       this.responseStatus = error.status;

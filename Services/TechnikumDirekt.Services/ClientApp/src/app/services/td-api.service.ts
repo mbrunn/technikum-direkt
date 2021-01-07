@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {SubmitParcelResponse} from '../../models/submitParcelResponse';
 import {TrackingInfo} from '../../models/trackingInfo';
+import {TransferWarehouse} from '../../models/transferwarehouse';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +27,9 @@ export class TdApiService {
 
   public reportHop(trackingId: string, code: string): Observable<any> {
     return this.http.post<any>(`/parcel/${trackingId}/reportHop/${code}`, {}, { responseType: 'text' as 'json' });
+  }
+
+  public getTransferWarehouses(): Observable<TransferWarehouse[]> {
+    return this.http.get<TransferWarehouse[]>('/warehouse/getTransferWarehouses');
   }
 }

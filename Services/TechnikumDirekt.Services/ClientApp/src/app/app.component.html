@@ -1,30 +1,34 @@
 <div class="mat-app-background td-app">
-  <mat-toolbar class="td-toolbar">
-    <img src="/assets/logo/minimal.svg" class="td-toolbar-logo" />
-    <span>Technikum Direkt</span>
-    <div class="td-nav-items">
-      <button mat-button class="td-nav-item" routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="td-nav-active">
-        <span class="material-icons">home</span>
-        Home
-      </button>
-      <button mat-button class="td-nav-item" routerLink="/track" routerLinkActive="td-nav-active">
-        <span class="material-icons">search</span>
-        Track Parcel
-      </button>
+  <div class="td-app-content">
+    <mat-toolbar class="td-toolbar">
+      <img src="/assets/logo/minimal.svg" class="td-toolbar-logo" />
+      <span>Technikum Direkt</span>
+      <div class="td-nav-items">
+        <button mat-button class="td-nav-item" routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="td-nav-active">
+          <span class="material-icons">home</span>
+          Home
+        </button>
+        <button mat-button class="td-nav-item" routerLink="/track" routerLinkActive="td-nav-active">
+          <span class="material-icons">search</span>
+          Track Parcel
+        </button>
 
-      <div class="td-nav-divider"></div>
+        <div class="td-nav-divider"></div>
 
-      <!-- STAFF AREA -->
-      <button mat-button class="td-nav-item" routerLink="/submit" routerLinkActive="td-nav-active">
-        <span class="material-icons">add</span>
-        Submit Parcel
-      </button>
-      <button mat-button class="td-nav-item" routerLink="/report-hop" routerLinkActive="td-nav-active">
-        <span class="material-icons">flag</span>
-        Report Hop
-      </button>
-    </div>
-  </mat-toolbar>
+        <!-- STAFF AREA -->
+        <button mat-button class="td-nav-item" routerLink="/submit" routerLinkActive="td-nav-active">
+          <span class="material-icons">add</span>
+          Submit Parcel
+        </button>
+        <button mat-button class="td-nav-item" routerLink="/report-hop" routerLinkActive="td-nav-active">
+          <span class="material-icons">flag</span>
+          Report Hop
+        </button>
+      </div>
+    </mat-toolbar>
 
-  <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
+  </div>
+
+  <footer>Technikum Direkt 2020-2021 © Ableidinger, Brunner</footer>
 </div>

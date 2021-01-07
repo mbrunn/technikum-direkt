@@ -1,1 +1,22 @@
-<p>home works!</p>
+<div class="td-home td-component">
+  <mat-card>
+    <div class="td-home-banner">
+      <div>
+        <h1>Parcel management with TechnikumDirekt!</h1>
+        <p>Wir managen deine Packln.</p>
+      </div>
+      <img src="/assets/logo/full.svg" class="td-home-logo"/>
+    </div>
+  </mat-card>
+
+  <mat-card class="td-home-search-card">
+    <div class="td-home-search-card-content">
+      <mat-form-field appearance="outline" floatLabel="always" class="td-home-search">
+        <mat-label>Parcel Search</mat-label>
+        <input [formControl]="searchControl" type="text" matInput placeholder="Search for a tracking id...">
+      </mat-form-field>
+
+      <button mat-flat-button color="accent" class="td-home-search-button" (click)="search()">Search</button>
+    </div>
+  </mat-card>
+</div>

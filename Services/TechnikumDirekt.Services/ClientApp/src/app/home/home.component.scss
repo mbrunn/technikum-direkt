@@ -1,0 +1,43 @@
+@import "../../styles/variables";
+
+.td-home {
+  padding-top: 32px;
+}
+
+.td-home h1 {
+  font-size: 32px;
+}
+
+.td-home p {
+  font-size: 20px;
+}
+
+.td-home-banner {
+  padding: 64px 32px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.td-home-logo {
+  width: 50%;
+}
+
+.td-home-search-card {
+  margin-top: 32px;
+}
+
+.td-home-search-card-content {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.td-home-search {
+  flex-grow: 1;
+}
+
+.td-home-search-button {
+  height: 52px;
+  width: 200px;
+  margin-left: 16px;
+}

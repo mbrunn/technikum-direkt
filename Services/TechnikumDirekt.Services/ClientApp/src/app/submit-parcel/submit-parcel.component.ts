@@ -3,6 +3,13 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Recipient} from '../../models/recipient';
 import {Parcel} from '../../models/parcel';
 import {TdApiService} from '../services/td-api.service';
+import * as i18nIsoCountries from 'i18n-iso-countries';
+declare var require: any;
+
+class CountryInfo {
+  code = '';
+  title = '';
+}
 
 @Component({
   selector: 'app-submit-parcel',
@@ -30,9 +37,24 @@ export class SubmitParcelComponent implements OnInit {
   public trackingId: string | undefined;
   public isLoading = false;
 
+  public countries: CountryInfo[] = [];
+
   constructor(private tdApiService: TdApiService) { }
 
   ngOnInit(): void {
+    i18nIsoCountries.registerLocale(require('i18n-iso-countries/langs/en.json'));
+
+    this.tdApiService.getTransferWarehouses().subscribe(warehouses => {
+      warehouses.forEach(wh => {
+        const countryName = wh.locationName.split('-')[1].trim();
+        const countryInfo = new CountryInfo();
+        countryInfo.title = countryName;
+        if (countryName) {
+          countryInfo.code = i18nIsoCountries.getAlpha2Code(countryName, 'en');
+          this.countries.push(countryInfo);
+        }
+      });
+    });
   }
 
   public submitParcel(): void {

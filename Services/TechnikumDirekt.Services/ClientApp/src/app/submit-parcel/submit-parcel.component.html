@@ -73,10 +73,10 @@
                     Austria
                   </span>
                   </mat-option>
-                  <mat-option value="DE">
+                  <mat-option *ngFor="let country of countries" [value]="country.code">
                   <span class="td-submit-address-option">
-                    <img class="td-submit-address-icon" src="/assets/flags/de.svg" />
-                    Germany
+                    <img class="td-submit-address-icon" [src]="'/assets/flags/' + country.code.toLocaleLowerCase() + '.svg'" />
+                    {{country.title}}
                   </span>
                   </mat-option>
                 </mat-select>

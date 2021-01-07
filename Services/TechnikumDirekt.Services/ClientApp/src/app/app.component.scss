@@ -2,6 +2,8 @@
 
 .td-app {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .td-toolbar-logo {
@@ -35,4 +37,15 @@
   width: 2px;
   background-color: rgba(white, 0.05);
   margin: 0 16px;
+}
+
+.td-app-content {
+  flex-grow: 1;
+}
+
+footer {
+  background-color: #222222;
+  padding: 4px 0;
+  display: flex;
+  justify-content: center;
 }

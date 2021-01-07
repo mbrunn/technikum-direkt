@@ -49,7 +49,7 @@
         <div *ngIf="trackingInfo.state === parcelStates.InTruckDelivery">In delivery truck</div>
         <div *ngIf="trackingInfo.state === parcelStates.Transferred">Transferred</div>
       </div>
-      <button mat-raised-button color="primary" class="td-w-100 td-parcel-info-action-button" *ngIf="staffMode && trackingInfo.state !== parcelStates.Delivered" (click)="reportDelivery()">
+      <button mat-raised-button color="primary" class="td-w-100 td-parcel-info-action-button" *ngIf="staffMode && trackingInfo.state !== parcelStates.Delivered" (click)="reportDelivery()" [disabled]="hasFutureHops">
         <span class="material-icons">done_all</span>
         Report Parcel Delivery
       </button>
