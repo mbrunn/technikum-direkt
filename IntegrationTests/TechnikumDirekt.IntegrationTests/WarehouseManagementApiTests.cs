@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +23,6 @@ namespace TechnikumDirekt.IntegrationTests
         public void Setup()
         {
             _datasetLight = Utilities.LoadDatasetLight();
-            
         }
 
         #region /warehouse post tests
@@ -69,6 +70,34 @@ namespace TechnikumDirekt.IntegrationTests
             Assert.NotNull(warehouse);
             Assert.NotNull(warehouse.NextHops);
             Assert.Greater(warehouse.NextHops.Count, 0);
+        }
+        
+        #endregion
+        
+        #region /warehouse/getTransferWarehouses get tests
+        
+        [Test]
+        public async Task GetTransferWarehouses_ImportedDatabase_ReturnsStructure()
+        {
+            // Arrange
+            var postContent = new StringContent(_datasetLight, Encoding.UTF8, "application/json");
+
+            //Act
+            var test2 = await Client.PostAsync("warehouse", postContent);
+            var response = await Client.GetAsync("warehouse/getTransferWarehouses");
+            
+            // Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+            Assert.AreEqual("application/json; charset=utf-8",
+                response.Content.Headers.ContentType.ToString());
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var transferWarehouses = JsonConvert.DeserializeObject<List<Transferwarehouse>>(responseString);
+            
+            Assert.NotNull(transferWarehouses);
+            Assert.IsNotEmpty(transferWarehouses);
+            Assert.IsInstanceOf<Transferwarehouse>(transferWarehouses.FirstOrDefault());
         }
         
         #endregion
