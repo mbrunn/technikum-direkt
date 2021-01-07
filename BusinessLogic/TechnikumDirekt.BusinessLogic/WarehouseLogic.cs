@@ -38,24 +38,32 @@ namespace TechnikumDirekt.BusinessLogic
 
         public Warehouse ExportWarehouses()
         {
-            var dalHops = _warehouseRepository.GetAll();
-
-            DalModels.Warehouse rootWarehouse = null;
-
-            foreach (var wh in dalHops)
+            try
             {
-                if (wh is DalModels.Warehouse warehouse && warehouse.Level == 0) rootWarehouse = warehouse;
-            }
+                var dalHops = _warehouseRepository.GetAll();
 
-            if (rootWarehouse == null)
+                DalModels.Warehouse rootWarehouse = null;
+
+                foreach (var wh in dalHops)
+                {
+                    if (wh is DalModels.Warehouse warehouse && warehouse.Level == 0) rootWarehouse = warehouse;
+                }
+
+                if (rootWarehouse == null)
+                {
+                    _logger.LogTrace($"No warehouses imported.");
+                    throw new BusinessLogicNotFoundException("No warehouses imported.");
+                }
+
+                var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
+                _logger.LogDebug($"Exported new Warehousestructure");
+                return blWarehouse;
+            }
+            catch (DataAccessNotFoundException e)
             {
-                _logger.LogTrace($"No warehouses imported.");
-                throw new BusinessLogicNotFoundException("No warehouses imported.");
+                _logger.LogDebug($"Warehousestructure couldn't be found.");
+                throw new BusinessLogicNotFoundException("Warehousestructure couldn't be found.", e);
             }
-
-            var blWarehouse = _mapper.Map<Warehouse>(rootWarehouse);
-            _logger.LogDebug($"Exported new Warehousestructure");
-            return blWarehouse;
         }
 
         public Hop GetWarehouse(string code)
@@ -99,19 +107,27 @@ namespace TechnikumDirekt.BusinessLogic
             }
             catch (ValidationException e)
             {
+                _logger.LogDebug($"Warehousestructure couldn't be validated.");
                 throw new BusinessLogicValidationException("Warehouse tree validation failed.", e);
             }
-            _warehouseRepository.ClearWarehouses();
-            var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
+
             try
             {
+                _warehouseRepository.ClearWarehouses();
+                var dalWh = _mapper.Map<DalModels.Warehouse>(warehouse);
                 _warehouseRepository.ImportWarehouses(dalWh);
+                _logger.LogDebug($"Importet warehouse with hopcode {warehouse.Code}");
             }
-            catch (Exception e)
+            catch (DataAccessNotPossibleException e)
             {
-                throw;
+                _logger.LogDebug($"Warehousestructure couldn't be cleared.");
+                throw new BusinessLogicBadArgumentException();
             }
-            _logger.LogDebug($"Importet warehouse with hopcode {warehouse.Code}");
+            catch (DataAccessAddException e)
+            {
+                _logger.LogDebug($"Warehousestructure couldn't be added.");
+                throw new BusinessLogicBadArgumentException();
+            }
         }
         
         private void ValidateWarehouseTree(Hop node)
@@ -140,34 +156,43 @@ namespace TechnikumDirekt.BusinessLogic
 
         public Hop GetHopContainingPoint(Point point)
         {
-            var hop = _hopRepository.GetHopContainingPoint(point);
-            if (hop == null)
+            try
             {
-                throw new BusinessLogicNotFoundException($"Hop containing the point {point.Coordinate} couldn't be found.");
-            }
+                var hop = _hopRepository.GetHopContainingPoint(point);
+                if (hop == null)
+                {
+                    throw new BusinessLogicNotFoundException($"Hop containing the point {point.Coordinate} couldn't be found.");
+                }
 
-            return _mapper.Map<Hop>(hop);
+                return _mapper.Map<Hop>(hop);
+            }
+            catch (DataAccessNotFoundException e)
+            {
+                _logger.LogDebug($"Hop containing the point {point.Coordinate} couldn't be found.");
+                throw new BusinessLogicBadArgumentException();
+            }
+            catch (DataAccessArgumentNullException e)
+            {
+                _logger.LogDebug($"Point can't be null.");
+                throw new BusinessLogicBadArgumentException();
+            }
         }
 
         public IEnumerable<Transferwarehouse> GetTransferWarehouses()
         {
-            var dalHops = _warehouseRepository.GetTransferWarehouses();
-
-            if (dalHops == null)
+            try
             {
-                _logger.LogTrace($"No TransferWarehouses imported.");
-                    throw new BusinessLogicNotFoundException("No TransferWarehouses imported.");
+                var dalHops = _warehouseRepository.GetTransferWarehouses();
+                
+                var blTransferWarehouses = _mapper.Map<List<Transferwarehouse>>(dalHops);
+                _logger.LogDebug($"Exported {blTransferWarehouses.Count()} TransferWarehouses");
+                return blTransferWarehouses;
             }
-            
-            if (!dalHops.Any())
+            catch (DataAccessNotFoundException e)
             {
-                _logger.LogTrace($"No TransferWarehouses imported.");
-                throw new BusinessLogicNotFoundException("No TransferWarehouses imported.");
+                _logger.LogDebug($"No TransferWarehouse found.");
+                throw new BusinessLogicNotFoundException();
             }
-
-            var blTransferWarehouses = _mapper.Map<List<Transferwarehouse>>(dalHops);
-            _logger.LogDebug($"Exported {blTransferWarehouses.Count()} TransferWarehouses");
-            return blTransferWarehouses;
         }
     }
 }

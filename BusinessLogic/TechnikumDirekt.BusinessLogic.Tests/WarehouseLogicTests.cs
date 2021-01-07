@@ -10,6 +10,7 @@ using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
 using TechnikumDirekt.BusinessLogic.Models;
 using TechnikumDirekt.DataAccess.Interfaces;
+using TechnikumDirekt.DataAccess.Sql.Exceptions;
 using TechnikumDirekt.Services.Mapper;
 using DalModels = TechnikumDirekt.DataAccess.Models;
 
@@ -101,9 +102,9 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             /* ------------- Empty Mock WarehouseRepository Setup ------------- */
             var emptyMockWarehouseRepository = new Mock<IWarehouseRepository>();
             // Setup - GetAll
-            emptyMockWarehouseRepository.Setup(m => m.GetAll()).Returns(new List<DalModels.Hop>());
+            emptyMockWarehouseRepository.Setup(m => m.GetAll()).Throws(new DataAccessNotFoundException());
             // Setup - GetTransferWarehouses
-            emptyMockWarehouseRepository.Setup(m => m.GetTransferWarehouses()).Returns(new List<DalModels.Hop>());
+            emptyMockWarehouseRepository.Setup(m => m.GetTransferWarehouses()).Throws(new DataAccessNotFoundException());
             
             /* --------------- Mock HopRepository Setup --------------- */
             var mockHopRepository = new Mock<IHopRepository>();

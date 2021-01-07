@@ -46,20 +46,36 @@ namespace TechnikumDirekt.DataAccess.Sql
 
         public void Update(Parcel parcel)
         {
-            _dbContext.Parcels.Update(parcel);
-            _dbContext.SaveChanges();
-            _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been updated.");
+            try
+            {
+                _dbContext.Parcels.Update(parcel);
+                _dbContext.SaveChanges();
+                _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been updated.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogTrace($"Parcel with TrackingId {parcel.TrackingId} could not be updated.");
+                throw new DataAccessUpdateException();
+            }
         }
 
         public string Add(Parcel parcel)
         {
-            _dbContext.Parcels.Add(parcel);
-            _dbContext.HopArrivals.AddRange(parcel.HopArrivals);
+            try
+            {
+                _dbContext.Parcels.Add(parcel);
+                _dbContext.HopArrivals.AddRange(parcel.HopArrivals);
 
-            _dbContext.SaveChanges();
-            _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been added.");
+                _dbContext.SaveChanges();
+                _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been added.");
 
-            return parcel.TrackingId;
+                return parcel.TrackingId;
+            }
+            catch (Exception e)
+            {
+                _logger.LogTrace($"Parcel with TrackingId {parcel.TrackingId} could not be added.");
+                throw new DataAccessAddException();
+            }
         }
 
         /// <summary>
@@ -70,9 +86,17 @@ namespace TechnikumDirekt.DataAccess.Sql
         /// </param>
         public void Delete(Parcel parcel)
         {
-            _dbContext.Parcels.Remove(parcel);
-            _dbContext.SaveChanges();
-            _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been deleted by parcel object.");
+            try
+            {
+                _dbContext.Parcels.Remove(parcel);
+                _dbContext.SaveChanges();
+                _logger.LogTrace($"Parcel with trackindId {parcel.TrackingId} has been deleted by parcel object.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogTrace($"Parcel with TrackingId {parcel.TrackingId} could not be deleted.");
+                throw new DataAccessRemoveException();
+            }
         }
 
         /// <summary>
@@ -83,10 +107,18 @@ namespace TechnikumDirekt.DataAccess.Sql
         /// </param>
         public void Delete(string trackingId)
         {
-            var parcel = GetByTrackingId(trackingId);
-            _dbContext.Remove(parcel);
-            _dbContext.SaveChanges();
-            _logger.LogTrace($"Parcel with trackindId {trackingId} has been deleted by trackingId");
+            try
+            {
+                var parcel = GetByTrackingId(trackingId);
+                _dbContext.Remove(parcel);
+                _dbContext.SaveChanges();
+                _logger.LogTrace($"Parcel with trackindId {trackingId} has been deleted by trackingId");
+            }
+            catch (Exception e)
+            {
+                _logger.LogTrace($"Parcel with TrackingId {trackingId} could not be deleted.");
+                throw new DataAccessRemoveException();
+            }
         }
 
         /// <summary>
@@ -100,12 +132,20 @@ namespace TechnikumDirekt.DataAccess.Sql
         /// </returns>
         private int? GetRecipientId(Recipient recipient)
         {
-            return _dbContext.Recipients.FirstOrDefault(sender =>
-                sender.City == recipient.City &&
-                sender.Country == recipient.Country
-                && sender.Name == recipient.Name &&
-                sender.Street == recipient.Street &&
-                sender.PostalCode == recipient.PostalCode)?.Id;
+            try
+            {
+                return _dbContext.Recipients.FirstOrDefault(sender =>
+                    sender.City == recipient.City &&
+                    sender.Country == recipient.Country
+                    && sender.Name == recipient.Name &&
+                    sender.Street == recipient.Street &&
+                    sender.PostalCode == recipient.PostalCode)?.Id;
+            }
+            catch (Exception e)
+            {
+                _logger.LogTrace($"Recipient with Name {recipient.Name} could not be found.");
+                throw new DataAccessNotFoundException();
+            }
         }
     }
 }
