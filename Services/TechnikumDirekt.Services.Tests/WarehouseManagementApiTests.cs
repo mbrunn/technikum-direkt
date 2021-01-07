@@ -13,6 +13,7 @@ using TechnikumDirekt.Services.Controllers;
 using TechnikumDirekt.Services.Mapper;
 using TechnikumDirekt.Services.Models;
 using BlWarehouse = TechnikumDirekt.BusinessLogic.Models.Warehouse;
+using BlTransferWarehouse = TechnikumDirekt.BusinessLogic.Models.Transferwarehouse;
 using Warehouse = TechnikumDirekt.Services.Models.Warehouse;
 using WarehouseNextHops = TechnikumDirekt.Services.Models.WarehouseNextHops;
 
@@ -37,8 +38,22 @@ namespace TechnikumDirekt.Services.Tests
             ProcessingDelayMins = 160,
             NextHops = new List<BusinessLogic.Models.WarehouseNextHops>()
         };
-
+        
+        private readonly BlTransferWarehouse _validTransferWarehouse = new BlTransferWarehouse
+        {
+            Code = "WENA04",
+            HopType = HopType.TransferWarehouse,
+            Description = "Transferwarehouse Lanzendorf",
+            LocationName = "Lanzendorf",
+            LocationCoordinates = new Point(16.3725042, 48.2083537),
+            ProcessingDelayMins = 160,
+            LogisticsPartner = "Lanzendorf TransferWarehosue",
+            LogisticsPartnerUrl = "http://www.validurl.at",
+            RegionGeometry = null
+        };
+        
         private readonly List<BlWarehouse> _warehouses = new List<BlWarehouse>();
+        private readonly List<BlTransferWarehouse> _transferWarehouses = new List<BlTransferWarehouse>();
 
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
@@ -51,9 +66,12 @@ namespace TechnikumDirekt.Services.Tests
             _mapper = new AutoMapper.Mapper(mockMapperConfig);
 
             _warehouses.Add(_validWarehouse);
+            _transferWarehouses.Add(_validTransferWarehouse);
+            
             var mockWarehouseLogic = new Mock<IWarehouseLogic>();
             // Setup - ExportWarehouses
             mockWarehouseLogic.Setup(m => m.ExportWarehouses()).Returns(_validWarehouse);
+            mockWarehouseLogic.Setup(m => m.GetTransferWarehouses()).Returns(_transferWarehouses);
             mockWarehouseLogic.Setup(m => m.GetWarehouse(ValidHopCode)).Returns(_validWarehouse);
             mockWarehouseLogic.Setup(m => m.GetWarehouse(InvalidHopCode)).Throws<BusinessLogicValidationException>();
             mockWarehouseLogic.Setup(m => m.GetWarehouse(NotfoundHopCode)).Throws<BusinessLogicNotFoundException>();
@@ -62,7 +80,8 @@ namespace TechnikumDirekt.Services.Tests
 
             var emptyMockWarehouseLogic = new Mock<IWarehouseLogic>();
             // Setup - ExportWarehouses
-            emptyMockWarehouseLogic.Setup(m => m.ExportWarehouses()).Throws<BusinessLogicNotFoundException>(); // TODO - ?
+            emptyMockWarehouseLogic.Setup(m => m.ExportWarehouses()).Throws<BusinessLogicNotFoundException>();
+            emptyMockWarehouseLogic.Setup(m => m.GetTransferWarehouses()).Throws<BusinessLogicNotFoundException>();
 
             _warehouseLogic = mockWarehouseLogic.Object;
             _emptyWarehouseLogic = emptyMockWarehouseLogic.Object;
@@ -107,6 +126,55 @@ namespace TechnikumDirekt.Services.Tests
             var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper, _logger);
 
             var response = controller.ExportWarehouses();
+
+            Assert.IsInstanceOf<NotFoundObjectResult>(response);
+
+            var typedResponse = (NotFoundObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
+
+            Assert.AreEqual(404, statusCode);
+        }
+
+        #endregion
+        
+        #region GetTransferWarehouses Tests
+
+        [Test]
+        public void GetTransferWarehouses_Valid_Ok()
+        {
+            var controller = new WarehouseManagementApiController(_warehouseLogic, _mapper, _logger);
+
+            var response = controller.GetTransferWarehouses();
+
+            Assert.IsInstanceOf<OkObjectResult>(response);
+
+            var typedResponse = (OkObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
+
+            Assert.AreEqual(200, statusCode);
+        }
+
+        [Test]
+        public void GetTransferWarehouses_Empty_Notfound()
+        {
+            var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper, _logger);
+
+            var response = controller.GetTransferWarehouses();
+
+            Assert.IsInstanceOf<NotFoundObjectResult>(response);
+
+            var typedResponse = (NotFoundObjectResult) response;
+            var statusCode = typedResponse.StatusCode;
+
+            Assert.AreEqual(404, statusCode);
+        }
+
+        [Test]
+        public void GetTransferWarehouses_BlReturnsNull_NotFound()
+        {
+            var controller = new WarehouseManagementApiController(_emptyWarehouseLogic, _mapper, _logger);
+
+            var response = controller.GetTransferWarehouses();
 
             Assert.IsInstanceOf<NotFoundObjectResult>(response);
 

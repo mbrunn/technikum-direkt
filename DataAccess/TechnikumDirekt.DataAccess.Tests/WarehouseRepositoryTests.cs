@@ -23,6 +23,26 @@ namespace TechnikumDirekt.DataAccess.Tests
         private const string ValidHopCode = "AUTA05";
         private const string InvalidHopCode = "AUTA99";
 
+        private static readonly Transferwarehouse ValidTransferWarehouse01 = new Transferwarehouse
+        {
+            Code = "TRAN01",
+            HopType = HopType.TransferWarehouse,
+            Description = "TransferWarehouse - Location01",
+            LocationName = "Location01",
+            LocationCoordinates = new Point(16.3725042, 48.2083537),
+            ProcessingDelayMins = 186
+        };
+        
+        private static readonly Transferwarehouse ValidTransferWarehouse02 = new Transferwarehouse
+        {
+            Code = "TRAN02",
+            HopType = HopType.TransferWarehouse,
+            Description = "TransferWarehouse - Location02",
+            LocationName = "Location02",
+            LocationCoordinates = new Point(16.3725042, 48.2083537),
+            ProcessingDelayMins = 186
+        };
+        
         private readonly Warehouse _validWarehouse = new Warehouse
         {
             Code = "AUTA05",
@@ -43,21 +63,24 @@ namespace TechnikumDirekt.DataAccess.Tests
                     Level = 4,
                     LocationCoordinates = new Point(16.3725042, 48.2083537),
                     ProcessingDelayMins = 160,
-                }
+                },
+                ValidTransferWarehouse01,
+                ValidTransferWarehouse02
             }
         };
-
+        
         [SetUp]
         public void Setup()
         {
             _entities = new List<Hop>()
             {
-                _validWarehouse
+                _validWarehouse,
+                ValidTransferWarehouse01,
+                ValidTransferWarehouse02
             };
 
             var dbMock = new Mock<ITechnikumDirektContext>();
             dbMock.Setup(p => p.Hops).Returns(DbContextMock.GetQueryableMockDbSet<Hop>(_entities));
-            
             
             dbMock.Setup(p => p.SaveChanges()).Returns(1);
             
@@ -79,6 +102,20 @@ namespace TechnikumDirekt.DataAccess.Tests
             Assert.NotNull(wh);
             Assert.IsInstanceOf<Warehouse>(wh.FirstOrDefault());
             Assert.AreSame(_validWarehouse, wh.FirstOrDefault());
+        }
+
+        #endregion
+        
+        #region GetTransferWarehouses
+
+        [Test]
+        public void GetTransferWarehouses_ReturnsTransferWarehouses_ValidWarehouseStructure()
+        {
+            _warehouseRepository = new WarehouseRepository(_technikumDirektContext, _logger);
+            var wh = _warehouseRepository.GetTransferWarehouses();
+            Assert.NotNull(wh);
+            Assert.IsInstanceOf<Transferwarehouse>(wh.FirstOrDefault());
+            Assert.AreSame(ValidTransferWarehouse01, wh.FirstOrDefault());
         }
 
         #endregion

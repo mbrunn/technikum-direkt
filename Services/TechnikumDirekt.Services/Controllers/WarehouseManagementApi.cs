@@ -194,23 +194,19 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation($"Successfully fetched list with {svcTransferWarehouses.Count()} partner countries.");
                 return Ok(svcTransferWarehouses);
             }
-            catch (BusinessLogicValidationException e)
-            {
-                _logger.LogError(e?.Message);
-                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
-            }
             catch (BusinessLogicNotFoundException e)
             {
                 _logger.LogWarning(e.Message);
                 return NotFound(StatusCode(404, new Error
                 {
-                    ErrorMessage = "Warehouse id not found"
+                    ErrorMessage = "No hierarchy loaded yet."
                 }));
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return BadRequest(StatusCode(400, new Error {ErrorMessage = "An error occured loading."}));
+                return BadRequest(StatusCode(400,
+                    new Error {ErrorMessage = "An error occured loading."}));
             }
         }
     }

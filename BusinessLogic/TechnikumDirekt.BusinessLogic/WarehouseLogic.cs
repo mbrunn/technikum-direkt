@@ -155,8 +155,14 @@ namespace TechnikumDirekt.BusinessLogic
 
             if (dalHops == null)
             {
-                _logger.LogTrace($"No warehouses imported.");
-                throw new BusinessLogicNotFoundException("No warehouses imported.");
+                _logger.LogTrace($"No TransferWarehouses imported.");
+                    throw new BusinessLogicNotFoundException("No TransferWarehouses imported.");
+            }
+            
+            if (!dalHops.Any())
+            {
+                _logger.LogTrace($"No TransferWarehouses imported.");
+                throw new BusinessLogicNotFoundException("No TransferWarehouses imported.");
             }
 
             var blTransferWarehouses = _mapper.Map<List<Transferwarehouse>>(dalHops);

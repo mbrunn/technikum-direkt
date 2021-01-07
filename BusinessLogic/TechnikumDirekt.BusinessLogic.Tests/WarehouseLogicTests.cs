@@ -56,6 +56,23 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             ProcessingDelayMins = 160
         };
 
+        private readonly DalModels.Transferwarehouse _validDalTransferWarehouse = new DalModels.Transferwarehouse()
+        {
+            Code = "TRAN04",
+            HopType = DalModels.HopType.Warehouse,
+            Description = "Warehouse Level 4 - Wien",
+            LocationName = "Wien",
+            LocationCoordinates = new Point(16.3725042, 48.2083537),
+            ProcessingDelayMins = 160,
+            HopArrivals = new List<DalModels.HopArrival>(),
+            LogisticsPartner = "Partner 01",
+            LogisticsPartnerUrl = "https://www.validurl.at",
+            ParentTraveltimeMins = 10
+        };
+
+        private readonly List<DalModels.Transferwarehouse>
+            _transferwarehouses = new List<DalModels.Transferwarehouse>();
+        
         private const string ValidHopCode = "ABCD1234";
         private const string InvalidHopCode = "AbdA2a";
 
@@ -68,12 +85,16 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var mockMapperConfig = new MapperConfiguration(c => c.AddProfile(new DalMapperProfile()));
             _mapper = new Mapper(mockMapperConfig);
 
+            _transferwarehouses.Add(_validDalTransferWarehouse);
+
             /* ------------- Mock WarehouseRepository Setup ------------- */
             var mockWarehouseRepository = new Mock<IWarehouseRepository>();
             // Setup - GetAll
             mockWarehouseRepository.Setup(m => m.GetAll()).Returns(new List<DalModels.Hop> {_validDalWarehouse});
             // Setup - GetWarehouse
             mockWarehouseRepository.Setup(m => m.GetWarehouseByCode(It.IsAny<string>())).Returns(_validDalWarehouse);
+            // Setup - GetTransferWarehouses
+            mockWarehouseRepository.Setup(m => m.GetTransferWarehouses()).Returns(_transferwarehouses);
 
             _warehouseRepository = mockWarehouseRepository.Object;
 
@@ -81,6 +102,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var emptyMockWarehouseRepository = new Mock<IWarehouseRepository>();
             // Setup - GetAll
             emptyMockWarehouseRepository.Setup(m => m.GetAll()).Returns(new List<DalModels.Hop>());
+            // Setup - GetTransferWarehouses
+            emptyMockWarehouseRepository.Setup(m => m.GetTransferWarehouses()).Returns(new List<DalModels.Hop>());
             
             /* --------------- Mock HopRepository Setup --------------- */
             var mockHopRepository = new Mock<IHopRepository>();
@@ -120,6 +143,27 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             Assert.DoesNotThrow(() => warehouses = _warehouseLogic.ExportWarehouses());
 
             Assert.IsNotNull(warehouses);
+        }
+
+        #endregion
+        
+        #region GetTransferWarehouses Tests
+
+        [Test]
+        public void GetTransferWarehouses_Throws_WithEmptyWarehouseList()
+        {
+            Assert.Throws<BusinessLogicNotFoundException>(() => _emptyWarehouseLogic.GetTransferWarehouses());
+        }
+
+        [Test]
+        public void GetTransferWarehouses_DoesNotThrowAndReturnsData_WithNonEmptyWarehouseList()
+        {
+            _warehouseLogic.ImportWarehouses(_validWarehouse);
+
+            IEnumerable<Transferwarehouse> transferwarehouses = new List<Transferwarehouse>();
+            Assert.DoesNotThrow(() => transferwarehouses = _warehouseLogic.GetTransferWarehouses());
+
+            Assert.IsNotNull(transferwarehouses);
         }
 
         #endregion
