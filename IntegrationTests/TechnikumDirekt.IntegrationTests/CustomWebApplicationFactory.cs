@@ -27,7 +27,7 @@ namespace TechnikumDirekt.IntegrationTests
             
             ClientOptions.AllowAutoRedirect = true;
             var uriString = _configurationRoot.GetSection("TestingUrls").GetValue<string>("TestingEnvUrl");
-            if (uriString != string.Empty)
+            if (!string.IsNullOrEmpty(uriString))
             {
                 ClientOptions.BaseAddress = new Uri(uriString);
             }
