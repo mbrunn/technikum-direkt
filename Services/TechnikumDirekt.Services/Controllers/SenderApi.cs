@@ -52,15 +52,9 @@ namespace TechnikumDirekt.Services.Controllers
                 _logger.LogInformation("Successfully submitted a new parcel with trackingId: " + trackingId);
                 return Ok(newParcelInfo);
             }
-            catch (BusinessLogicValidationException)
+            catch (BusinessLogicValidationException e)
             {
-                var errorMessage = string.Empty;
-                /*foreach (var error in e.Errors)
-                {
-                    errorMessage += ("\n" + error?.ErrorMessage + " with Value: " + error?.AttemptedValue);
-                }*/
-
-                _logger.LogWarning(errorMessage.Trim());
+                _logger.LogWarning(e.Message);
                 return BadRequest(StatusCode(400, new Error
                 {
                     ErrorMessage = "The parcel has invalid data."
