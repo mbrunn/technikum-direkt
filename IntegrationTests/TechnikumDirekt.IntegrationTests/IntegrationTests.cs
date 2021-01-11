@@ -18,9 +18,17 @@ namespace TechnikumDirekt.IntegrationTests
             
             var clientOptions = new WebApplicationFactoryClientOptions();
             clientOptions.BaseAddress = Factory.ClientOptions.BaseAddress;
-            Client = new HttpClient {BaseAddress = clientOptions.BaseAddress};
-            //Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //Client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+            if (Factory.ClientOptions.BaseAddress.ToString().Contains("localhost") || string.IsNullOrEmpty(Factory.ClientOptions.BaseAddress.ToString()))
+            {
+                Client = Factory.CreateClient(new WebApplicationFactoryClientOptions
+                {
+                    AllowAutoRedirect = false
+                });
+            }
+            else
+            {
+                Client = new HttpClient {BaseAddress = clientOptions.BaseAddress};
+            }
         }
 
         /// <summary>

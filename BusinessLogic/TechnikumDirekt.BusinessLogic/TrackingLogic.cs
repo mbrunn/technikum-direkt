@@ -246,17 +246,7 @@ namespace TechnikumDirekt.BusinessLogic
                 try
                 {
                     parcel.TrackingId = GenerateUniqueId(IdLength);
-                    
-                    var dalParcel = _mapper.Map<DalModels.Parcel>(parcel);
-                    //add ordering to all HopArrivals
-                    var i = 0;
-                    foreach (var ha in dalParcel.HopArrivals)
-                    {
-                        ha.Order = i;
-                        i++;
-                    }
-                    
-                    _parcelRepository.Add(dalParcel);
+                    _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
                     _logger.LogDebug($"Parcel with TrackingId {parcel.TrackingId} has been added.");
                     return parcel.TrackingId;
                 }
@@ -330,6 +320,11 @@ namespace TechnikumDirekt.BusinessLogic
             catch (DataAccessNotFoundException)
             {
                 parcel.TrackingId = trackingId;
+
+                parcel = FindShortestPath(parcel);
+                
+                parcel.State = Parcel.StateEnum.InTransportEnum;
+
                 _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
                 _logger.LogDebug($"Parcel with trackingId {trackingId} has been transitioned from partner");
             }
