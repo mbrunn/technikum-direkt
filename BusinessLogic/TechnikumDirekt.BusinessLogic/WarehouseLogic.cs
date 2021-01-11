@@ -169,7 +169,7 @@ namespace TechnikumDirekt.BusinessLogic
             catch (DataAccessNotFoundException e)
             {
                 _logger.LogDebug($"Hop containing the point {point.Coordinate} couldn't be found.");
-                throw new BusinessLogicBadArgumentException();
+                throw new BusinessLogicNotFoundException();
             }
             catch (DataAccessArgumentNullException e)
             {
