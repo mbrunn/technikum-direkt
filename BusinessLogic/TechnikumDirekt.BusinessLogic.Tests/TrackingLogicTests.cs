@@ -584,8 +584,8 @@ namespace TechnikumDirekt.BusinessLogic.Tests
             var parcel = new Parcel
             {
                 Weight = 2.0f,
-                Sender = _recipient1,
-                Recipient = _recipient2,
+                Sender = trans01Recipient,
+                Recipient = truck02Recipient,
                 VisitedHops = new List<HopArrival>(),
                 FutureHops = new List<HopArrival>()
             };

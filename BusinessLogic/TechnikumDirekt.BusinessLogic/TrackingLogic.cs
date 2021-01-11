@@ -330,7 +330,20 @@ namespace TechnikumDirekt.BusinessLogic
             catch (DataAccessNotFoundException)
             {
                 parcel.TrackingId = trackingId;
-                _parcelRepository.Add(_mapper.Map<DalModels.Parcel>(parcel));
+
+                parcel = FindShortestPath(parcel);
+                
+                parcel.State = Parcel.StateEnum.InTransportEnum;
+
+                var dalParcel = _mapper.Map<DalModels.Parcel>(parcel);
+                var i = 0;
+                foreach (var ha in dalParcel.HopArrivals)
+                {
+                    ha.Order = i;
+                    i++;
+                }
+                
+                _parcelRepository.Add(dalParcel);
                 _logger.LogDebug($"Parcel with trackingId {trackingId} has been transitioned from partner");
             }
         }
