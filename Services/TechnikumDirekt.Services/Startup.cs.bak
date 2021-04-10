@@ -1,11 +1,13 @@
 using System;
+using System.Net;
 using System.Linq;
 using System.Net.Http.Headers;
-using System.Net;
+
 using AutoMapper;
+
 using FluentValidation.AspNetCore;
+
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -17,9 +19,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+
 using TechnikumDirekt.BusinessLogic;
 using TechnikumDirekt.BusinessLogic.FluentValidation;
 using TechnikumDirekt.BusinessLogic.Interfaces;
@@ -86,8 +90,8 @@ namespace TechnikumDirekt.Services
                         Description = "Parcel Logistics Service (ASP.NET Core 3.1)",
                         Contact = new OpenApiContact
                         {
-                            Name = "SKS",
-                            Url = new Uri("http://www.technikum-wien.at/"),
+                            Name = "Keptn_Demo_TDirekt",
+                            Url = new Uri("http://amasol.de"),
                             Email = ""
                         }
                     });
@@ -141,10 +145,16 @@ namespace TechnikumDirekt.Services
                 c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             });
             
+            /*
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
+            });*/
         }
 
         /// <summary>
@@ -155,76 +165,25 @@ namespace TechnikumDirekt.Services
         /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, ITechnikumDirektContext dbContext)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseForwardedHeaders(new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-                });
             }
             else
             {
+                //TODO: Enable production exception handling (https://docs.microsoft.com/en-us/aspnet/core/fundamentals/error-handling)
                 app.UseExceptionHandler("/Error");
-                //app.UseForwardedHeaders();
                 app.UseHsts();
             }
 
-            app.UseCors(builder =>
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                builder.AllowAnyHeader()
-                .AllowAnyOrigin()
-                .AllowAnyMethod();
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-
-            app.UseHttpsRedirection();
-
+            
+            app.UseStaticFiles();
             app.UseRouting();
-
-            app.UsePathBase(new PathString("/api"));
-
-            //-------------------------SWAGGER---------------------------------
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                //TODO: Either use the SwaggerGen generated Swagger contract (generated from C# classes)
-                c.SwaggerEndpoint("/api/swagger/1/swagger.json", "Parcel Logistics Service");
-
-                //TODO: Or alternatively use the original Swagger contract that's included in the static files
-                //c.SwaggerEndpoint("/swagger-original.json", "Parcel Logistics Service Original");
-            });
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
-            /*app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    Console.WriteLine("Starting spa in dev mode.");
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-                else
-                {
-                    Console.WriteLine("Production Env");
-                    spa.UseProxyToSpaDevelopmentServer("http://frontend:80");
-                }
-            });*/
-
-            if (dbContext.Database.GetPendingMigrations().Any() && env.IsDevelopment()) {
-                dbContext.Database.Migrate();
-            }
-
-            //----------------------------------------------------------------------------------------------
-            /*Ö
-            app.UseRouting();
-
-            //TODO: Uncomment this if you need wwwroot folder
-            //app.UseStaticFiles();
-
             app.UseAuthorization();
 
             app.UseSwagger();
@@ -239,39 +198,36 @@ namespace TechnikumDirekt.Services
 
             //TODO: Use Https Redirection
             // app.UseHttpsRedirection();
-            app.UseStaticFiles();
+
+            //app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
-                app.UseSpaStaticFiles();
+                //app.UseSpaStaticFiles();
             }
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                //TODO: Enable production exception handling (https://docs.microsoft.com/en-us/aspnet/core/fundamentals/error-handling)
-                app.UseExceptionHandler("/Error");
-
-                app.UseHsts();
-            }
-            
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
                 // see https://go.microsoft.com/fwlink/?linkid=864501
-
                 spa.Options.SourcePath = "ClientApp";
 
                 if (env.IsDevelopment())
                 {
+                    Console.WriteLine("Starting spa in dev mode.");
                     spa.UseAngularCliServer(npmScript: "start");
                 }
+                else
+                {
+                    Console.WriteLine("Production Env");
+                    spa.UseProxyToSpaDevelopmentServer("http://frontend:4200");
+                }
             });
-            */
+
+            if (dbContext.Database.GetPendingMigrations().Any()) {
+                dbContext.Database.Migrate();
+            }
         }
     }
 }

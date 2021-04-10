@@ -14,22 +14,22 @@ export class TdApiService {
   constructor(private http: HttpClient) { }
 
   public submitParcel(parcel: Parcel): Observable<SubmitParcelResponse> {
-    return this.http.post<SubmitParcelResponse>('/parcel', parcel);
+    return this.http.post<SubmitParcelResponse>('/api/parcel', parcel);
   }
 
   public trackParcel(trackingId: string): Observable<TrackingInfo> {
-    return this.http.get<TrackingInfo>(`/parcel/${trackingId}`);
+    return this.http.get<TrackingInfo>(`/api/parcel/${trackingId}`);
   }
 
   public reportDelivery(trackingId: string): Observable<any> {
-    return this.http.post<any>(`/parcel/${trackingId}/reportDelivery`, {}, { responseType: 'text' as 'json' });
+    return this.http.post<any>(`/api/parcel/${trackingId}/reportDelivery`, {}, { responseType: 'text' as 'json' });
   }
 
   public reportHop(trackingId: string, code: string): Observable<any> {
-    return this.http.post<any>(`/parcel/${trackingId}/reportHop/${code}`, {}, { responseType: 'text' as 'json' });
+    return this.http.post<any>(`/api/parcel/${trackingId}/reportHop/${code}`, {}, { responseType: 'text' as 'json' });
   }
 
   public getTransferWarehouses(): Observable<TransferWarehouse[]> {
-    return this.http.get<TransferWarehouse[]>('/warehouse/getTransferWarehouses');
+    return this.http.get<TransferWarehouse[]>('/api/warehouse/getTransferWarehouses');
   }
 }
